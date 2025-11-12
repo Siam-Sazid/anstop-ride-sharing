@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ride_sharing/feature/auth/driver/registration.dart';
 import 'package:ride_sharing/feature/auth/log_in_screen.dart';
 import 'package:ride_sharing/feature/auth/passenger/registration.dart';
 
@@ -20,7 +21,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> _goToNextRoute() async {
     await Future.delayed(Duration(seconds: 2));
     // Get.offAll(() => LogInScreen());
-    Get.offAll(() => PassengerRegistration());
+    Get.offAll(() => DriverRegistration());
   }
 
   @override
