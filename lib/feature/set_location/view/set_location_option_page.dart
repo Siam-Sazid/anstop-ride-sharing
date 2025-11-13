@@ -2,7 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
-
+import 'package:get/get.dart';
+import 'package:ride_sharing/feature/set_location/view/set_location_screen.dart';
+import 'package:ride_sharing/routes/app_routes.dart';
 
 class SetLocationOptionPage extends StatelessWidget {
   const SetLocationOptionPage({Key? key}) : super(key: key);
@@ -30,7 +32,7 @@ class SetLocationOptionPage extends StatelessWidget {
           // Search bar
           TextField(
             onTap: (){
-
+              Get.toNamed(AppRoutes.passengersetLocationPage);
             },
             decoration: InputDecoration(
               hintText: 'Search address',
@@ -58,6 +60,7 @@ class SetLocationOptionPage extends StatelessWidget {
                   icon: Icons.pin_drop_rounded,
                   title: 'Set on Map',
                   onTap: () {
+                    Get.toNamed(AppRoutes.passengersetLocationPage);
                     print('Home tapped');
                   },
                 ),
@@ -65,6 +68,7 @@ class SetLocationOptionPage extends StatelessWidget {
                   icon: Icons.home,
                   title: 'Home',
                   onTap: () {
+                    Get.toNamed(AppRoutes.passengersetLocationPage);
                     print('Home tapped');
                   },
                 ),
@@ -72,6 +76,7 @@ class SetLocationOptionPage extends StatelessWidget {
                   icon: Icons.work,
                   title: 'Work',
                   onTap: () {
+                    Get.toNamed(AppRoutes.passengersetLocationPage);
                     print('Work tapped');
                   },
                 ),
@@ -79,6 +84,7 @@ class SetLocationOptionPage extends StatelessWidget {
                   icon: Icons.bookmark,
                   title: 'Bookmarks',
                   onTap: () {
+                    Get.toNamed(AppRoutes.passengersetLocationPage);
                     print('Bookmarks tapped');
                   },
                 ),

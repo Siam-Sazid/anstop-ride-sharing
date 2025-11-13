@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ride_sharing/feature/homepage/passenger/controller/home_page_controller.dart';
+import 'package:ride_sharing/feature/set_location/controller/set_location_controller.dart';
 import 'package:ride_sharing/feature/set_location/view/set_location_option_page.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 import 'package:ride_sharing/widgets/custom_app_bar_title.dart';
@@ -9,19 +10,22 @@ import 'package:ride_sharing/widgets/custom_google_map.dart';
 import 'package:ride_sharing/widgets/home_links/home_links.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+class SetLocationScreen extends StatelessWidget {
+  const SetLocationScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBarTitle(),
-      body: GetBuilder<HomePageController>(
+      body: GetBuilder<SetLocationController>(
         builder: (controller) {
           return Stack(
             children: [
-
-              GoogleMapWidget(),
+              GoogleMap(
+                initialCameraPosition: SetLocationController.defaultLocation,
+                onMapCreated: controller.onMapCreated, // Pass the controller
+                markers: controller.markers,
+              ),
               if (controller.isLoading)
                 Container(
                   color: Colors.black54,
@@ -35,11 +39,12 @@ class HomePage extends StatelessWidget {
               // Current location info card
               if (controller.currentPosition != null && !controller.isLoading)
                 Positioned(
-                  bottom: 50,
+                  bottom: 0,
                   left: 20,
                   right: 20,
                   child: Container(
                     height: MediaQuery.of(context).size.height * 0.25,
+                    width: double.infinity,
                     child: Card(
                       color: AppColors.white,
                       elevation: 8,
@@ -61,43 +66,25 @@ class HomePage extends StatelessWidget {
                               borderRadio: 20,
                             ),
                             SizedBox(height: 8),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 8.sp),
-                              child: Container(
-                                height: 70.h,
-                                width: 300.w,
-                                decoration: BoxDecoration(
-                                  color: AppColors.greenShade50,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Padding(
-                                  padding: EdgeInsets.all(10),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      CustomLocationButton(
-                                        imageUrl: 'https://picsum.photos/250?image=9',
-                                        mainText: 'Home',
-                                        subText: 'Set address',
-                                        onTap: () {
-                                          print('Location button tapped');
-                                          Get.to(SetLocationOptionPage());
-                                        },
-                                      ),
-                                      VerticalDivider(color: AppColors.white, width: 2),
-                                      CustomLocationButton(
-                                        imageUrl: 'https://picsum.photos/250?image=10',
-                                        mainText: 'Work',
-                                        subText: 'Set address',
-                                        onTap: () {
-                                          print('Location button tapped');
-                                        },
-                                      ),
-                                    ],
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                SizedBox(
+                                  width: 200.w,
+                                  child: CustomButton(
+
+                                      onPressed: (){},
+                                     title: Text('Set Location',style: TextStyle(color: AppColors.white),),
+
+
+
                                   ),
                                 ),
-                              ),
-                            ),
+                                Icon(CupertinoIcons.bookmark_fill,color: AppColors.primaryColor,)
+                              ],
+                              
+                            )
+                            
                           ],
                         ),
                       ),

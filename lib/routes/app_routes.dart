@@ -13,7 +13,9 @@ import 'package:ride_sharing/feature/auth/passenger/registration.dart';
 import 'package:ride_sharing/feature/auth/reset_password_screen.dart';
 import 'package:ride_sharing/feature/homepage/passenger/binding/home_binding.dart';
 import 'package:ride_sharing/feature/homepage/passenger/view/home_page.dart';
-import 'package:ride_sharing/feature/homepage/passenger/set_location/view/set_location_option_page.dart';
+import 'package:ride_sharing/feature/set_location/binding/set_location_binding.dart';
+import 'package:ride_sharing/feature/set_location/view/set_location_option_page.dart';
+import 'package:ride_sharing/feature/set_location/view/set_location_screen.dart';
 import 'package:ride_sharing/feature/splash_screen/splash_screen.dart';
 
 abstract class AppRoutes {
@@ -34,7 +36,8 @@ abstract class AppRoutes {
   static const String carInformationScreen = '/car-information-screen.dart';
   static const String uploadProfilePictureScreen = '/upload-profile-picture-screen.dart';
   static const String homePage = '/home-page.dart';
-  static const String passengerLocationPage = '/passenger-location.dart';
+  static const String passengerSetLocationOptionPage = '/passenger-location-option.dart';
+  static const String passengersetLocationPage = '/passenger-location-page.dart';
 
   ///============= > Routes < ============
   static final routes = [
@@ -93,8 +96,13 @@ abstract class AppRoutes {
     ),
 
     GetPage(
-      name: passengerLocationPage,
+      name: passengerSetLocationOptionPage,
       page: () => SetLocationOptionPage(),
+    ),
+    GetPage(
+      name: passengersetLocationPage,
+      page: () => SetLocationScreen(),
+      binding: SetLocationBinding(),
     ),
   ];
 }
