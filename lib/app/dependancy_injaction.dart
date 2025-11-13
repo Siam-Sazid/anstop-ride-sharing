@@ -5,4 +5,5 @@ class DependencyInjection implements Bindings {
   void dependencies() {
     // Get.put(AuthController());
 
-  }}
+  }
+}

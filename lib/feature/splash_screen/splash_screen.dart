@@ -20,8 +20,8 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _goToNextRoute() async {
     await Future.delayed(Duration(seconds: 2));
-    // Get.offAll(() => LogInScreen());
-    Get.offAll(() => DriverRegistration());
+     Get.offAll(() => LogInScreen());
+   // Get.offAll(() => DriverRegistration());
   }
 
   @override

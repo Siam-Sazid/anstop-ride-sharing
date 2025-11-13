@@ -16,12 +16,9 @@ class RideSharingApp extends StatelessWidget {
       builder: (_, _) => GetMaterialApp(
         darkTheme: AppThemeData.darkThemeData,
         debugShowCheckedModeBanner: false,
-        initialRoute: AppRoutes.splashScreen,
-        routes: AppRoutes.routes,
+        initialRoute: AppRoutes.splashScreen, // Initial route
+        getPages: AppRoutes.routes, // Your defined routes
         theme: AppThemeData.lightThemeData,
-        // routes: AppRoutes.registrationScreen,
-        // builder: (context, child) =>
-        //     Scaffold(body: NoInternetWrapper(child: child!)),
       ),
     );
   }

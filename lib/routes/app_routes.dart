@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:ride_sharing/feature/auth/driver/car_information_screen.dart';
 import 'package:ride_sharing/feature/auth/driver/driving_license_screen.dart';
 import 'package:ride_sharing/feature/auth/driver/national_id_screen.dart';
@@ -10,6 +11,9 @@ import 'package:ride_sharing/feature/auth/log_in_screen.dart';
 import 'package:ride_sharing/feature/auth/otp_varification_screen.dart';
 import 'package:ride_sharing/feature/auth/passenger/registration.dart';
 import 'package:ride_sharing/feature/auth/reset_password_screen.dart';
+import 'package:ride_sharing/feature/homepage/passenger/binding/home_binding.dart';
+import 'package:ride_sharing/feature/homepage/passenger/view/home_page.dart';
+import 'package:ride_sharing/feature/homepage/passenger/set_location/view/set_location_option_page.dart';
 import 'package:ride_sharing/feature/splash_screen/splash_screen.dart';
 
 abstract class AppRoutes {
@@ -18,8 +22,6 @@ abstract class AppRoutes {
 
   /// =========>Routes Name
   static const String splashScreen = '/';
-
-  /// ====> Authentication Related Route are here
   static const String logInScreen = '/log-in-screen.dart';
   static const String emailValidationScreen = '/email-validation-screen.dart';
   static const String otpVarificationScreen = '/otp-varification-screen.dart';
@@ -31,23 +33,68 @@ abstract class AppRoutes {
   static const String drivingLicenseScreen = '/driving-license-screen.dart';
   static const String carInformationScreen = '/car-information-screen.dart';
   static const String uploadProfilePictureScreen = '/upload-profile-picture-screen.dart';
-
-
+  static const String homePage = '/home-page.dart';
+  static const String passengerLocationPage = '/passenger-location.dart';
 
   ///============= > Routes < ============
-  static final routes = <String, WidgetBuilder>{
-    splashScreen: (context) => SplashScreen(),
-    logInScreen: (context) => LogInScreen(),
-    emailValidationScreen: (context) => EmailValidationScreen(),
-    otpVarificationScreen: (context) => OtpVarificationScreen(),
-    resetPasswordScreen: (context) => ResetPasswordScreen(),
-    passengerRegistrationScreen: (context) => PassengerRegistration(),
-    driverRegistrationScreen: (context) => DriverRegistration(),
-    uploadYourDocumentsScreen: (context) => UploadYourDocuments(),
-    nationalIdScreen: (context) => NationalIdScreen(),
-    drivingLicenseScreen: (context) => DrivingLicenseScreen(),
-    carInformationScreen: (context) => CarInformationScreen(),
-    uploadProfilePictureScreen: (context) => UploadProfilePictureScreen(),
+  static final routes = [
+    GetPage(
+      name: splashScreen,
+      page: () => SplashScreen(),
+    ),
+    GetPage(
+      name: logInScreen,
+      page: () => LogInScreen(),
+    ),
+    GetPage(
+      name: emailValidationScreen,
+      page: () => EmailValidationScreen(),
+    ),
+    GetPage(
+      name: otpVarificationScreen,
+      page: () => OtpVarificationScreen(),
+    ),
+    GetPage(
+      name: resetPasswordScreen,
+      page: () => ResetPasswordScreen(),
+    ),
+    GetPage(
+      name: passengerRegistrationScreen,
+      page: () => PassengerRegistration(),
+    ),
+    GetPage(
+      name: driverRegistrationScreen,
+      page: () => DriverRegistration(),
+    ),
+    GetPage(
+      name: uploadYourDocumentsScreen,
+      page: () => UploadYourDocuments(),
+    ),
+    GetPage(
+      name: nationalIdScreen,
+      page: () => NationalIdScreen(),
+    ),
+    GetPage(
+      name: drivingLicenseScreen,
+      page: () => DrivingLicenseScreen(),
+    ),
+    GetPage(
+      name: carInformationScreen,
+      page: () => CarInformationScreen(),
+    ),
+    GetPage(
+      name: uploadProfilePictureScreen,
+      page: () => UploadProfilePictureScreen(),
+    ),
+    GetPage(
+      name: homePage,
+      page: () => HomePage(),
+      binding: HomePageBinding(),
+    ),
 
-  };
+    GetPage(
+      name: passengerLocationPage,
+      page: () => SetLocationOptionPage(),
+    ),
+  ];
 }

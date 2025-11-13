@@ -1,5 +1,8 @@
 import 'package:ride_sharing/feature/auth/email_validation_screen.dart';
+import 'package:ride_sharing/feature/homepage/passenger/view/home_page.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
+
+import '../../routes/app_routes.dart';
 
 class LogInScreen extends StatelessWidget {
   LogInScreen({super.key});
@@ -54,7 +57,8 @@ class LogInScreen extends StatelessWidget {
                 SizedBox(height: 13.h),
                 CustomButton(
                   onPressed: () {
-                    Get.to(() => EmailValidationScreen());
+                  //  Get.to(() => EmailValidationScreen());
+                    Get.toNamed(AppRoutes.homePage);
                   },
                   label: AppString.logInButtonText,
                 ),
