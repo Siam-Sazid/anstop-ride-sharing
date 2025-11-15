@@ -11,12 +11,16 @@ import 'package:ride_sharing/feature/auth/log_in_screen.dart';
 import 'package:ride_sharing/feature/auth/otp_varification_screen.dart';
 import 'package:ride_sharing/feature/auth/passenger/registration.dart';
 import 'package:ride_sharing/feature/auth/reset_password_screen.dart';
+import 'package:ride_sharing/feature/car_booking/passenger/binding/pick_up_location_binding.dart';
+import 'package:ride_sharing/feature/car_booking/passenger/set_on_map_screen.dart';
 import 'package:ride_sharing/feature/homepage/passenger/binding/home_binding.dart';
 import 'package:ride_sharing/feature/homepage/passenger/view/home_page.dart';
 import 'package:ride_sharing/feature/set_location/binding/set_location_binding.dart';
 import 'package:ride_sharing/feature/set_location/view/set_location_option_page.dart';
 import 'package:ride_sharing/feature/set_location/view/set_location_screen.dart';
 import 'package:ride_sharing/feature/splash_screen/splash_screen.dart';
+
+import '../feature/car_booking/passenger/pick_up_location.dart';
 
 abstract class AppRoutes {
   /// =========== > Initial Route < =========
@@ -38,6 +42,8 @@ abstract class AppRoutes {
   static const String homePage = '/home-page.dart';
   static const String passengerSetLocationOptionPage = '/passenger-location-option.dart';
   static const String passengersetLocationPage = '/passenger-location-page.dart';
+  static const String passengerSetOnMapPage = '/set-on-map-page.dart';
+  static const String passengerPickUpLocationPage = '/pick-up-location.dart';
 
   ///============= > Routes < ============
   static final routes = [
@@ -103,6 +109,17 @@ abstract class AppRoutes {
       name: passengersetLocationPage,
       page: () => SetLocationScreen(),
       binding: SetLocationBinding(),
+    ), GetPage(
+      name: passengerSetOnMapPage,
+      page: () => SetOnMapScreen(),
+
+    ),GetPage(
+      name: passengerPickUpLocationPage,
+      page: () => PickUpLocationScreen(),
+      binding: PickUpLocationBinding(),
+
+
+
     ),
   ];
 }

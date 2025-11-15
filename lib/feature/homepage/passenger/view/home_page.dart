@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ride_sharing/feature/car_booking/passenger/set_on_map_screen.dart';
 import 'package:ride_sharing/feature/homepage/passenger/controller/home_page_controller.dart';
 import 'package:ride_sharing/feature/set_location/view/set_location_option_page.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
@@ -53,6 +54,9 @@ class HomePage extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             CustomTextField(
+                              onTap: (){
+                               Get.to(SetOnMapScreen());
+                              },
                               controller: controller.locationTEController,
                               prefixIcon: Icon(Icons.location_on, color: AppColors.primaryColor),
                               suffixIcon: Icon(CupertinoIcons.search_circle),
