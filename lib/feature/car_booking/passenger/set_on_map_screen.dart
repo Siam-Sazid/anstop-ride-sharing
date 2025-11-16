@@ -63,7 +63,7 @@ class SetOnMapScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           CustomLocationButton(
-                            imageUrl: 'https://picsum.photos/250?image=9',
+                            imageUrl: 'assets/images/home.png',
                             mainText: 'Home',
                             subText: 'Set address',
                             onTap: () {
@@ -73,7 +73,7 @@ class SetOnMapScreen extends StatelessWidget {
                           ),
                           VerticalDivider(color: AppColors.white, width: 2),
                           CustomLocationButton(
-                            imageUrl: 'https://picsum.photos/250?image=10',
+                            imageUrl: 'assets/images/briefcase.png',
                             mainText: 'Work',
                             subText: 'Set address',
                             onTap: () {
@@ -102,6 +102,7 @@ class SetOnMapScreen extends StatelessWidget {
                   ),
                   onTap: () {
                     // Define the action on tap here
+                    Navigator.pop(context);
                     Get.toNamed(AppRoutes.passengerPickUpLocationPage);
                   },
 

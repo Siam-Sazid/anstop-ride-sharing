@@ -10,14 +10,32 @@ import 'package:ride_sharing/widgets/custom_google_map.dart';
 import 'package:ride_sharing/widgets/home_links/home_links.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ride_sharing/widgets/custom_text_field.dart';  // Assuming you have this widget
-
+import 'package:geocoding/geocoding.dart';
 class PickUpLocationScreen extends StatelessWidget {
-  const PickUpLocationScreen({Key? key}) : super(key: key);
+   PickUpLocationScreen({Key? key}) : super(key: key);
+  final TextEditingController pickUpController = TextEditingController();
+  final TextEditingController destinationController = TextEditingController();
+   Future<void> getCoordinates(String address) async {
+     try {
+       // Get the coordinates from the address
+       List<Location> locations = await locationFromAddress(address);
+       if (locations.isNotEmpty) {
+         // Get the first location (if there are multiple results)
+         double latitude = locations[0].latitude;
+         double longitude = locations[0].longitude;
 
+         // Update the controller to store the location
+         print('Latitude: $latitude, Longitude: $longitude');
+
+         // Do something with the coordinates (e.g., set on map)
+       }
+     } catch (e) {
+       print('Error: $e');
+     }
+   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBarTitle(),
       body: GetBuilder<PickUpLocationController>(
         builder: (controller) {
           return Stack(
@@ -87,6 +105,9 @@ class PickUpLocationScreen extends StatelessWidget {
                             hintText: 'Where are you headed?',
                             borderColor: AppColors.primaryColor,
                             borderRadio: 20,
+                            onChanged: (address) {
+                              getCoordinates(address);
+                            },
                           ),
 
                           SizedBox(height: 8),
@@ -104,6 +125,9 @@ class PickUpLocationScreen extends StatelessWidget {
                             hintText: 'Where are you headed?',
                             borderColor: AppColors.primaryColor,
                             borderRadio: 20,
+                            onChanged: (address) {
+                              getCoordinates(address);
+                            },
                           ),
 
                           SizedBox(height: 8),
@@ -133,7 +157,7 @@ class PickUpLocationScreen extends StatelessWidget {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     CustomLocationButton(
-                                      imageUrl: 'https://picsum.photos/250?image=9',
+                                      imageUrl: 'assets/images/home.png',
                                       mainText: 'Home',
                                       subText: 'Set address',
                                       onTap: () {
@@ -143,7 +167,7 @@ class PickUpLocationScreen extends StatelessWidget {
                                     ),
                                     VerticalDivider(color: AppColors.white, width: 2),
                                     CustomLocationButton(
-                                      imageUrl: 'https://picsum.photos/250?image=10',
+                                      imageUrl: 'assets/images/briefcase.png',
                                       mainText: 'Work',
                                       subText: 'Set address',
                                       onTap: () {
@@ -161,6 +185,35 @@ class PickUpLocationScreen extends StatelessWidget {
                     ),
                   ),
                 ),
+              Positioned(
+                top: 40,
+                left: 16,
+                child: Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.3),
+                        blurRadius: 4,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: Colors.black,
+                      size: 25,
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+              )
             ],
           );
         },
@@ -171,7 +224,7 @@ class PickUpLocationScreen extends StatelessWidget {
           padding: EdgeInsets.all(5),
           child: CustomButton(
             onPressed: () {
-
+              Navigator.pop(context);
               showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,

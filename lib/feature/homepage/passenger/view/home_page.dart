@@ -80,7 +80,7 @@ class HomePage extends StatelessWidget {
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       CustomLocationButton(
-                                        imageUrl: 'https://picsum.photos/250?image=9',
+                                        imageUrl: 'assets/images/home.png',
                                         mainText: 'Home',
                                         subText: 'Set address',
                                         onTap: () {
@@ -88,9 +88,9 @@ class HomePage extends StatelessWidget {
                                           Get.to(SetLocationOptionPage());
                                         },
                                       ),
-                                      VerticalDivider(color: AppColors.white, width: 2),
+                                      VerticalDivider(color: AppColors.white, width: 5),
                                       CustomLocationButton(
-                                        imageUrl: 'https://picsum.photos/250?image=10',
+                                        imageUrl: 'assets/images/briefcase.png',
                                         mainText: 'Work',
                                         subText: 'Set address',
                                         onTap: () {

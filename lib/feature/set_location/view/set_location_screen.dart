@@ -16,7 +16,6 @@ class SetLocationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBarTitle(),
       body: GetBuilder<SetLocationController>(
         builder: (controller) {
           return Stack(
@@ -40,14 +39,15 @@ class SetLocationScreen extends StatelessWidget {
               if (controller.currentPosition != null && !controller.isLoading)
                 Positioned(
                   bottom: 0,
-                  left: 20,
-                  right: 20,
+                  left: 0,
+                  right: 0,
                   child: Container(
                     height: MediaQuery.of(context).size.height * 0.25,
                     width: double.infinity,
                     child: Card(
                       color: AppColors.white,
-                      elevation: 8,
+                      margin: EdgeInsets.zero,
+                      elevation: 5,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),
@@ -91,6 +91,35 @@ class SetLocationScreen extends StatelessWidget {
                     ),
                   ),
                 ),
+              Positioned(
+                top: 40,
+                left: 16,
+                child: Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.3),
+                        blurRadius: 4,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: Colors.black,
+                      size: 25,
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+              )
             ],
           );
         },

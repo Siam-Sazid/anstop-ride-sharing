@@ -1,8 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:ride_sharing/feature/car_booking/passenger/cancel_taxi.dart';
+import 'package:ride_sharing/feature/car_booking/utils/cancel_driver_widget.dart';
+import 'package:ride_sharing/feature/car_booking/utils/car_details.dart';
+import 'package:ride_sharing/feature/car_booking/utils/driver_arrived_bottom_sheet.dart';
+import 'package:ride_sharing/feature/car_booking/utils/driver_status_widget.dart';
+import 'package:ride_sharing/feature/car_booking/utils/support_note_widget.dart';
+import 'package:ride_sharing/feature/car_booking/utils/trip_id.dart';
+import 'package:ride_sharing/feature/car_booking/utils/user_info_section.dart';
 import '../../../app/utils/app_colors.dart';
 import '../../../widgets/custom_button.dart';
+import '../../../widgets/custom_horizontal_line.dart';
+import '../../../widgets/custom_vertical_line.dart';
 import '../../../widgets/logo.dart';
+import 'package:get/get.dart';
 
 class BookingCarsBottomSheet extends StatefulWidget {
   @override
@@ -15,202 +26,88 @@ class _BookingCarsBottomSheetState extends State<BookingCarsBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.5,
+      height: MediaQuery.of(context).size.height * 0.7,
       width: double.infinity,
       color: AppColors.white,
-      //  padding: EdgeInsets.all(16),
+        padding: EdgeInsets.only(top: 20.sp),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Title Text
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Driver is on the way to pick up',
-                  style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.bold),
-                ),
-                Container(
-                  width: 50,
-                color: Colors.black,
-                  child: Center(child: Text('1 min',style: TextStyle(color: AppColors.white),)),
-                  
-                )
-              ],
-            ),
+
+
+          DriverStatusWidget(
+            statusText: 'Driver is on the way to pick up',
+            time: '1 min',
+            circleColor: Colors.green,
           ),
 
+         // SizedBox(height: 16.sp),
+          CarDetailsWidget(
+            title: 'DHK METRO - 8475Dkk',
+            subtitle: 'Toyota',
+            imagePath: 'assets/images/cars_side_view.png',
+            backgroundColor: AppColors.violetShade,
+          ),
           SizedBox(height: 16.sp),
-          Container(
-            color:AppColors.violetShade,
-            child: ListTile(
-              title: Text('DHK METRO - 8475Dkk'),
-              subtitle: Text('Toyota'),
-              trailing: Image.asset('assets/images/cars_side_view.png'),
+          /// User Info Section with Avatar and Rating
+          UserInfoSection(
+            imageUrl: 'https://picsum.photos/250?image=9',
+            name: 'John Doe',
+            rating: 3.54,
+            trips: 3,
+            profession: 'Professional',
+            price: '\$24',
+            distance: '28 km',
+          ),
+          SupportNoteWidget(),
+          Padding(
+            padding:  EdgeInsets.all(8.0),
+            child: Text('Your Trip',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15.sp),),
+          ),
+          Padding(
+            padding:  EdgeInsets.all(5.sp),
+            child: Row(
+              children: [
+                Icon(Icons.location_on, color: AppColors.primaryColor),
+                SizedBox(width: 5.sp),
+                Text('Green Road, Dhaka'), // Destination location
+              ],
             ),
           ),
+          CustomHorizontalLine(thickness: 5.sp,),
 
-
-          // User Info Section with Avatar and Rating
+          SizedBox(height: 8.sp),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
-                ClipOval(
-                  child: Image.network(
-                    'https://picsum.photos/250?image=9', // Placeholder Image URL
-                    width: 50.w,
-                    height: 50.h,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                SizedBox(width: 12.sp),
-
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'John Doe',
-                      style: TextStyle(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.primaryColor,
-                      ),
-                    ),
-                    // Rating Stars
-                    Row(
-                      children: [
-
-                      ]
-                    ),
-                  ],
-                ),
-                Spacer(),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("\$24"), // Price
-                    Text('28 km') // Distance
-                  ],
-                )
+                Image.asset('assets/images/Wallet.png'),
+                SizedBox(width: 2.sp,),
+                Text('Pay via wallet',style: TextStyle(fontSize: 20.sp),)
               ],
             ),
           ),
-
-          Container(
-            width: double.infinity,
-            child: Divider(
-              color: Colors.grey[200],
-              thickness: 15, // Increased thickness
-              indent: 0,
-              endIndent: 0,
-            ),
-          ),
-
-          SizedBox(height: 8.sp),
-
-          // Start and End Location Information
-          
-          // SizedBox(height: 8.sp),
-          // SizedBox(width: 12.sp),
-
-
-          Row(
-            children: [
-              Icon(Icons.location_on, color: AppColors.primaryColor),
-              SizedBox(width: 5.sp),
-              Text('Green Road, Dhaka'), // Destination location
-            ],
-          ),
-
-          SizedBox(height: 8.sp),
-
-          // Distance Information
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Text('Distance'),
-                Spacer(),
-                Text('29 km') // Distance Value
-              ],
-            ),
-          ),
-          Container(
-            width: double.infinity,
-            child: Divider(
-              color: Colors.grey[200],
-              thickness: 15, // Increased thickness
-              indent: 0,
-              endIndent: 0,
-            ),
-          ),
-          SizedBox(height: 8.sp),
-
-          Row(
-            children: [
-              Image.asset('assets/images/Wallet.png'),
-              SizedBox(width: 2.sp,),
-              Text('Pay via wallet',style: TextStyle(fontSize: 20.sp),)
-            ],
-          ),
-          Container(
-            width: double.infinity,
-            child: Divider(
-              color: Colors.grey[200],
-              thickness: 15, // Increased thickness
-              indent: 0,
-              endIndent: 0,
-            ),
-          ),
+          CustomHorizontalLine(thickness: 5.sp,),
+          TripIdWidget(),
+          CustomHorizontalLine(thickness: 5.sp,),
           // Cancel Button
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Cancel this ride?'),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      builder: (BuildContext context) {
-                        return BookingCarsBottomSheet();
-                      },
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.red, // Background color of the button
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5), // Border radius
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min, // Make the row size fit the content
-                    children: [
-
-                      // Space between the icon and the text
-                      Text(
-                        'Cancel Now',
-                        style: TextStyle(
-                          color: Colors.white, // Text color
-                        ),
-                      ),
-                      SizedBox(width: 8),
-                      Icon(
-                        Icons.close,
-                        color: Colors.white, // Icon color
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          )
+          CancelDriverWidget(
+            onCancelPressed: () {
+              // // Custom behavior when cancel button is pressed
+              // print("Cancel button pressed!");
+              // showModalBottomSheet(
+              //   context: context,
+              //   isScrollControlled: true,
+              //   builder: (BuildContext context) {
+              //    // Navigator.pop(context);
+              //  //   return DriverArrivedBottomSheet(); // Your bottom sheet widget
+              //
+              //
+              //   },
+              // );
+              Get.to(() => CancelTaxiScreen());
+            },
+          ),
 
         ],
       ),

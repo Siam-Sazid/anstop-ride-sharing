@@ -165,12 +165,15 @@ class _FindNearbyCarsBottomSheetState extends State<FindNearbyCarsBottomSheet> {
           ),
           SizedBox(height: 8.sp),
           
-          Row(
-            children: [
-              Image.asset('assets/images/Wallet.png'),
-              SizedBox(width: 2.sp,),
-              Text('Pay via wallet',style: TextStyle(fontSize: 20.sp),)
-            ],
+          Padding(
+            padding:  EdgeInsets.symmetric(horizontal:  8.sp),
+            child: Row(
+              children: [
+                Image.asset('assets/images/Wallet.png'),
+                SizedBox(width: 2.sp,),
+                Text('Pay via wallet',style: TextStyle(fontSize: 20.sp),)
+              ],
+            ),
           ),
           Container(
             width: double.infinity,

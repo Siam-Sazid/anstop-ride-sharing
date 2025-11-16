@@ -5,6 +5,7 @@ import '../../../widgets/custom_button.dart';
 import '../../../widgets/custom_text_field.dart';
 import '../../../widgets/logo.dart';
 import 'package:get/get.dart';
+import 'package:geolocator/geolocator.dart';
 
 import 'find_nearby_cars_bottom_sheet.dart';
 class AcceptCarBottomSheet extends StatefulWidget {
@@ -18,7 +19,15 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
   bool isAcceptClicked = false;
   int childrenCount = 0;
   int rating = 0;
-
+  Future<double> calculateDistance(double startLatitude, double startLongitude, double endLatitude, double endLongitude) async {
+    double distanceInMeters = await Geolocator.distanceBetween(
+      startLatitude,
+      startLongitude,
+      endLatitude,
+      endLongitude,
+    );
+    return distanceInMeters;
+  }
   @override
   Widget build(BuildContext context) {
     return Container(

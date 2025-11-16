@@ -15,6 +15,7 @@ import 'package:ride_sharing/feature/car_booking/passenger/binding/pick_up_locat
 import 'package:ride_sharing/feature/car_booking/passenger/set_on_map_screen.dart';
 import 'package:ride_sharing/feature/homepage/passenger/binding/home_binding.dart';
 import 'package:ride_sharing/feature/homepage/passenger/view/home_page.dart';
+import 'package:ride_sharing/feature/payment/passenger/passenger_payment_screen.dart';
 import 'package:ride_sharing/feature/set_location/binding/set_location_binding.dart';
 import 'package:ride_sharing/feature/set_location/view/set_location_option_page.dart';
 import 'package:ride_sharing/feature/set_location/view/set_location_screen.dart';
@@ -44,6 +45,9 @@ abstract class AppRoutes {
   static const String passengersetLocationPage = '/passenger-location-page.dart';
   static const String passengerSetOnMapPage = '/set-on-map-page.dart';
   static const String passengerPickUpLocationPage = '/pick-up-location.dart';
+  static const String passengerpaymentScreen = '/passenger-payment-screen.dart';
+  static const String passengerCancelTaxiScreen = '/passenger-cancel-taxi.dart';
+
 
   ///============= > Routes < ============
   static final routes = [
@@ -113,13 +117,21 @@ abstract class AppRoutes {
       name: passengerSetOnMapPage,
       page: () => SetOnMapScreen(),
 
-    ),GetPage(
+    ),
+    GetPage(
       name: passengerPickUpLocationPage,
       page: () => PickUpLocationScreen(),
       binding: PickUpLocationBinding(),
 
 
 
+    ),GetPage(
+      name: passengerpaymentScreen,
+      page: () => PassengerPaymentScreen(),
+    ),
+    GetPage(
+      name: passengerCancelTaxiScreen,
+      page: () => SplashScreen(),
     ),
   ];
 }

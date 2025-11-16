@@ -19,6 +19,16 @@ class _UploadYourDocumentsState extends State<UploadYourDocuments> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        backgroundColor: Colors.white,
+        elevation: 0,
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -55,7 +65,7 @@ class _UploadYourDocumentsState extends State<UploadYourDocuments> {
               ///
               CustomBoxItems(
                 documentTitle: 'National ID',
-                isUploaded: true,
+                isUploaded: false,
                 onTap: () {
                   Get.offAll(() => NationalIdScreen());
                   // Handle document upload
@@ -72,7 +82,7 @@ class _UploadYourDocumentsState extends State<UploadYourDocuments> {
               ),
               CustomBoxItems(
                 documentTitle: 'Car information',
-                isUploaded: true,
+                isUploaded: false,
                 onTap: () {
                   Get.offAll(() => CarInformationScreen());
                   // Handle document upload
@@ -80,7 +90,7 @@ class _UploadYourDocumentsState extends State<UploadYourDocuments> {
               ),
               CustomBoxItems(
                 documentTitle: 'Your Picture',
-                isUploaded: true,
+                isUploaded: false,
                 onTap: () {
                   Get.offAll(() => UploadProfilePictureScreen());
                   // Handle document upload

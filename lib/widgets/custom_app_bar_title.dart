@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'custom_drawer.dart';
+import 'logo.dart';
 
 // Custom AppBar Page
 
@@ -25,10 +27,19 @@ class CustomAppBarTitle extends StatelessWidget implements PreferredSizeWidget {
           Scaffold.of(context).openDrawer(); // Open the drawer when tapped
         },
       ),
-      title: Text(
-        'Custom AppBar', // Title text
-        style: TextStyle(color: Colors.black), // Title color black
-      ),
+
+      actions: [
+        // Custom Logo Widget at the right end of the AppBar
+        Padding(
+          padding: const EdgeInsets.only(right: 16.0), // Add some padding for spacing
+          child: LogoWidget(
+            width: 40.0, // You can customize the width and height of the logo
+            height: 40.0,
+            fontSize: 15.sp,
+          ),
+        ),
+      ],
+
     );
   }
 }

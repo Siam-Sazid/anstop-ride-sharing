@@ -2,6 +2,7 @@ import 'package:ride_sharing/feature/auth/driver/upload_your_documents_screen.da
 import 'package:ride_sharing/feature/auth/passenger/terms_of_services.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+import 'package:flutter/cupertino.dart';
 
 class DriverRegistration extends StatefulWidget {
   const DriverRegistration({super.key});
@@ -77,6 +78,18 @@ class _DriverRegistrationState extends State<DriverRegistration> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: CupertinoNavigationBar(
+        leading: CupertinoButton(
+          padding: EdgeInsets.zero,
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Icon(CupertinoIcons.back, color: Colors.black),
+        ),
+      //  middle: Text('Create Account'),
+        backgroundColor: Colors.white,
+        border: Border(bottom: BorderSide.none),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(

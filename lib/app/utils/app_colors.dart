@@ -24,6 +24,7 @@ class AppColors {
   static const Color greenShade50 = Color(0xFFE6ECEA);
   static const Color white = Color(0xFFFFFFFF);
   static const Color red = Color(0xFFD30000);
+  static const Color primaryRed = Color(0xFFD30000);
   static const Color violetShade = Color(0xFFF6F1F6);
   static List<Color> splashLinearColors = [
     Color(0xffFFFFFF),
