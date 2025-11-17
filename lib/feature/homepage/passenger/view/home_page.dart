@@ -10,13 +10,18 @@ import 'package:ride_sharing/widgets/custom_google_map.dart';
 import 'package:ride_sharing/widgets/home_links/home_links.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import '../../../../widgets/custom_drawer.dart';
+
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+   HomePage({Key? key}) : super(key: key);
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBarTitle(),
+      key: _scaffoldKey,
+      appBar: CustomAppBarTitle(scaffoldKey: _scaffoldKey,),
+      drawer: CustomDrawer(),
       body: GetBuilder<HomePageController>(
         builder: (controller) {
           return Stack(

@@ -1,46 +1,126 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:ride_sharing/app/utils/app_colors.dart';
+import 'package:ride_sharing/feature/my_ride/view/my_ride.dart';
+import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
+
+import '../utils/custom_user_rating.dart';
+
 class CustomDrawer extends StatelessWidget {
+  const CustomDrawer({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: <Widget>[
-          DrawerHeader(
-            decoration: BoxDecoration(
-              color: Colors.blue, // Background color for the drawer header
-            ),
-            child: Text(
-              'Menu',
-              style: TextStyle(
+      backgroundColor: AppColors.drawerShade,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+
+          // Drawer Header
+          Padding(
+            padding: EdgeInsets.only(left:  32.sp, top: 50.sp,right: 32.sp),
+            child: Container(
+              height: 74.h,
+             // color: AppColors.white,
+              decoration: BoxDecoration(
                 color: Colors.white,
-                fontSize: 24,
+                borderRadius: BorderRadius.circular(15),
+
+              ),
+              child: CustomUserRating(
+                name: "Naima Jahan",
+                imageUrl: "https://picsum.photos/250?image=9",
+              //  price: 24,
+             //   distance: 28,
               ),
             ),
           ),
-          ListTile(
-            title: Text('Item 1'),
-            onTap: () {
-              // Handle item tap
-              Navigator.pop(context); // Close the drawer
-            },
+
+          // Menu items
+          Expanded(
+            child: Padding(
+              padding:  EdgeInsets.only( bottom: 250.sp,top: 32.sp,right: 32.sp,left: 32.sp),
+              child: Container(
+                height: 100.h,
+                width: 236,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15),
+
+                ),
+                child: ListView(
+                  children: [
+                    _drawerItem(
+                      imagePath: 'assets/images/notification.png',
+                      text: "Notification",
+                      onTap: () {},
+                    ),
+
+                    _drawerItem(
+                      imagePath: 'assets/images/Car_drawer.png',
+                      text: "My Ride",
+                      onTap: () {Get.to(MyRidePage());},
+                    ),
+
+                    _drawerItem(
+                      imagePath: 'assets/images/Wallet_drawer.png',
+                      text: "Wallet",
+                      onTap: () {},
+                    ), _drawerItem(
+                      imagePath: 'assets/images/Support.png',
+                      text: "Support",
+                      onTap: () {},
+                    ), _drawerItem(
+                      imagePath: 'assets/images/settings.png',
+                      text: "Settings",
+                      onTap: () {},
+                     ),
+                    _drawerItem(
+                      imagePath: 'assets/images/logout.png',
+                      text: "Logout",
+                      onTap: () {},
+                    ),
+
+                  ],
+                ),
+              ),
+            ),
           ),
-          ListTile(
-            title: Text('Item 2'),
-            onTap: () {
-              // Handle item tap
-              Navigator.pop(context); // Close the drawer
-            },
-          ),
-          ListTile(
-            title: Text('Item 3'),
-            onTap: () {
-              // Handle item tap
-              Navigator.pop(context); // Close the drawer
-            },
-          ),
+
+          // Logout button
+          Padding(
+            padding: EdgeInsets.all(32.sp),
+            child: CustomButton(
+                onPressed: (){
+
+                },
+             title: Text('Switch to drive',style: TextStyle(color: AppColors.white),),
+            ),
+          )
         ],
       ),
     );
   }
+
+  Widget _drawerItem({
+    required String imagePath,   // 🔥 changed
+    required String text,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      leading: Image.asset(
+        imagePath,
+        width: 24.w,       // adjust size as needed
+        height: 24.h,
+        fit: BoxFit.contain,
+      ),
+      title: Text(
+        text,
+        style: TextStyle(fontSize: 15.sp),
+      ),
+      onTap: onTap,
+    );
+  }
+
 }

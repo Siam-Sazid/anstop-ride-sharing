@@ -8,38 +8,36 @@ import 'logo.dart';
 
 
 // Custom AppBar Widget
-class CustomAppBarTitle extends StatelessWidget implements PreferredSizeWidget { // Implement PreferredSizeWidget
+class CustomAppBarTitle extends StatelessWidget implements PreferredSizeWidget {
+  final GlobalKey<ScaffoldState> scaffoldKey;
   @override
-  final Size preferredSize; // Implement preferredSize
+  final Size preferredSize;
 
-  CustomAppBarTitle({Key? key})
-      : preferredSize = Size.fromHeight(80), // Set the height of the AppBar
-        super(key: key);
+  CustomAppBarTitle({required this.scaffoldKey})
+      : preferredSize = Size.fromHeight(80);
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.white, // White color for the AppBar
-      elevation: 0, // Remove the shadow
+      backgroundColor: Colors.white,
+      elevation: 0,
       leading: IconButton(
-        icon: Icon(Icons.menu, color: Colors.black), // Menu icon
+        icon: Icon(Icons.menu, color: Colors.black),
         onPressed: () {
-          Scaffold.of(context).openDrawer(); // Open the drawer when tapped
+          scaffoldKey.currentState?.openDrawer();
         },
       ),
-
       actions: [
-        // Custom Logo Widget at the right end of the AppBar
         Padding(
-          padding: const EdgeInsets.only(right: 16.0), // Add some padding for spacing
+          padding: const EdgeInsets.only(right: 16.0),
           child: LogoWidget(
-            width: 40.0, // You can customize the width and height of the logo
+            width: 40.0,
             height: 40.0,
             fontSize: 15.sp,
           ),
         ),
       ],
-
     );
   }
 }
+

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../app/utils/app_colors.dart';
 import '../../../widgets/custom_vertical_line.dart';
 class UserInfoRow extends StatelessWidget {
   final double rating;
@@ -30,7 +31,7 @@ class UserInfoRow extends StatelessWidget {
         SizedBox(width: 5.w),
         Image.asset('assets/images/steering-wheel.png', width: 15.w, height: 15.h),
         SizedBox(width: 5.w),
-        Text(profession, style: TextStyle(fontSize: 10.sp, color: Colors.greenAccent)),
+        Text(profession, style: TextStyle(fontSize: 10.sp, color: AppColors.togglebuttonColor)),
         SizedBox(width: 5.w),
       ],
     );

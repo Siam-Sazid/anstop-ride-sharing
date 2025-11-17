@@ -25,7 +25,7 @@ class SupportNoteWidget extends StatelessWidget {
               prefixIcon: GestureDetector(
                 onTap: (){},
                 child: Icon(CupertinoIcons.chat_bubble_2,
-                  color: AppColors.primaryColor,),
+                  color: AppColors.togglebuttonColor,),
               ),
               borderRadio: 20,
             )
@@ -34,11 +34,11 @@ class SupportNoteWidget extends StatelessWidget {
             GestureDetector(
               onTap: (){},
                 child: Icon(Icons.chat_bubble_outline_outlined,
-                  color: AppColors.primaryColor,
+                  color: AppColors.togglebuttonColor,
                 )
             ),
             SizedBox(width: 8.sp,),
-            Icon(Icons.phone,color: AppColors.primaryColor,),
+            Icon(Icons.phone,color: AppColors.togglebuttonColor,),
 
 
           ],

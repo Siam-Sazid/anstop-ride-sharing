@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/feature/car_booking/utils/user_info_row.dart';
+import '../../../app/utils/app_colors.dart';
 import '../../../widgets/custom_vertical_line.dart';
 
 class UserInfoSection extends StatelessWidget {
@@ -29,12 +30,23 @@ class UserInfoSection extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: Row(
         children: [
-          ClipOval(
-            child: Image.network(
-              imageUrl, // User Image
-              width: 50.w,
-              height: 50.h,
-              fit: BoxFit.cover,
+          Container(
+            width: 50.w,
+            height: 50.h,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: AppColors.togglebuttonColor,
+                width: 3,
+              ),
+            ),
+            child: ClipOval(
+              child: Image.network(
+                imageUrl, // User Image
+                width: 50.w,
+                height: 50.h,
+                fit: BoxFit.cover,
+              ),
             ),
           ),
           SizedBox(width: 12.sp),

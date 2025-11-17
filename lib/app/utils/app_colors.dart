@@ -6,7 +6,7 @@ class AppColors {
   // Ride Sharing Color Pattern are here
   static const Color primaryColor = Color(0xFF053A27);
   static const Color appBarColor = Colors.white;
-
+  static const Color togglebuttonColor = Color(0xFF587F71);
   static const Color bgColor = Color(0xffF3EFEF);
   static const Color secondaryBgColor = Color(0xFFF7F7F7);
   static const Color secondaryColor = Color(0xff305CDE);
@@ -26,6 +26,7 @@ class AppColors {
   static const Color red = Color(0xFFD30000);
   static const Color primaryRed = Color(0xFFD30000);
   static const Color violetShade = Color(0xFFF6F1F6);
+  static const Color drawerShade = Color(0xFFF7F7F7);
   static List<Color> splashLinearColors = [
     Color(0xffFFFFFF),
     Color(0xffEAC75C).withOpacity(0.20),

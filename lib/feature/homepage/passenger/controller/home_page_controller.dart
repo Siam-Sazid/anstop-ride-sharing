@@ -10,7 +10,7 @@ class HomePageController extends GetxController {
   bool isLoading = true;
   Set<Marker> markers = {};
 
-  // Default location (Dhaka, Bangladesh)
+
   static const CameraPosition defaultLocation = CameraPosition(
     target: LatLng(23.8103, 90.4125),
     zoom: 14.0,
@@ -61,7 +61,7 @@ class HomePageController extends GetxController {
       currentPosition = position;
       isLoading = false;
 
-      // Add marker for current location
+
       markers.add(
         Marker(
           markerId: MarkerId('current_location'),
@@ -72,7 +72,7 @@ class HomePageController extends GetxController {
       );
       update();
 
-      // Move camera to current location
+
       if (mapController != null) {
         mapController!.animateCamera(
           CameraUpdate.newCameraPosition(
