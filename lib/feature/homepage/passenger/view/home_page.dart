@@ -27,7 +27,7 @@ class HomePage extends StatelessWidget {
           return Stack(
             children: [
 
-              GoogleMapWidget(),
+              PassengerGoogleMapWidget(),
               if (controller.isLoading)
                 Container(
                   color: Colors.black54,

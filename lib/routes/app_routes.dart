@@ -13,6 +13,8 @@ import 'package:ride_sharing/feature/auth/passenger/registration.dart';
 import 'package:ride_sharing/feature/auth/reset_password_screen.dart';
 import 'package:ride_sharing/feature/car_booking/passenger/binding/pick_up_location_binding.dart';
 import 'package:ride_sharing/feature/car_booking/passenger/set_on_map_screen.dart';
+import 'package:ride_sharing/feature/homepage/driver/binding/driver_homescreen_binding.dart';
+import 'package:ride_sharing/feature/homepage/driver/view/driver_homescreen.dart';
 import 'package:ride_sharing/feature/homepage/passenger/binding/home_binding.dart';
 import 'package:ride_sharing/feature/homepage/passenger/view/home_page.dart';
 import 'package:ride_sharing/feature/payment/passenger/passenger_payment_screen.dart';
@@ -47,6 +49,7 @@ abstract class AppRoutes {
   static const String passengerPickUpLocationPage = '/pick-up-location.dart';
   static const String passengerpaymentScreen = '/passenger-payment-screen.dart';
   static const String passengerCancelTaxiScreen = '/passenger-cancel-taxi.dart';
+  static const String driverHomeScreen = '/driver-home-screen.dart';
 
 
   ///============= > Routes < ============
@@ -132,6 +135,11 @@ abstract class AppRoutes {
     GetPage(
       name: passengerCancelTaxiScreen,
       page: () => SplashScreen(),
+    ),
+    GetPage(
+      name: driverHomeScreen,
+      page: () => DriverHomeScreen(),
+      binding: DriverHomeScreenBinding(),
     ),
   ];
 }

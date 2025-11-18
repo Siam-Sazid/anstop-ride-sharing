@@ -1,0 +1,85 @@
+import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:flutter/material.dart';
+
+class DriverHomeScreenController extends GetxController {
+  final TextEditingController locationTEController = TextEditingController();
+  GoogleMapController? mapController;
+  Position? currentPosition;
+  bool isLoading = true;
+  Set<Marker> markers = {};
+
+
+  static const CameraPosition defaultLocation = CameraPosition(
+    target: LatLng(23.8103, 90.4125),
+    zoom: 14.0,
+  );
+
+  @override
+  void onInit() {
+    super.onInit();
+    _initializeMap();
+  }
+
+  Future<void> _initializeMap() async {
+    await _requestLocationPermission();
+    await _getCurrentLocation();
+  }
+
+  Future<void> _requestLocationPermission() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      isLoading = false;
+      update();
+      return;
+    }
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        isLoading = false;
+        update();
+        return;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      isLoading = false;
+      update();
+      return;
+    }
+  }
+
+  Future<void> _getCurrentLocation() async {
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      currentPosition = position;
+
+      markers = {
+        Marker(
+          markerId: const MarkerId('driver_location'),
+          position: LatLng(position.latitude, position.longitude),
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+        ),
+      };
+
+      update(); // markers + position updated
+    } catch (e) {
+      debugPrint('Location error: $e');
+    } finally {
+      isLoading = false;
+      update();
+    }
+  }
+
+  @override
+  void onClose() {
+    mapController?.dispose();
+    super.onClose();
+  }
+}

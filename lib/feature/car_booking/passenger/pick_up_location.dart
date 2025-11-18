@@ -40,7 +40,7 @@ class PickUpLocationScreen extends StatelessWidget {
         builder: (controller) {
           return Stack(
             children: [
-              GoogleMapWidget(),
+              PassengerGoogleMapWidget(),
               if (controller.isLoading)
                 Container(
                   color: Colors.black54,

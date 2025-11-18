@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:ride_sharing/feature/auth/driver/registration.dart';
 import 'package:ride_sharing/feature/auth/log_in_screen.dart';
 import 'package:ride_sharing/feature/auth/passenger/registration.dart';
+import 'package:ride_sharing/feature/homepage/driver/view/driver_homescreen.dart';
 
 import '../auth/email_validation_screen.dart';
 import '../auth/otp_varification_screen.dart';
@@ -24,9 +25,11 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _goToNextRoute() async {
     await Future.delayed(Duration(seconds: 2));
-     Get.offAll(() => LogInScreen());
+   //  Get.offAll(() => LogInScreen());
    // Get.offAll(() => DriverRegistration());
    // Get.offAll(() => EmailValidationScreen());
+    Get.offAll(() => DriverHomeScreen());
+
   }
 
   @override
