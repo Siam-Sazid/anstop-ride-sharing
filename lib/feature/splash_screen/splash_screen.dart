@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:ride_sharing/feature/auth/driver/registration.dart';
 import 'package:ride_sharing/feature/auth/log_in_screen.dart';
 import 'package:ride_sharing/feature/auth/passenger/registration.dart';
-import 'package:ride_sharing/feature/homepage/driver/view/driver_homescreen.dart';
+import 'package:ride_sharing/feature/driver/homepage/view/driver_homescreen.dart';
 
 import '../auth/email_validation_screen.dart';
 import '../auth/otp_varification_screen.dart';

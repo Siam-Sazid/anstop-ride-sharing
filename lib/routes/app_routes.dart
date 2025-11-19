@@ -11,19 +11,21 @@ import 'package:ride_sharing/feature/auth/log_in_screen.dart';
 import 'package:ride_sharing/feature/auth/otp_varification_screen.dart';
 import 'package:ride_sharing/feature/auth/passenger/registration.dart';
 import 'package:ride_sharing/feature/auth/reset_password_screen.dart';
-import 'package:ride_sharing/feature/car_booking/passenger/binding/pick_up_location_binding.dart';
-import 'package:ride_sharing/feature/car_booking/passenger/set_on_map_screen.dart';
-import 'package:ride_sharing/feature/homepage/driver/binding/driver_homescreen_binding.dart';
-import 'package:ride_sharing/feature/homepage/driver/view/driver_homescreen.dart';
-import 'package:ride_sharing/feature/homepage/passenger/binding/home_binding.dart';
-import 'package:ride_sharing/feature/homepage/passenger/view/home_page.dart';
-import 'package:ride_sharing/feature/payment/passenger/passenger_payment_screen.dart';
-import 'package:ride_sharing/feature/set_location/binding/set_location_binding.dart';
-import 'package:ride_sharing/feature/set_location/view/set_location_option_page.dart';
-import 'package:ride_sharing/feature/set_location/view/set_location_screen.dart';
+import 'package:ride_sharing/feature/driver/homepage/binding/driver_homescreen_binding.dart';
+import 'package:ride_sharing/feature/driver/homepage/view/driver_homescreen.dart';
+import 'package:ride_sharing/feature/passenger/car_booking/passenger/binding/pick_up_location_binding.dart';
+import 'package:ride_sharing/feature/passenger/car_booking/passenger/pick_up_location.dart';
+import 'package:ride_sharing/feature/passenger/car_booking/passenger/set_on_map_screen.dart';
+import 'package:ride_sharing/feature/passenger/homepage/binding/home_binding.dart';
+import 'package:ride_sharing/feature/passenger/homepage/view/home_page.dart';
+import 'package:ride_sharing/feature/passenger/payment/view/passenger_payment_screen.dart';
+import 'package:ride_sharing/feature/passenger/set_location/binding/set_location_binding.dart';
+import 'package:ride_sharing/feature/passenger/set_location/view/set_location_option_page.dart';
+import 'package:ride_sharing/feature/passenger/set_location/view/set_location_screen.dart';
+
 import 'package:ride_sharing/feature/splash_screen/splash_screen.dart';
 
-import '../feature/car_booking/passenger/pick_up_location.dart';
+
 
 abstract class AppRoutes {
   /// =========== > Initial Route < =========

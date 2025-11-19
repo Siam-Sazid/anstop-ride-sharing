@@ -1,7 +1,5 @@
 import 'package:ride_sharing/feature/auth/email_validation_screen.dart';
-import 'package:ride_sharing/feature/homepage/passenger/view/home_page.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
-
 import '../../routes/app_routes.dart';
 
 class LogInScreen extends StatelessWidget {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'custom_drawer.dart';
+import '../utils/passenger/passenger_custom_drawer.dart';
 import 'logo.dart';
 
 // Custom AppBar Page
@@ -29,7 +29,7 @@ class CustomAppBarTitle extends StatelessWidget implements PreferredSizeWidget {
       ),
       actions: [
         Padding(
-          padding: const EdgeInsets.only(right: 16.0),
+          padding: const EdgeInsets.only(right: 16.0,top: 8),
           child: LogoWidget(
             width: 40.0,
             height: 40.0,
