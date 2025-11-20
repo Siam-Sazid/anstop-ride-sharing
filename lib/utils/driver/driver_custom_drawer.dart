@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
+import 'package:ride_sharing/feature/driver/homepage/view/driver_homescreen.dart';
 import 'package:ride_sharing/feature/driver/my_trip/view/my_trip.dart';
 import 'package:ride_sharing/feature/driver/wallet/view/driver_wallet_page.dart';
 import 'package:ride_sharing/feature/notification/view/notification_screen.dart';
+import 'package:ride_sharing/feature/passenger/homepage/view/home_page.dart';
 import 'package:ride_sharing/feature/passenger/my_ride/view/my_ride.dart';
 import 'package:ride_sharing/feature/settings/view/settings_screen.dart';
+import 'package:ride_sharing/feature/support_page/support_page.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 
+import '../../feature/auth/log_in_screen.dart';
+import '../../feature/auth/log_out_dialog.dart';
 import '../custom_user_rating.dart';
 
 class DriverCustomDrawer extends StatelessWidget {
@@ -34,7 +39,8 @@ class DriverCustomDrawer extends StatelessWidget {
               ),
               child: CustomUserRating(
                 name: "Naima Jahan",
-                imageUrl: "https://picsum.photos/250?image=9",
+                imageUrl:'https://img.freepik.com/premium-photo/happy-man-ai-generated-portrait-user-profile_1119669-1.jpg?w=2000',
+
                 //  price: 24,
                 //   distance: 28,
               ),
@@ -44,7 +50,7 @@ class DriverCustomDrawer extends StatelessWidget {
           // Menu items
           Expanded(
             child: Padding(
-              padding:  EdgeInsets.only( bottom: 250.sp,top: 32.sp,right: 32.sp,left: 32.sp),
+              padding:  EdgeInsets.only( bottom: 200.sp,top: 32.sp,right: 32.sp,left: 32.sp),
               child: Container(
                 height: 100.h,
                 width: 236,
@@ -87,20 +93,24 @@ class DriverCustomDrawer extends StatelessWidget {
                       imagePath: 'assets/images/Support.png',
                       text: "Support",
                       onTap: () {
+                        Get.to(SupportPage());
 
-                      },
-                    ), _drawerItem(
-                      imagePath: 'assets/images/settings.png',
-                      text: "Settings",
-                      onTap: () {
-                        Get.to(SettingsScreen());
                       },
                     ),
                     _drawerItem(
                       imagePath: 'assets/images/logout.png',
                       text: "Logout",
-                      onTap: () {},
+                      onTap: () async {
+                        // Show the logout dialog
+                        final result = await LogoutDialog.show(context);
+
+                        // If user confirmed logout
+                        if (result == true) {
+                          Get.to(() => LogInScreen());
+                        }
+                      },
                     ),
+
 
                   ],
                 ),
@@ -113,9 +123,9 @@ class DriverCustomDrawer extends StatelessWidget {
             padding: EdgeInsets.all(32.sp),
             child: CustomButton(
               onPressed: (){
-
+                   Get.to(HomePage());
               },
-              title: Text('Switch to drive',style: TextStyle(color: AppColors.white),),
+              title: Text('Switch to Passenger',style: TextStyle(color: AppColors.white),),
             ),
           )
         ],

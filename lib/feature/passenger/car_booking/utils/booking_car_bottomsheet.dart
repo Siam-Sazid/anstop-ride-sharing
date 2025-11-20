@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/passenger/cancel_taxi.dart';
+import 'package:ride_sharing/feature/passenger/payment/view/passenger_payment_screen.dart';
 import 'package:ride_sharing/utils/cancel_driver_widget.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/utils/car_details.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/utils/driver_status_widget.dart';
@@ -79,7 +80,11 @@ class _BookingCarsBottomSheetState extends State<BookingCarsBottomSheet> {
               children: [
                 Image.asset('assets/images/Wallet.png'),
                 SizedBox(width: 2.sp,),
-                Text('Pay via wallet',style: TextStyle(fontSize: 20.sp),)
+                GestureDetector(
+                  onTap:() {Get.to(PassengerPaymentScreen());},
+                    child: Text('Pay via wallet',style: TextStyle(fontSize: 20.sp),
+                    )
+                )
               ],
             ),
           ),

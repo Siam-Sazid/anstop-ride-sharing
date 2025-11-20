@@ -34,6 +34,26 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
     _rippleAnimation = Tween<double>(begin: 80, end: 120).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
     );
+
+    // Show DriverTripFlow automatically after 3 seconds
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted) {
+        setState(() {
+          _isOnline = true;
+        });
+        _animationController.forward();
+        _showDriverTripFlow();
+      }
+    });
+  }
+
+  void _showDriverTripFlow() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const DriverTripFlow(),
+    );
   }
 
   @override
@@ -53,6 +73,8 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
               _isOnline = value;
               if (_isOnline) {
                 _animationController.forward();
+                // Show DriverTripFlow whenever toggle is turned on
+                _showDriverTripFlow();
               } else {
                 _animationController.stop();
               }
@@ -139,7 +161,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                         ),
                                       ),
                                     ),
-                                   // SizedBox(height: 8.h),
+                                    // SizedBox(height: 8.h),
                                     Text(
                                       'Go online to get trips and earn money.',
                                       textAlign: TextAlign.center,
@@ -171,14 +193,8 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                       _isOnline = true;
                                       _animationController.forward();
                                     });
-                                    showModalBottomSheet(
-                                      context: context,
-                                      isScrollControlled: true,
-                                      backgroundColor: Colors.transparent,
-                                      builder: (context) => const DriverTripFlow(),
-                                    );
-
-                                 //   Get.to(DriverTripFlow);
+                                    // Show DriverTripFlow when Go Online is clicked
+                                    _showDriverTripFlow();
                                   },
                                   child: Text(
                                     'Go\nOnline',
@@ -231,7 +247,7 @@ class GlassCard extends StatelessWidget {
     return Container(
       width: 345.w,
       height: 98.h,
-    //  color: Colors.black.withOpacity(0.3),
+      //  color: Colors.black.withOpacity(0.3),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(borderRadius.r),
         border: Border.all(
@@ -332,40 +348,40 @@ class StatusAlertBanner extends StatelessWidget {
       ),
       child: Row(
         children: [
-      Expanded(
-      child: Text(
-      isOnline
-      ? 'you are online'
-            : 'You are offline',
-      style: TextStyle(
-        fontSize: 14.sp,
-        color: Colors.black87,
+          Expanded(
+            child: Text(
+              isOnline
+                  ? 'you are online'
+                  : 'You are offline',
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: Colors.black87,
+              ),
+            ),
+          ),
+          SizedBox(width: 16.w),
+          ElevatedButton(
+            onPressed: onToggle,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: isOnline
+                  ? AppColors.violetShade
+                  : AppColors.primaryColor,
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.r),
+              ),
+            ),
+            child: Text(
+              isOnline ? 'Go Offline' : 'Go Online',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
       ),
-    ),
-    ),
-    SizedBox(width: 16.w),
-    ElevatedButton(
-    onPressed: onToggle,
-    style: ElevatedButton.styleFrom(
-    backgroundColor: isOnline
-    ? AppColors.violetShade
-        : AppColors.primaryColor,
-    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-    shape: RoundedRectangleBorder(
-    borderRadius: BorderRadius.circular(20.r),
-    ),
-    ),
-    child: Text(
-    isOnline ? 'Go Offline' : 'Go Online',
-    style: TextStyle(
-    color: Colors.white,
-    fontSize: 14.sp,
-    fontWeight: FontWeight.w600,
-    ),
-    ),
-    ),
-    ],
-    ),
     );
   }
 }
@@ -385,7 +401,7 @@ class CustomToggleSwitch extends StatelessWidget {
     return GestureDetector(
       onTap: () => onChanged(!isOnline),
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
+        duration: const Duration(seconds: 1),
         width: 70.w,
         height: 36.h,
         padding: EdgeInsets.all(4.w),
@@ -428,3 +444,7 @@ class CustomToggleSwitch extends StatelessWidget {
     );
   }
 }
+
+
+
+

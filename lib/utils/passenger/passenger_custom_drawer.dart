@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
+import 'package:ride_sharing/feature/auth/log_in_screen.dart';
+import 'package:ride_sharing/feature/driver/homepage/view/driver_homescreen.dart';
 import 'package:ride_sharing/feature/passenger/my_ride/view/my_ride.dart';
 import 'package:ride_sharing/feature/passenger/wallet/view/passenger_wallet_page.dart';
 import 'package:ride_sharing/feature/settings/view/settings_screen.dart';
+import 'package:ride_sharing/feature/support_page/support_page.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 
+import '../../feature/auth/log_out_dialog.dart';
 import '../custom_user_rating.dart';
 
 class PassengerCustomDrawer extends StatelessWidget {
@@ -76,7 +80,10 @@ class PassengerCustomDrawer extends StatelessWidget {
                     ), _drawerItem(
                       imagePath: 'assets/images/Support.png',
                       text: "Support",
-                      onTap: () {},
+                      onTap: () {
+                        Get.to(SupportPage());
+
+                      },
                     ), _drawerItem(
                       imagePath: 'assets/images/settings.png',
                       text: "Settings",
@@ -88,7 +95,16 @@ class PassengerCustomDrawer extends StatelessWidget {
                     _drawerItem(
                       imagePath: 'assets/images/logout.png',
                       text: "Logout",
-                      onTap: () {},
+                      onTap: () async {
+                        // Show the logout dialog
+                        final result = await LogoutDialog.show(context);
+
+                        // If user confirmed logout
+                        if (result == true) {
+
+                           Get.to(() => LogInScreen());
+                        }
+                      },
                     ),
 
                   ],
@@ -102,7 +118,7 @@ class PassengerCustomDrawer extends StatelessWidget {
             padding: EdgeInsets.all(32.sp),
             child: CustomButton(
                 onPressed: (){
-
+                  Get.to(DriverHomeScreen());
                 },
              title: Text('Switch to drive',style: TextStyle(color: AppColors.white),),
             ),

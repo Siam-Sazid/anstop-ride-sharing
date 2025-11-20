@@ -1,0 +1,87 @@
+import 'package:flutter/material.dart';
+import 'package:ride_sharing/app/utils/app_colors.dart';
+import 'package:get/get.dart';
+import 'package:ride_sharing/feature/auth/driver/registration.dart';
+import 'package:ride_sharing/feature/auth/log_in_screen.dart';
+import 'package:ride_sharing/feature/auth/passenger/registration.dart';
+class DriverAuthSelectionScreen extends StatelessWidget {
+  const DriverAuthSelectionScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            children: [
+              // const SizedBox(height: 40),
+              Center(
+                child: Image.asset(
+                  'assets/images/rafiki.png',
+                  height: 500,
+                  width: 500,
+                  fit: BoxFit.contain,
+                ),
+
+              ),
+
+              const SizedBox(height: 30),
+              const Text(
+                'WELCOME TO DURRAH',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Seamless, affordable, and reliable ride-sharing at your fingertips.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 40),
+              ElevatedButton(
+                  onPressed: () {
+
+                    Get.to(LogInScreen());
+
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primaryColor,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 120, vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                  child: Text("Log in")
+              ),
+              const SizedBox(height: 15),
+              OutlinedButton(
+                onPressed: () {
+                  Get.to(DriverRegistration());
+
+                },
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColors.primaryColor,
+                  side: BorderSide(color: AppColors.primaryColor),
+                  padding: const EdgeInsets.symmetric(horizontal: 110, vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+                child: Text("Register") ,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

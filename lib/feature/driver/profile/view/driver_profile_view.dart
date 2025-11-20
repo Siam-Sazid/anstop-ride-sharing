@@ -1,17 +1,19 @@
 import 'package:ride_sharing/feature/auth/driver/upload_your_documents_screen.dart';
 import 'package:ride_sharing/feature/auth/passenger/terms_of_services.dart';
+import 'package:ride_sharing/utils/driver/driver_custom_drawer.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:ride_sharing/widgets/custom_app_bar_title.dart';
 
-class DriverRegistration extends StatefulWidget {
-  const DriverRegistration({super.key});
+class DriverProfileView extends StatefulWidget {
+  const DriverProfileView({super.key});
 
   @override
-  State<DriverRegistration> createState() => _DriverRegistrationState();
+  State<DriverProfileView> createState() => _DriverProfileViewState();
 }
 
-class _DriverRegistrationState extends State<DriverRegistration> {
+class _DriverProfileViewState extends State<DriverProfileView> {
   /// Controller are define here
   final TextEditingController _nameTEController = TextEditingController();
   final TextEditingController _passwordTEController = TextEditingController();
@@ -33,16 +35,16 @@ class _DriverRegistrationState extends State<DriverRegistration> {
 
   Future<void> _selectGender(BuildContext context) async {
     final RenderBox renderBox = context.findRenderObject() as RenderBox;
-    final Offset position = renderBox.localToGlobal(Offset.zero); // Get position of the text field
-    final double textFieldWidth = renderBox.size.width; // Width of the text field
-    final double textFieldHeight = renderBox.size.height; // Height of the text field
-    final double middleY = position.dy + (textFieldHeight / 2);// Width of the text field
+    final Offset position = renderBox.localToGlobal(Offset.zero);
+    final double textFieldWidth = renderBox.size.width;
+    final double textFieldHeight = renderBox.size.height;
+    final double middleY = position.dy + (textFieldHeight / 2);
     final String? selected = await showMenu<String>(
       context: context,
       position: RelativeRect.fromLTRB(
-        position.dx + textFieldWidth - 24, // 24 is the width of the suffixIcon
-        middleY + 30, // Vertically center the dropdown with a slight offset (20 is the approximate height of the menu)
-        position.dx + textFieldWidth - 24, // Keep dropdown aligned to the right
+        position.dx + textFieldWidth - 24,
+        middleY + 30,
+        position.dx + textFieldWidth - 24,
         0,),
       items: _genders.map((gender) {
         return PopupMenuItem<String>(
@@ -75,35 +77,53 @@ class _DriverRegistrationState extends State<DriverRegistration> {
       });
     }
   }
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CupertinoNavigationBar(
-        leading: CupertinoButton(
-          padding: EdgeInsets.zero,
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: Icon(CupertinoIcons.back, color: Colors.black),
-        ),
-      //  middle: Text('Create Account'),
-        backgroundColor: Colors.white,
-        border: Border(bottom: BorderSide.none),
-      ),
+      backgroundColor: MessagingColors.profileBackgroundColor,
+      key: _scaffoldKey,
+      appBar: CustomAppBarTitle(scaffoldKey: _scaffoldKey,title: "Profile",),
+      drawer: DriverCustomDrawer(),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(height: 46.h),
-              Text(
-                'Create Account',
-                style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w400),
-              ),
-              SizedBox(height: 8.h),
-              Text(
-                'Fill the information to create a new account.',
-                style: TextStyle(fontSize: 12.sp),
+              Stack(
+                alignment: Alignment.bottomLeft, // Positions child at bottom-left
+                children: [
+                  ClipOval(
+                    child: SizedBox(
+                      width: 100.h,
+                      height: 100.h,
+                      child: Image.network(
+                        'https://img.freepik.com/premium-photo/happy-man-ai-generated-portrait-user-profile_1119669-1.jpg?w=2000',
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 8,  // Adjust spacing from bottom
+                    right: 0,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.grey[300]!, width: 2),
+                      ),
+                      padding: const EdgeInsets.all(4),
+                      child: Icon(
+                        Icons.edit,
+                        color: Colors.green[800],
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ],
               ),
               SizedBox(height: 29.h),
               Padding(
@@ -118,7 +138,7 @@ class _DriverRegistrationState extends State<DriverRegistration> {
                           color: Color(0XFF8A8A8A),
                           size: 24.sp,
                         ),
-                        hintText: 'Name here',
+                        hintText: 'Name',
                         hintextSize: 14.sp,
                         hintextColor: Color(0XFF8A8A8A),
                       ),
@@ -130,7 +150,7 @@ class _DriverRegistrationState extends State<DriverRegistration> {
                           color: Color(0XFF8A8A8A),
                           size: 24.sp,
                         ),
-                        hintText: 'Enter E-mail',
+                        hintText: 'E-mail',
                         hintextSize: 14.sp,
                         hintextColor: Color(0XFF8A8A8A),
                       ),
@@ -184,7 +204,7 @@ class _DriverRegistrationState extends State<DriverRegistration> {
                                 color: Color(0XFF8A8A8A),
                                 size: 24,
                               ),
-                              hintText: 'Select Gender',
+                              hintText: 'Gender',
                               hintStyle: TextStyle(
                                 fontSize: 14,
                                 color: Color(0XFF8A8A8A),
@@ -251,88 +271,14 @@ class _DriverRegistrationState extends State<DriverRegistration> {
                         hintextSize: 14.sp,
                         hintextColor: Color(0XFF8A8A8A),
                       ),
-                      SizedBox(height: 46.h),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Checkbox(
-                            checkColor: Colors.white,
-                            // fillColor: Color(0XFF323232),
-                            value: isChecked,
-                            onChanged: (bool? value) {
-                              setState(() {
-                                isChecked = value!;
-                              });
-                            },
-                          ),
-                          RichText(
-                            textAlign: TextAlign.center,
-                            maxLines: 1,
-                            text: TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: 'Agree with ', style: TextStyle(
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.w400,
-                                  color: Color(0XFF4E4E4E),
-                                ),
-                                ),
-                                WidgetSpan(child: GestureDetector(
-                                  child: Text('Terms of Service', style: TextStyle(
-                                      fontSize: 12.sp,
-                                      fontWeight: FontWeight.w400,
-                                      color: Colors.red,
-                                      decorationThickness: 2,
-                                      decoration: TextDecoration.underline,
-                                      decorationColor: Colors.red
-                                  )),
-                                  onTap: ()=> {
-                                    Get.to(() => TermsOfServices())
-                                  },
-                                )),
-                                TextSpan(text: ' & ', style: TextStyle(
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.w400,
-                                  color: Color(0XFF4E4E4E),
-                                )),
-                                TextSpan(
-                                    text: 'Privacy Policy', style: TextStyle(
-                                    fontSize: 12.sp,
-                                    fontWeight: FontWeight.w400,
-                                    color: Colors.red,
-                                    decorationThickness: 2,
-                                    decoration: TextDecoration.underline
-                                )),
-                              ],
-                            ),
-                          )
-                        ],
-                      )
-                      ,
+
                       SizedBox(height: 17.5.sp),
                       CustomButton(onPressed: () {
-                        Get.to(() => UploadYourDocuments());
+                        Get.offAll(() => UploadYourDocuments());
 
-                      }, label: 'Register'),
+                      }, label: 'Save Changes'),
                       SizedBox(height: 16.h),
-                      RichText(
-                        text: TextSpan(
-                          children: [
-                            TextSpan(text: 'Have any account ?', style: TextStyle(
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w400,
-                              color: Color(0XFF4E4E4E),
-                            )),
-                            TextSpan(text: ' Login', style: TextStyle(
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.w400,
-                                color: Colors.red,
-                                decorationThickness: 2,
-                                decoration: TextDecoration.underline
-                            )),
-                          ],
-                        ),
-                      ),
+
                     ],
                   ),
                 ),

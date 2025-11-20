@@ -17,6 +17,7 @@ class DriverArrivedBottomSheet extends StatefulWidget {
 
 class _DriverArrivedBottomSheetState extends State<DriverArrivedBottomSheet> {
   int rating = 0;
+  @override
 
   @override
   Widget build(BuildContext context) {

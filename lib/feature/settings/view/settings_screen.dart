@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:ride_sharing/feature/auth/passenger/terms_of_services.dart';
 import 'package:ride_sharing/feature/settings/utils/settings_menu_item.dart';
 import 'package:ride_sharing/feature/settings/view/change_password_screen.dart';
 import 'package:ride_sharing/utils/driver/driver_custom_drawer.dart';
@@ -95,7 +96,9 @@ class SettingsScreen extends StatelessWidget {
                   SettingsMenuItem(
                     icon: Icons.description_outlined,
                     title: 'Terms of service',
-                    onTap: () {},
+                    onTap: () {
+                      Get.to(() => TermsOfServices());
+                    },
                   ),
                   SettingsMenuItem(
                     icon: Icons.language,

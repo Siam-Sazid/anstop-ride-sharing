@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
+import 'package:get/get.dart';
+import 'package:ride_sharing/feature/driver/profile/view/driver_profile_view.dart';
 class CustomUserRating extends StatefulWidget {
   final String name;
   final String imageUrl;
@@ -56,7 +57,9 @@ class _CustomUserRatingState extends State<CustomUserRating> {
               ),
               SizedBox(height: 2.sp,),
               GestureDetector(
-                onTap: (){},
+                onTap: (){
+                  Get.to(DriverProfileView());
+                },
                   child: Text('Go to profile ',style: TextStyle(color: Colors.green,fontSize: 10.sp),
 
                   )

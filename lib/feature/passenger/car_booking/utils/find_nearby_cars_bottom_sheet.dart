@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/utils/booking_car_bottomsheet.dart';
+import 'package:ride_sharing/feature/passenger/car_booking/utils/driver_arrived_bottom_sheet.dart';
 
 import '../../../../app/utils/app_colors.dart';
 
@@ -11,7 +12,28 @@ class FindNearbyCarsBottomSheet extends StatefulWidget {
 
 class _FindNearbyCarsBottomSheetState extends State<FindNearbyCarsBottomSheet> {
   int rating = 0;
+  void initState() {
+    super.initState();
+    // Automatically navigate to DriverArrivedBottomSheet after 3 seconds
+    _autoNavigateToDriverArrived();
+  }
 
+  void _autoNavigateToDriverArrived() {
+    Future.delayed(Duration(seconds: 3), () {
+      if (mounted) {
+        Navigator.pop(context); // Close current bottom sheet
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          isDismissible: false, // Prevent dismissing by tapping outside
+          enableDrag: false, // Prevent dismissing by dragging
+          builder: (BuildContext context) {
+            return DriverArrivedBottomSheet();
+          },
+        );
+      }
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Container(

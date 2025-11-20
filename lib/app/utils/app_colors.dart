@@ -72,7 +72,10 @@ class MessagingColors {
   static const Color primaryGreen = Color(0xFF0D4D3D);
   static const Color darkRed = Color(0xFF8B0000);
 
+// Profile COlors
+  static const Color profileBackgroundColor = Color(0xFFF5F0F5);
 
+  //
   static const Color backgroundColor = Color(0xFFF5F5F5);
   static const Color chatBackground = Color(0xFFFFFFFF);
   static const Color messageBubbleReceived = Color(0xFFF0F0F0);

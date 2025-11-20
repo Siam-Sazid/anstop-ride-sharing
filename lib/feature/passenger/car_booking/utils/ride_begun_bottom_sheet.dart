@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/utils/driver_status_widget.dart';
+import 'package:ride_sharing/feature/passenger/payment/view/passenger_payment_screen.dart';
 import 'package:ride_sharing/utils/user_info_section.dart';
-
+import 'package:get/get.dart';
 import '../../../../app/utils/app_colors.dart';
 import '../../../../widgets/custom_horizontal_line.dart';
 
@@ -14,7 +15,21 @@ class RideBegunBottomSheet extends StatefulWidget {
 
 class _RideBegunBottomSheetState extends State<RideBegunBottomSheet> {
   int rating = 0;
+  void initState() {
+    super.initState();
+    // Automatically navigate to DriverArrivedBottomSheet after 3 seconds
+    _goToNextRoute();
+  }
 
+  Future<void> _goToNextRoute() async {
+    await Future.delayed(Duration(seconds: 2));
+    //  Get.offAll(() => LogInScreen());
+    // Get.offAll(() => DriverRegistration());
+    // Get.offAll(() => EmailValidationScreen());
+    // Get.offAll(() => DriverHomeScreen());
+    Get.to(() => PassengerPaymentScreen());
+
+  }
   @override
   Widget build(BuildContext context) {
     return Container(

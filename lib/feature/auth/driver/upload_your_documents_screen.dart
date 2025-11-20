@@ -67,7 +67,7 @@ class _UploadYourDocumentsState extends State<UploadYourDocuments> {
                 documentTitle: 'National ID',
                 isUploaded: false,
                 onTap: () {
-                  Get.offAll(() => NationalIdScreen());
+                  Get.to(() => NationalIdScreen());
                   // Handle document upload
                 },
               ),
@@ -76,7 +76,7 @@ class _UploadYourDocumentsState extends State<UploadYourDocuments> {
                 documentTitle: 'Driving Licence',
                 isUploaded: false,
                 onTap: () {
-                  Get.offAll(() => DrivingLicenseScreen());
+                  Get.to(() => DrivingLicenseScreen());
                   // Handle document upload
                 },
               ),
@@ -84,7 +84,7 @@ class _UploadYourDocumentsState extends State<UploadYourDocuments> {
                 documentTitle: 'Car information',
                 isUploaded: false,
                 onTap: () {
-                  Get.offAll(() => CarInformationScreen());
+                  Get.to(() => CarInformationScreen());
                   // Handle document upload
                 },
               ),
@@ -92,7 +92,7 @@ class _UploadYourDocumentsState extends State<UploadYourDocuments> {
                 documentTitle: 'Your Picture',
                 isUploaded: false,
                 onTap: () {
-                  Get.offAll(() => UploadProfilePictureScreen());
+                  Get.to(() => UploadProfilePictureScreen());
                   // Handle document upload
                 },
               ),
