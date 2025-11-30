@@ -22,6 +22,7 @@ abstract class AppString {
   static const String resetPasswordConfirmButton = 'Confirm';
 
   // Register Screen Text Are here
+  static const String googleApiKey = 'AIzaSyCOAYoZktEbWIRX4mbS9D9ypHXdyYWFpSo';
 
   // Terms And Condition Screen
   static const String termsAndConditionText = '''

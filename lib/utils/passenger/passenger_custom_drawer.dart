@@ -46,9 +46,9 @@ class PassengerCustomDrawer extends StatelessWidget {
           // Menu items
           Expanded(
             child: Padding(
-              padding:  EdgeInsets.only( bottom: 250.sp,top: 32.sp,right: 32.sp,left: 32.sp),
+              padding:  EdgeInsets.only( bottom: 150.sp,top: 32.sp,right: 32.sp,left: 32.sp),
               child: Container(
-                height: 100.h,
+                height: 200.h,
                 width: 236,
                 decoration: BoxDecoration(
                   color: Colors.white,

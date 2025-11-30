@@ -6,6 +6,8 @@ import 'package:ride_sharing/feature/auth/log_in_screen.dart';
 import 'package:ride_sharing/feature/splash_screen/passenger_auth_selection_screen.dart';
 import 'package:ride_sharing/feature/splash_screen/role_selection_screen.dart';
 
+import '../../widgets/custom_sliding_container.dart';
+
 class OnboardingPageThird extends StatelessWidget {
   const OnboardingPageThird({super.key});
 
@@ -25,7 +27,7 @@ class OnboardingPageThird extends StatelessWidget {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: Colors.green[800],
+                      color: AppColors.primaryColor,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Center(
@@ -53,20 +55,20 @@ class OnboardingPageThird extends StatelessWidget {
                 ],
               ),
              SizedBox(
-               height: 40.h,
+               height: 150.h,
              ),
               Center(
                   child: Image.asset(
                     'assets/images/pana.png',
-                    height: 400,
-                    width: 400,
+                    height: 212.h,
+                    width: 345.w,
                     fit: BoxFit.contain,
                   ),
                 ),
 
-              const SizedBox(height: 30),
+               SizedBox(height: 30.h),
               const Text(
-                'Easy and Convenient .',
+                'Easy and Convenient',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -75,24 +77,37 @@ class OnboardingPageThird extends StatelessWidget {
               ),
               Center(
                 child: Text(
-                  'booking',
+                  'Booking',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.primaryColor,
+                    color: AppColors.green400,
                   ),
                 ),
               ),
-              const SizedBox(height: 10),
+               SizedBox(height: 30.h),
               const Text(
                 'Book your ride in just a few taps. Quick, easy, and hassle-free.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey,
+                  fontSize: 18,
+                  color: Colors.black,
                 ),
               ),
-              const SizedBox(height: 40),
+
+               SizedBox(height: 20.h,),
+              OnboardingIndicator(
+                totalPages: 3,
+                currentPage: 2,
+                activeWidth: 21,
+                inactiveWidth: 13,
+                height: 5,
+                borderRadius: 100,
+                activeColor: AppColors.violetFoundation,
+                inactiveColor: AppColors.greyShade,
+                spacing: 5,           // Space between indicators
+              ),
+               SizedBox(height: 20.h),
               ElevatedButton(
                 onPressed: () {
                   Get.to(RoleSelectionScreen());
@@ -107,38 +122,8 @@ class OnboardingPageThird extends StatelessWidget {
                 ),
                 child: const Text('Get started !!'),
               ),
-              const SizedBox(height: 30),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 10,
-                    height: 10,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                  ),
-                  const SizedBox(width: 5),
-                  Container(
-                    width: 10,
-                    height: 10,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                  ),
-                  const SizedBox(width: 5),
-                  Container(
-                    width: 10,
-                    height: 10,
-                    decoration: BoxDecoration(
-                      color: Colors.green[800],
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                  ),
-                ],
-              ),
+
+
             ],
           ),
         ),

@@ -31,7 +31,7 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.5,
+      height: MediaQuery.of(context).size.height * 0.6,
       width: double.infinity,
       color: AppColors.white,
       padding: EdgeInsets.all(16),

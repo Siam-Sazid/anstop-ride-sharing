@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
 import 'package:ride_sharing/feature/splash_screen/onboarding_page_third.dart';
 
+import '../../widgets/custom_sliding_container.dart';
+
 
 class OnboardingPageSecond extends StatelessWidget {
   const OnboardingPageSecond({super.key});
@@ -50,46 +52,58 @@ class OnboardingPageSecond extends StatelessWidget {
                   ),
                 ],
               ),
-               SizedBox(height: 40.h),
+               SizedBox(height: 150.h),
 
                  Center(
                   child: Image.asset(
                     'assets/images/cuate.png', // Replace with your asset
-                    height: 400,
-                    width: 400,
+                    height: 195.h,
+                    width: 325.w,
                     fit: BoxFit.contain,
                   ),
                 ),
 
               //const SizedBox(height: 10),
                Text(
-                'Safe and Secure Journeys.',
+                'Safe and Secure',
                 style: TextStyle(
-                  fontSize: 28.sp ,
+                  fontSize: 26.sp ,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
                 ),
               ),
               Center(
                 child: Text(
-                  'Journeys.',
+                  'Journeys',
                   style: TextStyle(
-                    fontSize: 28.sp,
+                    fontSize: 26.sp,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.primaryColor,
+                    color: AppColors.green400,
                   ),
                 ),
               ),
-              const SizedBox(height: 10),
-              const Text(
+               SizedBox(height: 10.h ),
+               Text(
                 'Your safety is our top priority. Every ride is monitored for your peace of mind.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey,
+                  fontSize: 14.sp ,
+                  color: Colors.black,
                 ),
               ),
-              const SizedBox(height: 40),
+               SizedBox(height: 20.h),
+              OnboardingIndicator(
+                totalPages: 3,
+                currentPage: 1,
+                activeWidth: 21,
+                inactiveWidth: 13,
+                height: 5,
+                borderRadius: 100,
+                activeColor: AppColors.violetFoundation,
+                inactiveColor: AppColors.greyShade,
+                spacing: 5,           // Space between indicators
+              ),
+              SizedBox(height: 20.h),
               ElevatedButton(
                 onPressed: () {
                   Navigator.push(
@@ -107,38 +121,8 @@ class OnboardingPageSecond extends StatelessWidget {
                 ),
                 child: const Text('Get started !!'),
               ),
-              const SizedBox(height: 30),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 10,
-                    height: 10,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                  ),
-                  const SizedBox(width: 5),
-                  Container(
-                    width: 10,
-                    height: 10,
-                    decoration: BoxDecoration(
-                      color: AppColors.primaryColor,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                  ),
-                  const SizedBox(width: 5),
-                  Container(
-                    width: 10,
-                    height: 10,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                  ),
-                ],
-              ),
+
+
             ],
           ),
         ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:ride_sharing/feature/passenger/homepage/view/home_page.dart';
 import 'package:ride_sharing/utils/user_info_section.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 import 'package:ride_sharing/widgets/custom_horizontal_line.dart';
@@ -265,25 +266,25 @@ void _showRatingDialog(BuildContext context) {
 void _showThankYouDialog(BuildContext context) {
   showDialog(
     context: context,
-    barrierDismissible: true, // Allows tapping outside to dismiss the dialog
+    barrierDismissible: true,
     builder: (BuildContext context) {
       return AlertDialog(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
         ),
-        contentPadding: EdgeInsets.zero, // Remove default padding
+        contentPadding: EdgeInsets.zero,
         content: Container(
-          height: 300, // Set the desired height here (increased height)
+          height: 300,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Asset Image at the top
+
               Padding(
-                padding: EdgeInsets.symmetric(vertical: 20), // Adjusted padding for more space
+                padding: EdgeInsets.symmetric(vertical: 20),
                 child: Image.asset(
-                  'assets/images/thankyou.png', // Replace with your image path
-                  height: 100, // Adjust the height if needed
-                  width: 100, // Adjust the width if needed
+                  'assets/images/thankyou.png',
+                  height: 100,
+                  width: 100,
                 ),
               ),
               // Thank You Message
@@ -306,7 +307,7 @@ void _showThankYouDialog(BuildContext context) {
                 padding: EdgeInsets.symmetric(horizontal: 10.sp),
                 child: CustomButton(
                   onPressed: () {
-                    Navigator.of(context).pop(); // Close the dialog
+                   Get.to(HomePage()); // Close the dialog
                   },
                   title: Text('Back to Home', style: TextStyle(fontSize: 20, color: AppColors.white)),
                 ),

@@ -29,6 +29,11 @@ class AppColors {
   static const Color drawerShade = Color(0xFFF7F7F7);
   static const Color tesxtColor = Color(0xFF4E4E4E);
   static const Color greenShade300 = Color(0xFF386655);
+  static const Color violetFoundation = Color(0xFFE3D3E2);
+  static const Color greyShade = Color(0xFFB9C0C9);
+  static const Color green400 = Color(0xFF386655);
+  static const Color green300 = Color(0xFF587F71);
+  static const Color grey400 = Color(0xFF5A5A5A);
 
 
   static List<Color> splashLinearColors = [

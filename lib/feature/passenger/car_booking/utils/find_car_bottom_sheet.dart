@@ -20,7 +20,7 @@ class _FindCarBottomSheetState extends State<FindCarBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.85, // Adjust height as needed
+      height: MediaQuery.of(context).size.height * 0.9, // Adjust height as needed
       width: double.infinity,
       color: AppColors.white,
       padding: EdgeInsets.all(16),
@@ -28,67 +28,71 @@ class _FindCarBottomSheetState extends State<FindCarBottomSheet> {
         crossAxisAlignment: CrossAxisAlignment.start,
 
         children: [
-         Card(
-           color: AppColors.white,
-           elevation: 5,
-           child: Padding(
-             padding:  EdgeInsets.all(16.0),
-             child: Column(
-               crossAxisAlignment: CrossAxisAlignment.start,
-               children: [
-                 Text('Your Trip',style: TextStyle(fontSize: 18.sp,fontWeight: FontWeight.bold),),
-                 SizedBox(height: 8.sp,),
-                 Row(children: [
-                   Container(
-                     child: Image.asset('assets/images/greetings.png'),
-                   ),
-                   SizedBox(width: 5.sp,),
-                   Text('Block b / Banasree, Dhaka'),
+         SizedBox(
+           height: 268.h,
+           width: 345.w,
+           child: Card(
+             color: AppColors.white,
+             elevation: 5,
+             child: Padding(
+               padding:  EdgeInsets.all(16.0),
+               child: Column(
+                 crossAxisAlignment: CrossAxisAlignment.start,
+                 children: [
+                   Text('Your Trip',style: TextStyle(fontSize: 18.sp,fontWeight: FontWeight.bold),),
+                   SizedBox(height: 8.sp,),
+                   Row(children: [
+                     Container(
+                       child: Image.asset('assets/images/greetings.png'),
+                     ),
+                     SizedBox(width: 5.sp,),
+                     Text('Block b / Banasree, Dhaka'),
 
-                 ],),
-                 SizedBox(height: 8.sp,),
-                 Row(children: [
-                   Container(
-                     child: Icon(Icons.location_on,color: AppColors.primaryColor,),
-                   ),
-                   SizedBox(width: 5.sp,),
-                   Text('Green Road Dhaka'),
+                   ],),
+                   SizedBox(height: 8.sp,),
+                   Row(children: [
+                     Container(
+                       child: Icon(Icons.location_on,color: AppColors.primaryColor,),
+                     ),
+                     SizedBox(width: 5.sp,),
+                     Text('Green Road Dhaka'),
 
-                 ],),
-                 SizedBox(height: 8.sp,),
-                 Row(
-                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                   children: [
+                   ],),
+                   SizedBox(height: 8.sp,),
+                   Row(
+                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                     children: [
+                     Text(
+                      'Distance',style: TextStyle(
+                       fontSize: 18.sp,color: Colors.black
+                     ),
+                     ),
+                     SizedBox(width: 5.sp,),
+                     Text('89 km'),
+
+                   ],),
+                SizedBox(height: 8.h,),
+
                    Text(
-                    'Distance',style: TextStyle(
-                     fontSize: 18.sp,color: Colors.black
+                     'Enter Ride Price',style: TextStyle(
+                       fontSize: 18.sp,color: AppColors.appGreyColor
                    ),
                    ),
-                   SizedBox(width: 5.sp,),
-                   Text('89 km'),
+                  // SizedBox(height: 8.h,),
+                   CustomTextField(
+                     onTap: () {
+                    //   Get.to(SetOnMapScreen());
+                     },
 
-                 ],),
-              SizedBox(height: 8.h,),
-
-                 Text(
-                   'Enter Ride Price',style: TextStyle(
-                     fontSize: 18.sp,color: AppColors.appGreyColor
-                 ),
-                 ),
-                // SizedBox(height: 8.h,),
-                 CustomTextField(
-                   onTap: () {
-                  //   Get.to(SetOnMapScreen());
-                   },
-
-                 //  prefixIcon: Icon(Icons.location_on, color: AppColors.primaryColor),
-                 //  suffixIcon: Icon(CupertinoIcons.search_circle),
-                 //  hintText: 'Where are you headed?',
-                   borderColor: AppColors.grayShade100,
-                   borderRadio: 10,
-                   controller: locationTEController,
-                 ),
-               ],
+                   //  prefixIcon: Icon(Icons.location_on, color: AppColors.primaryColor),
+                   //  suffixIcon: Icon(CupertinoIcons.search_circle),
+                   //  hintText: 'Where are you headed?',
+                     borderColor: AppColors.grayShade100,
+                     borderRadio: 10,
+                     controller: locationTEController,
+                   ),
+                 ],
+               ),
              ),
            ),
          ),

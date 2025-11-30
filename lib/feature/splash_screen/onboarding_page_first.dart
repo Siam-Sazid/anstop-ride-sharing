@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
 import 'package:ride_sharing/feature/splash_screen/onboarding_page_second.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
+import 'package:ride_sharing/widgets/custom_sliding_container.dart';
 
 
 class OnboardingPageFirst extends StatelessWidget {
@@ -38,25 +39,40 @@ class OnboardingPageFirst extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 40),
-              Expanded(
-                child: Center(
+               SizedBox(height: 100.h),
+
+                 Center(
                   child: Image.asset(
-                    'assets/images/undraw_my-location.png', // Replace with your asset
-                    height: 400,
-                    width: 400,
+                    'assets/images/undraw_my-location.png',
+                    height: 360.h,
+                    width: 285.w,
                     fit: BoxFit.contain,
                   ),
                 ),
-              ),
-              const SizedBox(height: 30),
-              const Text(
-                'Welcome to app name',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
+
+             //  SizedBox(height: 10.h ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+
+                  const Text(
+                    'Welcome to',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                  SizedBox(width: 5.h,),
+                  Text(
+                    'app name',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primaryColor
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 10),
               const Text(
@@ -67,7 +83,19 @@ class OnboardingPageFirst extends StatelessWidget {
                   color: Colors.grey,
                 ),
               ),
-              const SizedBox(height: 40),
+               SizedBox(height: 20.h),
+              OnboardingIndicator(
+                totalPages: 3,        // Total number of onboarding pages
+                currentPage: 0,       // Current active page (0-indexed)
+                activeWidth: 21,      // Width of active indicator
+                inactiveWidth: 13,    // Width of inactive indicators
+                height: 5,            // Height of all indicators
+                borderRadius: 100,    // Border radius
+                activeColor: AppColors.violetFoundation,
+                inactiveColor: AppColors.greyShade,
+                spacing: 5,           // Space between indicators
+              ),
+              SizedBox(height: 20.h),
               ElevatedButton(
                 onPressed: () {
                   Navigator.push(
@@ -86,37 +114,7 @@ class OnboardingPageFirst extends StatelessWidget {
                 child: const Text('Get started !!'),
               ),
               const SizedBox(height: 30),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 10,
-                    height: 10,
-                    decoration: BoxDecoration(
-                      color: AppColors.primaryColor,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                  ),
-                  const SizedBox(width: 5),
-                  Container(
-                    width: 10,
-                    height: 10,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                  ),
-                  const SizedBox(width: 5),
-                  Container(
-                    width: 10,
-                    height: 10,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                  ),
-                ],
-              ),
+
             ],
           ),
         ),

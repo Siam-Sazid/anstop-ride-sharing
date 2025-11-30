@@ -59,7 +59,7 @@ class SetOnMapScreen extends StatelessWidget {
                     child: Padding(
                       padding: EdgeInsets.all(10),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           CustomLocationButton(
                             imageUrl: 'assets/images/home.png',
@@ -86,6 +86,23 @@ class SetOnMapScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 8.h),
                 ///If location is found
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    GestureDetector(
+                      onTap: (){},
+                      child: Text('Recent Places',style: TextStyle(
+                        color: AppColors.grey400,fontSize: 16.sp
+                      ),),
+                    ),
+
+                    GestureDetector(
+                      onTap: (){},
+                      child: Text('Clear all',style: TextStyle(
+                          color: AppColors.green300),),
+                    )
+                  ],
+                ),
                 CustomListTile(
                   icon: Icon(CupertinoIcons.clock,color: AppColors.appGreyColor,),
                   title: 'Coffee',

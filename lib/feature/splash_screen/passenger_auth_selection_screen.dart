@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
 import 'package:get/get.dart';
 import 'package:ride_sharing/feature/auth/log_in_screen.dart';
@@ -15,12 +16,12 @@ class PassengerAuthSelectionScreen extends StatelessWidget {
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
-             // const SizedBox(height: 40),
+               SizedBox(height: 150.h),
               Center(
                 child: Image.asset(
                       'assets/images/rafiki.png',
-                  height: 500,
-                  width: 500,
+                  height: 300.h,
+                  width: 348.w,
                   fit: BoxFit.contain,
                 ),
 
@@ -28,7 +29,7 @@ class PassengerAuthSelectionScreen extends StatelessWidget {
 
               const SizedBox(height: 30),
               const Text(
-                'WELCOME TO DURRAH',
+                'WELCOME TO Our App',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,

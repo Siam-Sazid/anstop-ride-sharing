@@ -43,7 +43,7 @@ class _SplashScreenState extends State<SplashScreen> {
         children: [
           Positioned.fill(
             child: Image.asset(
-              'assets/images/splash_screen.png', // Replace with your actual image
+              'assets/images/splash_screen.png',
               fit: BoxFit.cover,
             ),
           ),
@@ -54,7 +54,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       const Text('English'),
                       Switch(

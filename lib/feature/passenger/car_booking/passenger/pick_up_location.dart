@@ -58,7 +58,7 @@ class PickUpLocationScreen extends StatelessWidget {
                   left: 0,
                   right: 0,
                   child: Container(
-                    height: MediaQuery.of(context).size.height * 0.48,
+                    height: MediaQuery.of(context).size.height * 0.5,
                     decoration: BoxDecoration(
                       color: AppColors.white,
                       borderRadius: BorderRadius.only(
@@ -135,7 +135,7 @@ class PickUpLocationScreen extends StatelessWidget {
                             padding:  EdgeInsets.fromLTRB(16.sp,16.sp,16.sp,0.sp),
                             child: Row(
                               children: [
-                                Text('Saved Adress', style:  TextStyle(fontSize: 20.sp),),
+                                Text('Saved Adress', style:  TextStyle(fontSize: 18.sp),),
                                 Spacer(),
                                 Text('See all >', style:  TextStyle(fontSize: 15.sp,color: AppColors.greenShade50),)
                               ],
@@ -154,7 +154,7 @@ class PickUpLocationScreen extends StatelessWidget {
                               child: Padding(
                                 padding: EdgeInsets.all(10),
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   children: [
                                     CustomLocationButton(
                                       imageUrl: 'assets/images/home.png',

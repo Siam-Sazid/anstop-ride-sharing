@@ -74,16 +74,16 @@ class HomePage extends StatelessWidget {
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 8.sp),
                               child: Container(
-                                height: 70.h,
+                                height: 69.h,
                                 width: 300.w,
                                 decoration: BoxDecoration(
                                   color: AppColors.greenShade50,
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: Padding(
-                                  padding: EdgeInsets.all(10),
+                                  padding: EdgeInsets.all(8.sp),
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                     children: [
                                       CustomLocationButton(
                                         imageUrl: 'assets/images/home.png',
