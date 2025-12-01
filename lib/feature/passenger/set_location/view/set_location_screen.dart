@@ -68,7 +68,7 @@ class SetLocationScreen extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 SizedBox(
-                                  width: 200.w,
+                                  width: 300.w,
                                   child: CustomButton(
 
                                       onPressed: (){},

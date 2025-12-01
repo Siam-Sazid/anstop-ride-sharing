@@ -1,4 +1,5 @@
 import 'package:ride_sharing/feature/auth/driver/upload_your_documents_screen.dart';
+import 'package:ride_sharing/feature/auth/log_in_screen.dart';
 import 'package:ride_sharing/feature/auth/passenger/terms_of_services.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
@@ -251,7 +252,7 @@ class _DriverRegistrationState extends State<DriverRegistration> {
                         hintextSize: 14.sp,
                         hintextColor: Color(0XFF8A8A8A),
                       ),
-                      SizedBox(height: 46.h),
+                      SizedBox(height: 10.h),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -314,23 +315,28 @@ class _DriverRegistrationState extends State<DriverRegistration> {
                         Get.to(() => UploadYourDocuments());
 
                       }, label: 'Register'),
-                      SizedBox(height: 16.h),
-                      RichText(
-                        text: TextSpan(
-                          children: [
-                            TextSpan(text: 'Have any account ?', style: TextStyle(
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w400,
-                              color: Color(0XFF4E4E4E),
-                            )),
-                            TextSpan(text: ' Login', style: TextStyle(
+                      SizedBox(height: 5.h),
+                      GestureDetector(
+                        onTap: (){
+                          Get.to(LogInScreen());
+                        },
+                        child: RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(text: 'Have any account ?', style: TextStyle(
                                 fontSize: 12.sp,
                                 fontWeight: FontWeight.w400,
-                                color: Colors.red,
-                                decorationThickness: 2,
-                                decoration: TextDecoration.underline
-                            )),
-                          ],
+                                color: Color(0XFF4E4E4E),
+                              )),
+                               TextSpan(text: ' Login', style: TextStyle(
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.red,
+                                  decorationThickness: 2,
+                                  decoration: TextDecoration.underline
+                              )),
+                            ],
+                          ),
                         ),
                       ),
                     ],

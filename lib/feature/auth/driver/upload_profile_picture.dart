@@ -28,6 +28,10 @@ class _UploadProfilePictureScreenState extends State<UploadProfilePictureScreen>
         backgroundColor: Colors.white,
         elevation: 0,
       ),
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20.sp, vertical: 16.sp),
+        child: CustomButton(onPressed: () {}, label: 'Submit'),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -61,14 +65,7 @@ class _UploadProfilePictureScreenState extends State<UploadProfilePictureScreen>
 
                   ),
                 ),
-               // SizedBox(height: 55.h),
-
-                 SizedBox(height: 350.sp),
-                // Spacer(),
-                Padding(
-                  padding:  EdgeInsets.symmetric(horizontal: 5.sp),
-                  child: CustomButton(onPressed: () {}, label: 'Submit'),
-                ),
+                SizedBox(height: 55.h),
               ],
             ),
           ),

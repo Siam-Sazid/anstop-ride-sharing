@@ -29,6 +29,10 @@ class _UploadYourDocumentsState extends State<UploadYourDocuments> {
         backgroundColor: Colors.white,
         elevation: 0,
       ),
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20.sp, vertical: 16.sp),
+        child: CustomButton(onPressed: () {}, label: 'Submit'),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -96,12 +100,7 @@ class _UploadYourDocumentsState extends State<UploadYourDocuments> {
                   // Handle document upload
                 },
               ),
-              SizedBox(height: 250.sp),
-             // Spacer(),
-              Padding(
-                padding:  EdgeInsets.symmetric(horizontal: 20.sp),
-                child: CustomButton(onPressed: () {}, label: 'Submit'),
-              ),
+              SizedBox(height: 20.sp),
             ],
           ),
         ),

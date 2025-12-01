@@ -28,6 +28,10 @@ class _NationalIdScreenState extends State<NationalIdScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
       ),
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20.sp, vertical: 16.sp),
+        child: CustomButton(onPressed: () {}, label: 'Submit'),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -97,13 +101,6 @@ class _NationalIdScreenState extends State<NationalIdScreen> {
                   ),
                 ),
                 SizedBox(height: 55.h),
-
-               // SizedBox(height: 250.sp),
-                // Spacer(),
-                Padding(
-                  padding:  EdgeInsets.symmetric(horizontal: 5.sp),
-                  child: CustomButton(onPressed: () {}, label: 'Submit'),
-                ),
               ],
             ),
           ),

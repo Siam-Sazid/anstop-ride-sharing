@@ -136,7 +136,10 @@ class _CarInformationScreenState extends State<CarInformationScreen> {
                 // Spacer(),
                 Padding(
                   padding:  EdgeInsets.symmetric(horizontal: 5.sp),
-                  child: CustomButton(onPressed: () {}, label: 'Submit'),
+                  child: CustomButton(
+
+                      onPressed: () {},
+                      label: 'Submit'),
                 ),
               ],
             ),

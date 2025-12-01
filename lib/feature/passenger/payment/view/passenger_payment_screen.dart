@@ -294,7 +294,7 @@ void _showThankYouDialog(BuildContext context) {
                   'Thank you for your valuable feedback and tip!',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                  //  fontWeight: FontWeight.bold,
+
                     fontSize: 10.sp,
                   ),
                 ),
@@ -307,7 +307,7 @@ void _showThankYouDialog(BuildContext context) {
                 padding: EdgeInsets.symmetric(horizontal: 10.sp),
                 child: CustomButton(
                   onPressed: () {
-                   Get.to(HomePage()); // Close the dialog
+                   Get.to(HomePage());
                   },
                   title: Text('Back to Home', style: TextStyle(fontSize: 20, color: AppColors.white)),
                 ),

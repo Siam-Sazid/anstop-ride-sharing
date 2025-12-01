@@ -29,7 +29,7 @@ class PassengerAuthSelectionScreen extends StatelessWidget {
 
               const SizedBox(height: 30),
               const Text(
-                'WELCOME TO Our App',
+                'Welcome TO Our App',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
