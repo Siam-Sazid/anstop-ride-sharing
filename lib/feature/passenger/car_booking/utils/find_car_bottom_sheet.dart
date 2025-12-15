@@ -20,7 +20,7 @@ class _FindCarBottomSheetState extends State<FindCarBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.9, // Adjust height as needed
+      height: MediaQuery.of(context).size.height * 0.85, // Adjust height as needed
       width: double.infinity,
       color: AppColors.white,
       padding: EdgeInsets.all(16),
@@ -108,40 +108,55 @@ class _FindCarBottomSheetState extends State<FindCarBottomSheet> {
           PaymentMethodDropdown(),
           SizedBox(height: 10.sp),
           Container(
-          //  height: 48.h,
             decoration: BoxDecoration(
-              border: Border.all(color: AppColors.grayShade100), // Set border color
-              borderRadius: BorderRadius.circular(10), // Optional: Add rounded corners if desired
+              border: Border.all(color: AppColors.grayShade100),
+              borderRadius: BorderRadius.circular(10),
             ),
             child: Padding(
-              padding:  EdgeInsets.symmetric(horizontal:  10.sp),
+              padding: EdgeInsets.symmetric(horizontal: 10.sp),
               child: Row(
                 children: [
-                  Text('Children', style: TextStyle(fontSize: 18.sp, color: AppColors.primaryColor)),
+                  Text(
+                    'Children',
+                    style: TextStyle(fontSize: 18.sp, color: AppColors.primaryColor),
+                  ),
                   Spacer(),
                   Column(
-
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      IconButton(
-                        icon: Icon(Icons.arrow_drop_up, color: AppColors.primaryColor), // Up arrow
-                        onPressed: () {
+                      // 👇 Up Arrow with GestureDetector
+                      GestureDetector(
+                        onTap: () {
                           setState(() {
                             childrenCount++;
                           });
                         },
+                        child: Icon(
+                          Icons.keyboard_arrow_up_outlined,
+                          color: AppColors.primaryColor,
+                          size: 20.sp, // Slightly larger for better tap area
+                        ),
                       ),
-                      IconButton(
-                        icon: Icon(Icons.arrow_drop_down, color: AppColors.primaryColor), // Down arrow
-                        onPressed: () {
+                      // 👇 Down Arrow with GestureDetector
+                      GestureDetector(
+                        onTap: () {
                           setState(() {
-                            if (childrenCount > 0) childrenCount--; // Prevent going negative
+                            if (childrenCount > 0) childrenCount--;
                           });
                         },
+                        child: Icon(
+                          Icons.keyboard_arrow_down,
+                          color: AppColors.primaryColor,
+                          size: 20.sp,
+                        ),
                       ),
                     ],
                   ),
-                  Text('$childrenCount', style: TextStyle(fontSize: 15.sp, color: AppColors.primaryColor)),
-
+                  SizedBox(width: 8.w), // spacing between arrows and number
+                  Text(
+                    '$childrenCount',
+                    style: TextStyle(fontSize: 15.sp, color: AppColors.primaryColor),
+                  ),
                 ],
               ),
             ),
@@ -164,6 +179,7 @@ class _FindCarBottomSheetState extends State<FindCarBottomSheet> {
           ),
           SizedBox(height: 20.sp,),
           CustomButton(
+            height: 50,
             onPressed: () {
               Navigator.pop(context);
               showModalBottomSheet(

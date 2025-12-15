@@ -14,6 +14,8 @@ class PassengerWalletPage extends StatefulWidget {
 }
 
 class _PassengerWalletPageState extends State<PassengerWalletPage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   void _showWithdrawDialog() {
     showDialog(
       context: context,
@@ -46,7 +48,11 @@ class _PassengerWalletPageState extends State<PassengerWalletPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
-     // appBar:  CustomAppBarTitle(),
+      appBar:  CustomAppBarTitle(
+        scaffoldKey: _scaffoldKey,
+        title: 'Wallet',
+        titleColor: AppColors.blackShade300,
+      ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,7 +62,7 @@ class _PassengerWalletPageState extends State<PassengerWalletPage> {
             // Balance Card
             BalanceCard(
               balance: '2652',
-              onWithdraw: _showWithdrawDialog,
+             // onWithdraw: _showWithdrawDialog,
               onDeposit: () {},
             ),
 

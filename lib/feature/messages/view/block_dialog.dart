@@ -29,24 +29,6 @@ class BlockDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Title with red "Block" text
-            RichText(
-              text: const TextSpan(
-                children: [
-                  TextSpan(
-                    text: 'Delete',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      color: MessagingColors.primaryText,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 4),
-
             // Block text in red
             const Text(
               'Block',
@@ -59,7 +41,7 @@ class BlockDialog extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            // Confirmation message
+
             Text(
               'Are you sure want to block $userName right now ?',
               textAlign: TextAlign.center,
@@ -72,7 +54,6 @@ class BlockDialog extends StatelessWidget {
 
             const SizedBox(height: 28),
 
-            // Action Buttons
             Row(
               children: [
                 Expanded(

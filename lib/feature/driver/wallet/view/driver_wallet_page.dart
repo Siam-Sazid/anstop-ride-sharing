@@ -50,7 +50,11 @@ class _DriverWalletPageState extends State<DriverWalletPage> {
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: AppColors.backgroundColor,
-      appBar:  CustomAppBarTitle(scaffoldKey: _scaffoldKey,),
+      appBar: CustomAppBarTitle(
+      scaffoldKey: _scaffoldKey,
+      title: 'Wallet',
+      titleColor: AppColors.blackShade300,
+    ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

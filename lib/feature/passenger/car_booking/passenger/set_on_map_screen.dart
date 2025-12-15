@@ -43,7 +43,7 @@ class SetOnMapScreen extends StatelessWidget {
                   icon: Icons.pin_drop_rounded,
                   title: 'Set on Map',
                   onTap: () {
-                    Get.toNamed(AppRoutes.passengersetLocationPage);
+                    Get.toNamed(AppRoutes.setLocationScreen);
                     print('Home tapped');
                   },
                 ),
@@ -119,7 +119,7 @@ class SetOnMapScreen extends StatelessWidget {
                   onTap: () {
                     // Define the action on tap here
                     Navigator.pop(context);
-                    Get.toNamed(AppRoutes.passengerPickUpLocationPage);
+                    Get.toNamed(AppRoutes.pickUpLocationScreen);
                   },
 
                   borderRadius: 8,

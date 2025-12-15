@@ -13,6 +13,7 @@ import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 
 import '../../feature/auth/log_in_screen.dart';
 import '../../feature/auth/log_out_dialog.dart';
+import '../../routes/app_routes.dart';
 import '../custom_user_rating.dart';
 
 class DriverCustomDrawer extends StatelessWidget {
@@ -50,7 +51,7 @@ class DriverCustomDrawer extends StatelessWidget {
           // Menu items
           Expanded(
             child: Padding(
-              padding:  EdgeInsets.only( bottom: 200.sp,top: 32.sp,right: 32.sp,left: 32.sp),
+              padding:  EdgeInsets.only( bottom: 220.sp,top: 32.sp,right: 32.sp,left: 32.sp),
               child: Container(
                 height: 100.h,
                 width: 236,
@@ -60,12 +61,14 @@ class DriverCustomDrawer extends StatelessWidget {
 
                 ),
                 child: ListView(
+                  padding: EdgeInsets.zero,
                   children: [
                     _drawerItem(
                       imagePath: 'assets/images/notification.png',
                       text: "Notification",
                       onTap: () {
-                        Get.to(NotificationScreen());
+                      //  Get.to(NotificationScreen());
+                        Get.toNamed(AppRoutes.notificationScreen);
                       },
                     ),
 
@@ -73,7 +76,8 @@ class DriverCustomDrawer extends StatelessWidget {
                       imagePath: 'assets/images/Car_drawer.png',
                       text: "My Trips",
                       onTap: () {
-                        Get.to(MyTripPage());
+                      //  Get.to(MyTripPage());
+                        Get.toNamed(AppRoutes.driverMyTripScreen);
                         },
                     ),
 
@@ -81,7 +85,8 @@ class DriverCustomDrawer extends StatelessWidget {
                       imagePath: 'assets/images/Wallet_drawer.png',
                       text: "My earnings",
                       onTap: () {
-                        Get.to(DriverWalletPage());
+                      //  Get.to(DriverWalletPage());
+                        Get.toNamed(AppRoutes.driverWalletScreen);
                       },
                     ),
                     _drawerItem(
@@ -106,7 +111,8 @@ class DriverCustomDrawer extends StatelessWidget {
 
                         // If user confirmed logout
                         if (result == true) {
-                          Get.to(() => LogInScreen());
+                        //  Get.to(() => LogInScreen());
+                          Get.toNamed(AppRoutes.loginScreen);
                         }
                       },
                     ),
@@ -123,7 +129,8 @@ class DriverCustomDrawer extends StatelessWidget {
             padding: EdgeInsets.all(32.sp),
             child: CustomButton(
               onPressed: (){
-                   Get.to(HomePage());
+                 //  Get.to(HomePage());
+                Get.toNamed(AppRoutes.passengerHomeScreen);
               },
               title: Text('Switch to Passenger',style: TextStyle(color: AppColors.white),),
             ),

@@ -22,7 +22,7 @@ class _DriverArrivedBottomSheetState extends State<DriverArrivedBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.35,
+      height: MediaQuery.of(context).size.height * 0.4,
       width: double.infinity,
       color: AppColors.white,
       padding: EdgeInsets.only(top: 20.sp),

@@ -7,6 +7,7 @@ import 'package:ride_sharing/feature/passenger/my_ride/view/my_ride.dart';
 import 'package:ride_sharing/feature/passenger/wallet/view/passenger_wallet_page.dart';
 import 'package:ride_sharing/feature/settings/view/settings_screen.dart';
 import 'package:ride_sharing/feature/support_page/support_page.dart';
+import 'package:ride_sharing/routes/app_routes.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 
 import '../../feature/auth/log_out_dialog.dart';
@@ -46,9 +47,9 @@ class PassengerCustomDrawer extends StatelessWidget {
           // Menu items
           Expanded(
             child: Padding(
-              padding:  EdgeInsets.only( bottom: 150.sp,top: 32.sp,right: 32.sp,left: 32.sp),
+              padding:  EdgeInsets.only( bottom: 220.sp,top: 32.sp,right: 32.sp,left: 32.sp),
               child: Container(
-                height: 200.h,
+                height: 256.h,
                 width: 236,
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -56,6 +57,7 @@ class PassengerCustomDrawer extends StatelessWidget {
 
                 ),
                 child: ListView(
+                  padding: EdgeInsets.zero,
                   children: [
                     _drawerItem(
                       imagePath: 'assets/images/notification.png',
@@ -67,7 +69,8 @@ class PassengerCustomDrawer extends StatelessWidget {
                       imagePath: 'assets/images/Car_drawer.png',
                       text: "My Ride",
                       onTap: () {
-                        Get.to(MyRidePage());
+                      //  Get.to(MyRidePage());
+                        Get.toNamed(AppRoutes.passengerMyRideScreen);
                         },
                     ),
 
@@ -75,7 +78,9 @@ class PassengerCustomDrawer extends StatelessWidget {
                       imagePath: 'assets/images/Wallet_drawer.png',
                       text: "Wallet",
                       onTap: () {
-                        Get.to(PassengerWalletPage());
+                       // Get.to(PassengerWalletPage());
+                        Get.toNamed(AppRoutes.passengerWalletScreen);
+
                       },
                     ), _drawerItem(
                       imagePath: 'assets/images/Support.png',
@@ -102,7 +107,9 @@ class PassengerCustomDrawer extends StatelessWidget {
                         // If user confirmed logout
                         if (result == true) {
 
-                           Get.to(() => LogInScreen());
+                         //  Get.to(() => LogInScreen());
+                          Get.toNamed(AppRoutes.loginScreen);
+
                         }
                       },
                     ),
@@ -118,7 +125,8 @@ class PassengerCustomDrawer extends StatelessWidget {
             padding: EdgeInsets.all(32.sp),
             child: CustomButton(
                 onPressed: (){
-                  Get.to(DriverHomeScreen());
+               //   Get.to(DriverHomeScreen());
+                  Get.toNamed(AppRoutes.driverHomeScreen);
                 },
              title: Text('Switch to drive',style: TextStyle(color: AppColors.white),),
             ),

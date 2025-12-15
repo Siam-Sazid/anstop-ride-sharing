@@ -1,0 +1,160 @@
+import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+class DriverTripFlowController extends GetxController {
+  // ==================== State ====================
+  final RxBool isLoading = false.obs;
+  final Rx<dynamic> currentTrip = Rx<dynamic>(null);
+  final RxString tripStatus = 'pending'.obs; // pending, accepted, started, arrived, completed
+  final Rx<LatLng?> driverLocation = Rx<LatLng?>(null);
+  final Rx<LatLng?> passengerLocation = Rx<LatLng?>(null);
+  final RxString errorMessage = ''.obs;
+  GoogleMapController? mapController;
+
+  // ==================== Lifecycle ====================
+  @override
+  void onInit() {
+    super.onInit();
+    _loadTripData();
+    _trackLocation();
+  }
+
+  @override
+  void onClose() {
+    mapController?.dispose();
+    super.onClose();
+  }
+
+  // ==================== Business Logic ====================
+  void _loadTripData() {
+    // Get trip data from arguments if passed
+    if (Get.arguments != null) {
+      currentTrip.value = Get.arguments;
+      tripStatus.value = Get.arguments['status'] ?? 'pending';
+    }
+  }
+
+  void _trackLocation() {
+    // TODO: Implement real-time location tracking
+    // Update driverLocation periodically and send to server
+  }
+
+  Future<void> acceptTrip() async {
+    try {
+      isLoading.value = true;
+      errorMessage.value = '';
+
+      // TODO: Implement accept trip API call
+      await Future.delayed(const Duration(seconds: 1));
+
+      tripStatus.value = 'accepted';
+
+      Get.snackbar(
+        'Trip Accepted',
+        'Navigate to passenger location',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+
+    } catch (e) {
+      errorMessage.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> rejectTrip() async {
+    try {
+      isLoading.value = true;
+
+      // TODO: Implement reject trip API call
+      await Future.delayed(const Duration(seconds: 1));
+
+      // Get.back();
+
+    } catch (e) {
+      errorMessage.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> startTrip() async {
+    try {
+      isLoading.value = true;
+      errorMessage.value = '';
+
+      // TODO: Implement start trip API call
+      await Future.delayed(const Duration(seconds: 1));
+
+      tripStatus.value = 'started';
+
+    } catch (e) {
+      errorMessage.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> arrivedAtPickup() async {
+    try {
+      isLoading.value = true;
+
+      // TODO: Implement arrived notification API call
+      await Future.delayed(const Duration(seconds: 1));
+
+      tripStatus.value = 'arrived';
+
+      Get.snackbar(
+        'Arrived',
+        'Passenger has been notified',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+
+    } catch (e) {
+      errorMessage.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> completeTrip() async {
+    try {
+      isLoading.value = true;
+      errorMessage.value = '';
+
+      // TODO: Implement complete trip API call
+      await Future.delayed(const Duration(seconds: 1));
+
+      tripStatus.value = 'completed';
+
+      // Show payment dialog or navigate to completion screen
+      _showCompletionDialog();
+
+    } catch (e) {
+      errorMessage.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  void _showCompletionDialog() {
+    // TODO: Show trip completion dialog with payment details
+  }
+
+  void updateLocation(LatLng location) {
+    driverLocation.value = location;
+    // TODO: Send location update to server
+  }
+
+  void contactPassenger() {
+    // TODO: Implement contact passenger functionality
+  }
+
+  void navigateToPassenger() {
+    // TODO: Open navigation app with passenger location
+  }
+
+  void cancelTrip() {
+    // TODO: Navigate to cancellation screen or show dialog
+  }
+}

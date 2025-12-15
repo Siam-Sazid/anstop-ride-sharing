@@ -29,7 +29,7 @@ class _LogInScreenState extends State<LogInScreen> {
     // Validate the form
     if (_formKey.currentState!.validate()) {
       // All fields are valid, proceed with login
-      Get.toNamed(AppRoutes.homePage);
+      Get.toNamed(AppRoutes.passengerHomeScreen);
     } else {
       // Show error message
       Get.snackbar(

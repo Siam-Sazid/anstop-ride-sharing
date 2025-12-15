@@ -31,7 +31,7 @@ class SetLocationOptionPage extends StatelessWidget {
           // Search bar
           TextField(
             onTap: (){
-              Get.toNamed(AppRoutes.passengersetLocationPage);
+              Get.toNamed(AppRoutes.setLocationScreen);
             },
             decoration: InputDecoration(
               hintText: 'Search address',
@@ -59,7 +59,7 @@ class SetLocationOptionPage extends StatelessWidget {
                   icon: Icons.pin_drop_rounded,
                   title: 'Set on Map',
                   onTap: () {
-                    Get.toNamed(AppRoutes.passengersetLocationPage);
+                    Get.toNamed(AppRoutes.setLocationScreen);
                     print('Home tapped');
                   },
                 ),
@@ -67,7 +67,7 @@ class SetLocationOptionPage extends StatelessWidget {
                   icon: Icons.home,
                   title: 'Home',
                   onTap: () {
-                    Get.toNamed(AppRoutes.passengersetLocationPage);
+                    Get.toNamed(AppRoutes.setLocationScreen);
                     print('Home tapped');
                   },
                 ),
@@ -75,7 +75,7 @@ class SetLocationOptionPage extends StatelessWidget {
                   icon: Icons.work,
                   title: 'Work',
                   onTap: () {
-                    Get.toNamed(AppRoutes.passengersetLocationPage);
+                    Get.toNamed(AppRoutes.setLocationScreen);
                     print('Work tapped');
                   },
                 ),
@@ -83,7 +83,7 @@ class SetLocationOptionPage extends StatelessWidget {
                   icon: Icons.bookmark,
                   title: 'Bookmarks',
                   onTap: () {
-                    Get.toNamed(AppRoutes.passengersetLocationPage);
+                    Get.toNamed(AppRoutes.setLocationScreen);
                     print('Bookmarks tapped');
                   },
                 ),

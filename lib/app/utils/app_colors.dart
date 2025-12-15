@@ -34,6 +34,8 @@ class AppColors {
   static const Color green400 = Color(0xFF386655);
   static const Color green300 = Color(0xFF587F71);
   static const Color grey400 = Color(0xFF5A5A5A);
+  static const Color blackShade300 = Color(0xFF545454);
+
 
 
   static List<Color> splashLinearColors = [
