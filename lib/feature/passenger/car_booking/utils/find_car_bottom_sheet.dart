@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/utils/accept_car_bottom_sheet.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/utils/payment_method_dropdown.dart';
 
@@ -43,7 +44,7 @@ class _FindCarBottomSheetState extends State<FindCarBottomSheet> {
                    SizedBox(height: 8.sp,),
                    Row(children: [
                      Container(
-                       child: Image.asset('assets/images/greetings.png'),
+                       child: Image.asset(AppImage.greetings),
                      ),
                      SizedBox(width: 5.sp,),
                      Text('Block b / Banasree, Dhaka'),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
+import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/passenger/cancel_taxi.dart';
 import 'package:ride_sharing/feature/passenger/payment/view/passenger_payment_screen.dart';
 import 'package:ride_sharing/utils/cancel_driver_widget.dart';
@@ -42,7 +43,7 @@ class _BookingCarsBottomSheetState extends State<BookingCarsBottomSheet> {
           CarDetailsWidget(
             title: 'DHK METRO - 8475Dkk',
             subtitle: 'Toyota',
-            imagePath: 'assets/images/cars_side_view.png',
+            imagePath: AppImage.carsSideView,
             backgroundColor: AppColors.violetShade,
           ),
           SizedBox(height: 16.sp),
@@ -67,7 +68,7 @@ class _BookingCarsBottomSheetState extends State<BookingCarsBottomSheet> {
               children: [
                 Icon(Icons.location_on, color: AppColors.primaryColor),
                 SizedBox(width: 5.sp),
-                Text('Green Road, Dhaka'), // Destination location
+                Text('Green Road, Dhaka'),
               ],
             ),
           ),
@@ -78,7 +79,7 @@ class _BookingCarsBottomSheetState extends State<BookingCarsBottomSheet> {
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
-                Image.asset('assets/images/Wallet.png'),
+                Image.asset(AppImage.wallet),
                 SizedBox(width: 2.sp,),
                 GestureDetector(
                   onTap:() {Get.to(PassengerPaymentScreen());},

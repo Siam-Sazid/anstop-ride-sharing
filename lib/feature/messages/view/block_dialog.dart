@@ -29,7 +29,6 @@ class BlockDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Block text in red
             const Text(
               'Block',
               style: TextStyle(

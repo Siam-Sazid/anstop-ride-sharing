@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/utils/car_details.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/utils/driver_status_widget.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/utils/ride_begun_bottom_sheet.dart';
@@ -40,7 +41,7 @@ class _DriverArrivedBottomSheetState extends State<DriverArrivedBottomSheet> {
           CarDetailsWidget(
             title: 'DHK METRO - 8475Dkk',
             subtitle: 'Toyota',
-            imagePath: 'assets/images/cars_side_view.png',
+            imagePath: AppImage.carsSideView,
             backgroundColor: AppColors.greenShade50,
           ),
           SizedBox(height: 16.sp),
@@ -71,7 +72,7 @@ class _DriverArrivedBottomSheetState extends State<DriverArrivedBottomSheet> {
                       },
                         child: RideBegunBottomSheet()
 
-                    ); // Your bottom sheet widget
+                    );
 
                   },
                 );

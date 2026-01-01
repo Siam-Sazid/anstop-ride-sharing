@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/passenger/set_on_map_screen.dart';
 import 'package:ride_sharing/feature/passenger/homepage/controller/home_page_controller.dart';
 import 'package:ride_sharing/feature/passenger/set_location/view/set_location_option_page.dart';
@@ -86,7 +87,7 @@ class HomePage extends StatelessWidget {
                                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                     children: [
                                       CustomLocationButton(
-                                        imageUrl: 'assets/images/home.png',
+                                        imageUrl: AppImage.home,
                                         mainText: 'Home',
                                         subText: 'Set address',
                                         onTap: () {
@@ -96,7 +97,7 @@ class HomePage extends StatelessWidget {
                                       ),
                                       VerticalDivider(color: AppColors.white, width: 5),
                                       CustomLocationButton(
-                                        imageUrl: 'assets/images/briefcase.png',
+                                        imageUrl: AppImage.briefcase,
                                         mainText: 'Work',
                                         subText: 'Set address',
                                         onTap: () {

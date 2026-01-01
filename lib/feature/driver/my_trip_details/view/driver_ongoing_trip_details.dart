@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/utils/cancel_driver_widget.dart';
 import 'package:ride_sharing/utils/support_note_widget.dart';
 import 'package:ride_sharing/utils/user_info_section.dart';
@@ -88,11 +89,11 @@ class DriverOngoingTripDetails extends StatelessWidget {
                       SizedBox(height: 8.sp,),
                       Row(children: [
                         Container(
-                          child: Image.asset('assets/images/greetings.png'),
+                          child: Image.asset(AppImage.greetings),
                         ),
                         SizedBox(width: 5.sp,),
                         Text('Block b / Banasree, Dhaka'),
-          
+
                       ],),
                       CustomVerticalLine(height: 20.h, color: Colors.black),
                       Row(children: [

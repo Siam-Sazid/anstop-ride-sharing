@@ -67,7 +67,7 @@ class BalanceCard extends StatelessWidget {
           ),
           Column(
             children: [
-              if (showWithdraw && onWithdraw != null) // 👈 conditional rendering
+              if (showWithdraw && onWithdraw != null)
                 _buildActionButton('Withdraw Now', onWithdraw!),
               if (showWithdraw && onWithdraw != null)
                 const SizedBox(height: 8),

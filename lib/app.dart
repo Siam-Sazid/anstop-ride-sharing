@@ -9,17 +9,27 @@ class RideSharingApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isBottomNavigationVisible(BuildContext context) {
+      final EdgeInsets padding = MediaQuery.of(context).viewInsets;
+      return padding.bottom == 0.0;
+    }
     return ScreenUtilInit(
       splitScreenMode: true,
       minTextAdapt: true,
       designSize: Size(392, 852),
-      builder: (_, _) => GetMaterialApp(
-      //  darkTheme: AppThemeData.darkThemeData,
-        debugShowCheckedModeBanner: false,
-        initialRoute: AppRoutes.splashScreen, // Initial route
-        getPages: AppRoutes.routes, // Your defined routes
-        theme: AppThemeData.lightThemeData,
-      ),
+      builder: (_, _) {
+        return GetMaterialApp(
+          builder: (_, Widget? child) {
+            final bool bottomNavigationVisible = isBottomNavigationVisible(context);
+            return SafeArea(top: false, bottom: bottomNavigationVisible, child: child!);
+          },
+        //  darkTheme: AppThemeData.darkThemeData,
+          debugShowCheckedModeBanner: false,
+          initialRoute: AppRoutes.splashScreen, // Initial route
+          getPages: AppRoutes.routes, // Your defined routes
+          theme: AppThemeData.lightThemeData,
+        );
+      }
     );
   }
 }

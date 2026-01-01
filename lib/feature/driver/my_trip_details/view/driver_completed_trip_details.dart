@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/feature/driver/invoice/view/invoice_view.dart';
 import 'package:ride_sharing/utils/user_info_section.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
@@ -87,7 +88,7 @@ class DriverCompletedTripDetails extends StatelessWidget {
                     SizedBox(height: 8.sp,),
                     Row(children: [
                       Container(
-                        child: Image.asset('assets/images/greetings.png'),
+                        child: Image.asset(AppImage.greetings),
                       ),
                       SizedBox(width: 5.sp,),
                       Text('Block b / Banasree, Dhaka'),

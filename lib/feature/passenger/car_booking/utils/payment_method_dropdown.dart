@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../app/utils/app_colors.dart';
+import '../../../../custom_assets/app_image.dart';
 
 
 class PaymentMethodDropdown extends StatefulWidget {
@@ -60,13 +61,13 @@ class _PaymentMethodDropdownState extends State<PaymentMethodDropdown> {
   String _getImageForPaymentMethod(String paymentMethod) {
     switch (paymentMethod) {
       case 'Wallet':
-        return 'assets/images/Wallet.png';
+        return AppImage.wallet;
       case 'By Cards':
-        return 'assets/images/Cards.png';
+        return AppImage.cards;
       case 'By Cash':
-        return 'assets/images/cash.png';
+        return AppImage.cash;
       default:
-        return 'assets/images/Wallet.png';
+        return AppImage.wallet;
     }
   }
 }

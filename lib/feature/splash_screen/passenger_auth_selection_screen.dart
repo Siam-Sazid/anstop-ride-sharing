@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
 import 'package:get/get.dart';
+import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/feature/auth/log_in_screen.dart';
 import 'package:ride_sharing/feature/auth/passenger/registration.dart';
 class PassengerAuthSelectionScreen extends StatelessWidget {
@@ -19,7 +20,7 @@ class PassengerAuthSelectionScreen extends StatelessWidget {
                SizedBox(height: 150.h),
               Center(
                 child: Image.asset(
-                      'assets/images/rafiki.png',
+                      AppImage.rafiki,
                   height: 300.h,
                   width: 348.w,
                   fit: BoxFit.contain,

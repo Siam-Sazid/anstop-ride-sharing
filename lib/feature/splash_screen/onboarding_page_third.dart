@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
+import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/feature/auth/log_in_screen.dart';
 import 'package:ride_sharing/feature/splash_screen/passenger_auth_selection_screen.dart';
 import 'package:ride_sharing/feature/splash_screen/role_selection_screen.dart';
@@ -59,9 +60,9 @@ class OnboardingPageThird extends StatelessWidget {
              ),
               Center(
                   child: Image.asset(
-                    'assets/images/pana.png',
-                    height: 212.h,
-                    width: 345.w,
+                    AppImage.pana,
+                    height: 250.h,
+                    width: 400.w,
                     fit: BoxFit.contain,
                   ),
                 ),
@@ -86,11 +87,11 @@ class OnboardingPageThird extends StatelessWidget {
                 ),
               ),
                SizedBox(height: 30.h),
-              const Text(
+               Text(
                 'Book your ride in just a few taps. Quick, easy, and hassle-free.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 18.sp,
                   color: Colors.black,
                 ),
               ),

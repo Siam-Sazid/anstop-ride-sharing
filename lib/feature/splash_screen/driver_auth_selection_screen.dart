@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
 import 'package:get/get.dart';
+import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/feature/auth/driver/registration.dart';
 import 'package:ride_sharing/feature/auth/log_in_screen.dart';
 import 'package:ride_sharing/feature/auth/passenger/registration.dart';
@@ -20,7 +21,7 @@ class DriverAuthSelectionScreen extends StatelessWidget {
               SizedBox(height: 150.h),
               Center(
                 child: Image.asset(
-                  'assets/images/rafiki.png',
+                  AppImage.rafiki,
                   height: 300.h,
                   width: 348.w,
                   fit: BoxFit.contain,
@@ -38,12 +39,12 @@ class DriverAuthSelectionScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
-              const Text(
+               Text(
                 'Seamless, affordable, and reliable ride-sharing at your fingertips.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey,
+                  fontSize: 18.sp,
+                  color: Colors.black,
                 ),
               ),
               const SizedBox(height: 40),

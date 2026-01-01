@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/feature/auth/email_validation_screen.dart';
 import 'package:ride_sharing/feature/passenger/set_location/view/set_location_option_page.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
@@ -62,7 +63,7 @@ class SetOnMapScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           CustomLocationButton(
-                            imageUrl: 'assets/images/home.png',
+                            imageUrl: AppImage.home,
                             mainText: 'Home',
                             subText: 'Set address',
                             onTap: () {
@@ -72,7 +73,7 @@ class SetOnMapScreen extends StatelessWidget {
                           ),
                           VerticalDivider(color: AppColors.white, width: 2),
                           CustomLocationButton(
-                            imageUrl: 'assets/images/briefcase.png',
+                            imageUrl: AppImage.briefcase,
                             mainText: 'Work',
                             subText: 'Set address',
                             onTap: () {

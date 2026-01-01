@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
+import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/feature/driver/homepage/view/driver_homescreen.dart';
 import 'package:ride_sharing/feature/driver/my_trip/view/my_trip.dart';
 import 'package:ride_sharing/feature/driver/wallet/view/driver_wallet_page.dart';
@@ -64,7 +65,7 @@ class DriverCustomDrawer extends StatelessWidget {
                   padding: EdgeInsets.zero,
                   children: [
                     _drawerItem(
-                      imagePath: 'assets/images/notification.png',
+                      imagePath: AppImage.notification,
                       text: "Notification",
                       onTap: () {
                       //  Get.to(NotificationScreen());
@@ -73,7 +74,7 @@ class DriverCustomDrawer extends StatelessWidget {
                     ),
 
                     _drawerItem(
-                      imagePath: 'assets/images/Car_drawer.png',
+                      imagePath: AppImage.carDrawer,
                       text: "My Trips",
                       onTap: () {
                       //  Get.to(MyTripPage());
@@ -82,7 +83,7 @@ class DriverCustomDrawer extends StatelessWidget {
                     ),
 
                     _drawerItem(
-                      imagePath: 'assets/images/Wallet_drawer.png',
+                      imagePath: AppImage.walletDrawer,
                       text: "My earnings",
                       onTap: () {
                       //  Get.to(DriverWalletPage());
@@ -90,12 +91,12 @@ class DriverCustomDrawer extends StatelessWidget {
                       },
                     ),
                     _drawerItem(
-                      imagePath: 'assets/images/Invite.png',
+                      imagePath: AppImage.invite,
                       text: "Invite and earns",
                       onTap: () {},
                     ),
                     _drawerItem(
-                      imagePath: 'assets/images/Support.png',
+                      imagePath: AppImage.support,
                       text: "Support",
                       onTap: () {
                         Get.to(SupportPage());
@@ -103,7 +104,7 @@ class DriverCustomDrawer extends StatelessWidget {
                       },
                     ),
                     _drawerItem(
-                      imagePath: 'assets/images/logout.png',
+                      imagePath: AppImage.logout,
                       text: "Logout",
                       onTap: () async {
                         // Show the logout dialog
@@ -126,7 +127,7 @@ class DriverCustomDrawer extends StatelessWidget {
 
           // Logout button
           Padding(
-            padding: EdgeInsets.all(32.sp),
+            padding: EdgeInsets.all(8.sp),
             child: CustomButton(
               onPressed: (){
                  //  Get.to(HomePage());

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
+import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/feature/auth/log_in_screen.dart';
 import 'package:ride_sharing/feature/driver/homepage/view/driver_homescreen.dart';
 import 'package:ride_sharing/feature/passenger/my_ride/view/my_ride.dart';
@@ -60,13 +61,13 @@ class PassengerCustomDrawer extends StatelessWidget {
                   padding: EdgeInsets.zero,
                   children: [
                     _drawerItem(
-                      imagePath: 'assets/images/notification.png',
+                      imagePath: AppImage.notification,
                       text: "Notification",
                       onTap: () {},
                     ),
 
                     _drawerItem(
-                      imagePath: 'assets/images/Car_drawer.png',
+                      imagePath: AppImage.carDrawer,
                       text: "My Ride",
                       onTap: () {
                       //  Get.to(MyRidePage());
@@ -75,7 +76,7 @@ class PassengerCustomDrawer extends StatelessWidget {
                     ),
 
                     _drawerItem(
-                      imagePath: 'assets/images/Wallet_drawer.png',
+                      imagePath: AppImage.walletDrawer,
                       text: "Wallet",
                       onTap: () {
                        // Get.to(PassengerWalletPage());
@@ -83,14 +84,14 @@ class PassengerCustomDrawer extends StatelessWidget {
 
                       },
                     ), _drawerItem(
-                      imagePath: 'assets/images/Support.png',
+                      imagePath: AppImage.support,
                       text: "Support",
                       onTap: () {
                         Get.to(SupportPage());
 
                       },
                     ), _drawerItem(
-                      imagePath: 'assets/images/settings.png',
+                      imagePath: AppImage.settings,
                       text: "Settings",
                       onTap: () {
                         Get.to(SettingsScreen());
@@ -98,7 +99,7 @@ class PassengerCustomDrawer extends StatelessWidget {
                       },
                      ),
                     _drawerItem(
-                      imagePath: 'assets/images/logout.png',
+                      imagePath: AppImage.logout,
                       text: "Logout",
                       onTap: () async {
                         // Show the logout dialog
@@ -122,7 +123,7 @@ class PassengerCustomDrawer extends StatelessWidget {
 
           // Logout button
           Padding(
-            padding: EdgeInsets.all(32.sp),
+            padding: EdgeInsets.all(8.sp),
             child: CustomButton(
                 onPressed: (){
                //   Get.to(DriverHomeScreen());

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 import 'package:ride_sharing/widgets/custom_horizontal_line.dart';
 import 'package:ride_sharing/widgets/custom_vertical_line.dart';
@@ -368,7 +369,7 @@ class TripRequestCard extends StatelessWidget {
                   children: [
                     Column(
                       children: [
-                        Image.asset('assets/images/Passenger.png'),
+                        Image.asset(AppImage.passenger),
                         SizedBox(height: 4.h),
                        CustomVerticalLine(height: 30.h, color: Colors.black),
                         SizedBox(height: 4.h),

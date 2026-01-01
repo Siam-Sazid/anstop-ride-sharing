@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../app/utils/app_colors.dart';
+import '../../../../custom_assets/app_image.dart';
 
 class UserInfoCard extends StatefulWidget {
   final String profileImageUrl;  // Profile picture URL
@@ -107,7 +108,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
           Row(
             children: [
               Container(
-                child: Image.asset('assets/images/greetings.png'),
+                child: Image.asset(AppImage.greetings),
               ),
               SizedBox(width: 5.sp),
               Text(widget.address),

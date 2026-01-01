@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
+import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/widgets/custom_button.dart';
 import 'package:ride_sharing/widgets/custom_text_field.dart';
 import 'package:ride_sharing/widgets/logo.dart';
@@ -136,7 +137,7 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
           SizedBox(height: 8.sp,),
           Row(children: [
             Container(
-              child: Image.asset('assets/images/greetings.png'),
+              child: Image.asset(AppImage.greetings),
             ),
             SizedBox(width: 5.sp,),
             Text('Block b / Banasree, Dhaka'),

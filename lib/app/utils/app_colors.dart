@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // Ride Sharing Color Pattern are here
+
   static const Color primaryColor = Color(0xFF0D4D3D);
   static const Color appBarColor = Colors.white;
   static const Color togglebuttonColor = Color(0xFF587F71);

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
+import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/feature/splash_screen/onboarding_page_second.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 import 'package:ride_sharing/widgets/custom_sliding_container.dart';
@@ -43,22 +44,22 @@ class OnboardingPageFirst extends StatelessWidget {
 
                  Center(
                   child: Image.asset(
-                    'assets/images/undraw_my-location.png',
+                    AppImage.undrawMyLocation,
                     height: 360.h,
                     width: 285.w,
                     fit: BoxFit.contain,
                   ),
                 ),
 
-             //  SizedBox(height: 10.h ),
+               SizedBox(height: 10.h ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
 
-                  const Text(
+                   Text(
                     'Welcome to',
                     style: TextStyle(
-                      fontSize: 24,
+                      fontSize: 26.sp,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
@@ -75,12 +76,12 @@ class OnboardingPageFirst extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 10),
-              const Text(
+               Text(
                 'Seamless, affordable, and reliable ride-sharing at your fingertips.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey,
+                  fontSize: 14.sp,
+                  color: Colors.black
                 ),
               ),
                SizedBox(height: 20.h),
@@ -113,7 +114,7 @@ class OnboardingPageFirst extends StatelessWidget {
                 ),
                 child: const Text('Get started !!'),
               ),
-              const SizedBox(height: 30),
+
 
             ],
           ),

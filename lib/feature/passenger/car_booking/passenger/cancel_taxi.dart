@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/widgets/custom_button.dart'; // Assuming CustomButton is imported from your widgets
 import '../../../../app/utils/app_colors.dart';
 import '../../../../widgets/custom_textfield_with_checkbox.dart';
@@ -126,7 +127,7 @@ class _CancelTaxiScreenState extends State<CancelTaxiScreen> {
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 10),
                 child: Image.asset(
-                  'assets/images/sad_emoji.png', // Replace with your image path
+                  AppImage.sadEmoji, // Replace with your image path
                   height: 50.h, // Adjust the height if needed
                   width: 50.h, // Adjust the width if needed
                 ),

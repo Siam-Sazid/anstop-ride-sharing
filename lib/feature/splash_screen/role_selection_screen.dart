@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/feature/splash_screen/driver_auth_selection_screen.dart';
 import 'package:ride_sharing/feature/splash_screen/passenger_auth_selection_screen.dart';
 import '../../app/utils/app_colors.dart';
@@ -25,7 +26,7 @@ class RoleSelectionScreen extends StatelessWidget {
                   children: [
                     Center(
                       child: Image.asset(
-                        'assets/images/cuate.png',
+                        AppImage.cuate,
                         height: 195.h,
                         width: 300.w,
                         fit: BoxFit.contain,
@@ -95,7 +96,7 @@ class RoleSelectionScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Image.asset(
-                            'assets/images/passenger_icon.png',
+                            AppImage.passengerIcon,
                             height: 24.h,
                             width: 24.w,
                             fit: BoxFit.cover,
@@ -129,7 +130,7 @@ class RoleSelectionScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Image.asset(
-                            'assets/images/driver_icon.png',
+                            AppImage.driverIcon,
                             height: 24.h,
                             width: 24.w,
                             fit: BoxFit.contain,

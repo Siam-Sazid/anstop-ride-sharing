@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/feature/passenger/homepage/view/home_page.dart';
 import 'package:ride_sharing/utils/user_info_section.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
@@ -17,22 +18,32 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-    //  backgroundColor: AppColors.white,
+     // backgroundColor: AppColors.white,
       backgroundColor: Color(0xFFEEEEEE),
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+        leading: Container(
+         margin: EdgeInsets.symmetric(horizontal: 8),
+          decoration: BoxDecoration(
+            color: AppColors.white,
+           shape:  BoxShape.circle,
+          ),
+          child: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Color(0xFFEEEEEE),
         elevation: 0,
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children:[
-           SizedBox(height: 10.sp,),
+          Container(
+            height: 50,
+            color: Colors.transparent,
+          ),
           Container(
             color: AppColors.white,
             child: UserInfoSection(
@@ -51,91 +62,65 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
         ),
           Container(
             color: AppColors.white,
-            width: double.infinity,
+           // elevation: 0,
             child: Padding(
-              padding:  EdgeInsets.all(16.sp),
-              child: Text('Your trip',style: TextStyle(fontSize: 15.sp,fontWeight: FontWeight.bold),),
-            ),
-          ),
-          Container(
-            color: AppColors.white,
-            width: double.infinity,
-            child: Padding(
-              padding:  EdgeInsets.symmetric(horizontal:  16.sp),
-              child: Row(children: [
-                Container(
-                  child: Image.asset('assets/images/greetings.png'),
-                ),
-                SizedBox(width: 5.sp,),
-                Text('Block b / Banasree, Dhaka'),
-
-              ],),
-            ),
-          ),
-         // SizedBox(height: 8.sp,),
-
-
-
-             Container(
-              color: AppColors.white, // Outer container with white background
-              width: double.infinity, // Full width
-              child: Align(
-                alignment: Alignment.topLeft,
-                child: Container(
-                  width: 1.0, // This is the width of the vertical line
-                  color: Colors.black, // Black line color
-                  height: 30.h, // Height of the vertical line
-                ),
-              ),
-            ),
-
-
-
-          Container(
-            color: AppColors.white,
-            width: double.infinity,
-            child: Padding(
-              padding:  EdgeInsets.symmetric(horizontal:  16.sp),
-              child: Row(children: [
-                Container(
-                  child: Icon(Icons.location_on,color: AppColors.primaryColor,),
-                ),
-                SizedBox(width: 5.sp,),
-                Text('Green Road Dhaka'),
-
-              ],
-              ),
-            ),
-          ),
-          Container(
-            color: AppColors.white,
-            width: double.infinity,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
+              padding:  EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Distance',style: TextStyle(fontSize: 15.sp),),
-                  Spacer(),
-                  Text('48 km',style: TextStyle(fontSize: 20.sp),)
+                  Text('Your Trip',style: TextStyle(fontSize: 18.sp,fontWeight: FontWeight.bold),),
+                  SizedBox(height: 8.sp,),
+                  Row(children: [
+                    Container(
+                      child: Image.asset(AppImage.greetings),
+                    ),
+                    SizedBox(width: 5.sp,),
+                    Text('Block b / Banasree, Dhaka'),
+
+                  ],),
+                  CustomVerticalLine(height: 20.h, color: Colors.black),
+                  Row(children: [
+                    Container(
+                      child: Icon(Icons.location_on,color: AppColors.green300,),
+                    ),
+                    SizedBox(width: 5.sp,),
+                    Text('Green Road Dhaka'),
+
+                  ],),
+                  SizedBox(height: 8.sp,),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Distance',style: TextStyle(
+                          fontSize: 18.sp,color: Colors.black
+                      ),
+                      ),
+                      SizedBox(width: 5.sp,),
+                      Text('89 km',),
+
+                    ],),
+                  SizedBox(height: 8.h,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Travel time ',style: TextStyle(
+                          fontSize: 18.sp,color: Colors.black
+                      ),
+                      ),
+                      SizedBox(width: 5.sp,),
+                      Text('90 min'),
+
+                    ],),
+
+                  // SizedBox(height: 8.h,),
+
                 ],
               ),
             ),
           ),
-          Container(
-            color: AppColors.white,
-            width: double.infinity,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  Text('Travel Time',style: TextStyle(fontSize: 15.sp),),
-                  Spacer(),
-                  Text('50 min',style: TextStyle(fontSize: 20.sp),)
-                ],
-              ),
-            ),
-          ),
-          SizedBox(height: 10.sp,),
           CustomHorizontalLine(
             thickness: 20.sp,
           ),
@@ -146,7 +131,7 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
-                  Image.asset('assets/images/Wallet.png'),
+                  Image.asset(AppImage.wallet),
                   SizedBox(width: 2.sp,),
                   Text('Pay via wallet',style: TextStyle(fontSize: 20.sp),),
                   Spacer(),
@@ -282,7 +267,7 @@ void _showThankYouDialog(BuildContext context) {
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 20),
                 child: Image.asset(
-                  'assets/images/thankyou.png',
+                  AppImage.thankyou,
                   height: 100,
                   width: 100,
                 ),

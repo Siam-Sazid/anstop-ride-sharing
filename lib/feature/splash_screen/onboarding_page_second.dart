@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
+import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/feature/splash_screen/onboarding_page_third.dart';
 
 import '../../widgets/custom_sliding_container.dart';
@@ -56,9 +57,9 @@ class OnboardingPageSecond extends StatelessWidget {
 
                  Center(
                   child: Image.asset(
-                    'assets/images/cuate.png', // Replace with your asset
-                    height: 195.h,
-                    width: 325.w,
+                    AppImage.cuate,
+                    height: 300.h,
+                    width: 330.w,
                     fit: BoxFit.contain,
                   ),
                 ),
