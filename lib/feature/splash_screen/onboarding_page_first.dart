@@ -6,8 +6,11 @@ import 'package:ride_sharing/feature/splash_screen/onboarding_page_second.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 import 'package:ride_sharing/widgets/custom_sliding_container.dart';
 
+import '../../widgets/custom_fade_slide.dart';
 
-class OnboardingPageFirst extends StatelessWidget {
+
+
+class OnboardingPageFirst extends StatelessWidget{
   const OnboardingPageFirst({super.key});
 
   @override
@@ -16,87 +19,93 @@ class OnboardingPageFirst extends StatelessWidget {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(20),
           child: Column(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  LogoWidget(
-                    height: 40.h,
-                    width: 40.h,
-                    fontSize: 14.sp,
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: const Text(
-                      'Skip',
-                      style: TextStyle(fontSize: 14),
-                    ),
-                  ),
-                ],
-              ),
-               SizedBox(height: 100.h),
 
-                 Center(
-                  child: Image.asset(
-                    AppImage.undrawMyLocation,
-                    height: 360.h,
-                    width: 285.w,
-                    fit: BoxFit.contain,
-                  ),
-                ),
-
-               SizedBox(height: 10.h ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-
-                   Text(
-                    'Welcome to',
-                    style: TextStyle(
-                      fontSize: 26.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
+              /// Top bar
+              CustomFadeSlide(
+                delay: 0,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    LogoWidget(
+                      height: 40.h,
+                      width: 40.h,
+                      fontSize: 14.sp,
                     ),
-                  ),
-                  SizedBox(width: 5.h,),
-                  Text(
-                    'app name',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primaryColor
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-               Text(
-                'Seamless, affordable, and reliable ride-sharing at your fingertips.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  color: Colors.black
+                    _skipButton(),
+                  ],
                 ),
               ),
-               SizedBox(height: 20.h),
-              OnboardingIndicator(
-                totalPages: 3,        // Total number of onboarding pages
-                currentPage: 0,       // Current active page (0-indexed)
-                activeWidth: 21,      // Width of active indicator
-                inactiveWidth: 13,    // Width of inactive indicators
-                height: 5,            // Height of all indicators
-                borderRadius: 100,    // Border radius
-                activeColor: AppColors.violetFoundation,
-                inactiveColor: AppColors.greyShade,
-                spacing: 5,           // Space between indicators
+
+              SizedBox(height: 100.h),
+
+              /// Image
+              CustomFadeSlide(
+                delay: 150,
+                child: Image.asset(
+                  AppImage.undrawMyLocation,
+                  height: 360.h,
+                  width: 285.w,
+                ),
               ),
+
+              SizedBox(height: 10.h),
+
+              /// Title
+              CustomFadeSlide(
+                delay: 300,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Welcome to', style: TextStyle(fontSize: 26.sp, fontWeight: FontWeight.bold)),
+                    SizedBox(width: 5),
+                    Text('app name',
+                        style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primaryColor)),
+                  ],
+                ),
+              ),
+
+              SizedBox(height: 10),
+
+              /// Description
+              CustomFadeSlide(
+                delay: 450,
+                child: Text(
+                  'Seamless, affordable, and reliable ride-sharing at your fingertips.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 14.sp),
+                ),
+              ),
+
               SizedBox(height: 20.h),
+
+              /// Indicator
+              CustomFadeSlide(
+                delay: 600,
+                child: OnboardingIndicator(
+                  totalPages: 3,
+                  currentPage: 0,
+                  activeWidth: 21,
+                  inactiveWidth: 13,
+                  height: 5,
+                  borderRadius: 100,
+                  activeColor: AppColors.violetFoundation,
+                  inactiveColor: AppColors.greyShade,
+                  spacing: 5,
+                ),
+              ),
+
+              SizedBox(height: 20.h),
+
+              /// Button
+              CustomFadeSlide(
+                delay: 750,
+                child:
               ElevatedButton(
                 onPressed: () {
                   Navigator.push(
@@ -114,12 +123,22 @@ class OnboardingPageFirst extends StatelessWidget {
                 ),
                 child: const Text('Get started !!'),
               ),
-
-
+              ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _skipButton() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: const Text('Skip'),
     );
   }
 }
