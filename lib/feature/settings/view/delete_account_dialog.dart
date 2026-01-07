@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ride_sharing/custom_assets/app_string.dart';
 
 import '../../../app/utils/app_colors.dart';
 
@@ -27,7 +28,7 @@ class DeleteAccountDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             const Text(
-              'Delete Account',
+              AppString.deleteAccountTitle,
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.w600,
@@ -36,7 +37,7 @@ class DeleteAccountDialog extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             const Text(
-              'Are you sure you want to sure delete your account?',
+              AppString.deleteAccountMessage,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 15,
@@ -60,7 +61,7 @@ class DeleteAccountDialog extends StatelessWidget {
                       ),
                     ),
                     child: const Text(
-                      'Cancel',
+                      AppString.cancelButton,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -82,7 +83,7 @@ class DeleteAccountDialog extends StatelessWidget {
                       ),
                     ),
                     child: const Text(
-                      'Yes, Delete',
+                      AppString.yesDeleteButton,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,

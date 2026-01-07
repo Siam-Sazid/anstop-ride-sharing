@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
+import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/feature/auth/email_validation_screen.dart';
 import 'package:ride_sharing/feature/passenger/set_location/view/set_location_option_page.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
@@ -35,14 +36,14 @@ class SetOnMapScreen extends StatelessWidget {
                   controller: locationTEController,
                   prefixIcon: Icon(Icons.location_on, color: AppColors.primaryColor),
                   suffixIcon: Icon(CupertinoIcons.search_circle),
-                  hintText: 'Where are you headed?',
+                  hintText: AppString.whereAreYouHeadedHint,
                   borderColor: AppColors.primaryColor,
                   borderRadio: 20,
                 ),
                 SizedBox(height: 8),// Optional, adjust if needed
                 SetLocationOptionCard(
                   icon: Icons.pin_drop_rounded,
-                  title: 'Set on Map',
+                  title: AppString.setOnMapOption,
                   onTap: () {
                     Get.toNamed(AppRoutes.setLocationScreen);
                     print('Home tapped');
@@ -64,8 +65,8 @@ class SetOnMapScreen extends StatelessWidget {
                         children: [
                           CustomLocationButton(
                             imageUrl: AppImage.home,
-                            mainText: 'Home',
-                            subText: 'Set address',
+                            mainText: AppString.homeOption,
+                            subText: AppString.setAddressSubtitle,
                             onTap: () {
                               print('Location button tapped');
                               Get.to(SetLocationOptionPage());
@@ -74,8 +75,8 @@ class SetOnMapScreen extends StatelessWidget {
                           VerticalDivider(color: AppColors.white, width: 2),
                           CustomLocationButton(
                             imageUrl: AppImage.briefcase,
-                            mainText: 'Work',
-                            subText: 'Set address',
+                            mainText: AppString.workOption,
+                            subText: AppString.setAddressSubtitle,
                             onTap: () {
                               print('Location button tapped');
                             },
@@ -92,21 +93,21 @@ class SetOnMapScreen extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: (){},
-                      child: Text('Recent Places',style: TextStyle(
+                      child: Text(AppString.recentPlacesLabel,style: TextStyle(
                         color: AppColors.grey400,fontSize: 16.sp
                       ),),
                     ),
 
                     GestureDetector(
                       onTap: (){},
-                      child: Text('Clear all',style: TextStyle(
+                      child: Text(AppString.clearAllButton,style: TextStyle(
                           color: AppColors.green300),),
                     )
                   ],
                 ),
                 CustomListTile(
                   icon: Icon(CupertinoIcons.clock,color: AppColors.appGreyColor,),
-                  title: 'Coffee',
+                  title: AppString.coffeeCategory,
                   subTitle: '35/3,Shantinagar Bazar Road',
 
                   trailing: Text(
@@ -133,7 +134,7 @@ class SetOnMapScreen extends StatelessWidget {
                 SizedBox(height: 8.h,),
                 CustomListTile(
                   icon: Icon(CupertinoIcons.clock,color: AppColors.appGreyColor,),
-                  title: 'Restaurant',
+                  title: AppString.restaurantCategory,
                   subTitle: '35/3,Banani Road',  // Subtitle of the ListTile
 
                   trailing: Text(

@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/material.dart';
+import 'package:ride_sharing/custom_assets/app_string.dart';
 
 class PickUpLocationController extends GetxController {
   final TextEditingController locationTEController = TextEditingController();
@@ -66,7 +67,7 @@ class PickUpLocationController extends GetxController {
         Marker(
           markerId: MarkerId('current_location'),
           position: LatLng(position.latitude, position.longitude),
-          infoWindow: InfoWindow(title: 'Your Location'),
+          infoWindow: InfoWindow(title: AppString.yourLocationMarker),
           icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
         ),
       );

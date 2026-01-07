@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/feature/auth/passenger/terms_of_services.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 
@@ -38,7 +39,7 @@ class _CarInformationScreenState extends State<CarInformationScreen> {
 
               //  SizedBox(height: 20.h),
                 Text(
-                  'Car information',
+                  AppString.carInformationTitle,
                   style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 29.h),
@@ -49,7 +50,7 @@ class _CarInformationScreenState extends State<CarInformationScreen> {
                   child: Padding(
                     padding: EdgeInsets.only(left: 4.sp),
                     child: Text(
-                      'Car name',
+                      AppString.carNameLabel,
                       textAlign: TextAlign.start,
                       style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.normal),
                     ),
@@ -66,7 +67,7 @@ class _CarInformationScreenState extends State<CarInformationScreen> {
                   child: Padding(
                     padding: EdgeInsets.only(left: 4.sp),
                     child: Text(
-                      'Car Model',
+                      AppString.carModelLabel,
                       textAlign: TextAlign.start,
                       style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.normal),
                     ),
@@ -83,7 +84,7 @@ class _CarInformationScreenState extends State<CarInformationScreen> {
                   child: Padding(
                     padding: EdgeInsets.only(left: 4.sp),
                     child: Text(
-                      'Number plate',
+                      AppString.numberPlateLabel,
                       textAlign: TextAlign.start,
                       style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.normal),
                     ),
@@ -98,7 +99,7 @@ class _CarInformationScreenState extends State<CarInformationScreen> {
                 Padding(
                   padding: EdgeInsets.only(left: 4.sp),
                   child: Text(
-                    'Upload your National ID picture (Front)',
+                    AppString.uploadCarPictureFront,
                     textAlign: TextAlign.start,
                     style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.normal),
                   ),
@@ -116,7 +117,7 @@ class _CarInformationScreenState extends State<CarInformationScreen> {
                 Padding(
                   padding: EdgeInsets.only(left: 4.sp),
                   child: Text(
-                    'Upload your National ID picture (Back)',
+                    AppString.uploadCarPictureBack,
                     textAlign: TextAlign.start,
                     style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.normal),
                   ),
@@ -139,7 +140,7 @@ class _CarInformationScreenState extends State<CarInformationScreen> {
                   child: CustomButton(
 
                       onPressed: () {},
-                      label: 'Submit'),
+                      label: AppString.submitButton),
                 ),
               ],
             ),

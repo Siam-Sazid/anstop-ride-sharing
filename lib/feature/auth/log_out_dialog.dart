@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
+import 'package:ride_sharing/custom_assets/app_string.dart';
 
 class LogoutDialog extends StatelessWidget {
   const LogoutDialog({Key? key}) : super(key: key);
@@ -22,7 +23,7 @@ class LogoutDialog extends StatelessWidget {
           children: [
             // Title
             Text(
-              'Log Out',
+              AppString.logOutTitle,
               style: TextStyle(
                 fontSize: 20.sp,
                 fontWeight: FontWeight.w600,
@@ -33,7 +34,7 @@ class LogoutDialog extends StatelessWidget {
 
             // Message
             Text(
-              'Are you sure you want to sure Logout?',
+              AppString.logOutMessage,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14.sp,
@@ -62,7 +63,7 @@ class LogoutDialog extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      'Cancel',
+                      AppString.cancelButton,
                       style: TextStyle(
                         fontSize: 16.sp,
                         color: Colors.black,
@@ -88,7 +89,7 @@ class LogoutDialog extends StatelessWidget {
                       elevation: 0,
                     ),
                     child: Text(
-                      'Logout',
+                      AppString.logoutButton,
                       style: TextStyle(
                         fontSize: 16.sp,
                         color: Colors.white,

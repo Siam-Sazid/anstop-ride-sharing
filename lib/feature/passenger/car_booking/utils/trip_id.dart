@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 
 class TripIdWidget extends StatelessWidget {
@@ -24,9 +25,9 @@ class TripIdWidget extends StatelessWidget {
             Column(
              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Trip Id',style: TextStyle(fontSize: 15.sp,fontWeight: FontWeight.bold),),
+                Text(AppString.tripIdLabel,style: TextStyle(fontSize: 15.sp,fontWeight: FontWeight.bold),),
                 SizedBox(height: 2.h,),
-                Text('#GD25G',style: TextStyle(fontSize: 20.sp,fontWeight: FontWeight.bold),),
+                Text(AppString.tripIdExample,style: TextStyle(fontSize: 20.sp,fontWeight: FontWeight.bold),),
 
 
               ],

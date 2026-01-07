@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/feature/auth/passenger/terms_of_services.dart';
 import 'package:ride_sharing/feature/settings/utils/settings_menu_item.dart';
 import 'package:ride_sharing/feature/settings/view/change_password_screen.dart';
@@ -30,7 +31,7 @@ class SettingsScreen extends StatelessWidget {
           onPressed: () {},
         ),
         title: const Text(
-          'Settings',
+          AppString.settingsTitle,
           style: TextStyle(
             color: SettingsColors.primaryText,
             fontSize: 18,
@@ -45,7 +46,7 @@ class SettingsScreen extends StatelessWidget {
               radius: 18,
               backgroundColor: SettingsColors.primaryGreen,
               child: const Text(
-                'Logo',
+                AppString.logoLabel,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 8,
@@ -73,7 +74,7 @@ class SettingsScreen extends StatelessWidget {
                 children: [
                   SettingsMenuItem(
                     icon: Icons.lock_outline,
-                    title: 'Change Password',
+                    title: AppString.changePasswordOption,
                     onTap: () {
                       Navigator.push(
                         context,
@@ -85,24 +86,24 @@ class SettingsScreen extends StatelessWidget {
                   ),
                   SettingsMenuItem(
                     icon: Icons.info_outline,
-                    title: 'About Us',
+                    title: AppString.aboutUsOption,
                     onTap: () {},
                   ),
                   SettingsMenuItem(
                     icon: Icons.shield_outlined,
-                    title: 'Privacy Policy',
+                    title: AppString.privacyPolicyOption,
                     onTap: () {},
                   ),
                   SettingsMenuItem(
                     icon: Icons.description_outlined,
-                    title: 'Terms of service',
+                    title: AppString.termsOfServiceOption,
                     onTap: () {
                       Get.to(() => TermsOfServices());
                     },
                   ),
                   SettingsMenuItem(
                     icon: Icons.language,
-                    title: 'Change language',
+                    title: AppString.changeLanguageOption,
                     onTap: () {
                       Navigator.push(
                         context,
@@ -145,7 +146,7 @@ class SettingsScreen extends StatelessWidget {
                     Icon(Icons.delete_outline, size: 20,color: AppColors.white,),
                     SizedBox(width: 8),
                     Text(
-                      'Delete Account',
+                      AppString.deleteAccountButton,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,

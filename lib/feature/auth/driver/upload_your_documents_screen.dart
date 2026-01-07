@@ -1,3 +1,4 @@
+import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/feature/auth/driver/car_information_screen.dart';
 import 'package:ride_sharing/feature/auth/driver/driving_license_screen.dart';
 import 'package:ride_sharing/feature/auth/driver/national_id_screen.dart';
@@ -31,7 +32,7 @@ class _UploadYourDocumentsState extends State<UploadYourDocuments> {
       ),
       bottomNavigationBar: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.sp, vertical: 16.sp),
-        child: CustomButton(onPressed: () {}, label: 'Submit'),
+        child: CustomButton(onPressed: () {}, label: AppString.submitButton),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -41,7 +42,7 @@ class _UploadYourDocumentsState extends State<UploadYourDocuments> {
 
               SizedBox(height: 15.h),
               Text(
-                'Upload your documents',
+                AppString.uploadDocumentsTitle,
                 style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w400),
               ),
               SizedBox(height: 8.h),
@@ -51,13 +52,13 @@ class _UploadYourDocumentsState extends State<UploadYourDocuments> {
                   crossAxisAlignment: CrossAxisAlignment.center, // Align the first part of the text to the left
                   children: [
                     Text(
-                      'please upload the required documents to complete',
+                      AppString.uploadDocumentsMessage1,
                       style: TextStyle(fontSize: 12.sp),
                     ),
                     SizedBox(height: 4.h), // Optional: Adjust the spacing between the two lines
                     Center( // Center the second part of the text
                       child: Text(
-                        'your application process',
+                        AppString.uploadDocumentsMessage2,
                         style: TextStyle(fontSize: 12.sp),
                       ),
                     ),
@@ -68,7 +69,7 @@ class _UploadYourDocumentsState extends State<UploadYourDocuments> {
               SizedBox(height: 29.h),
               ///
               CustomBoxItems(
-                documentTitle: 'National ID',
+                documentTitle: AppString.nationalIdLabel,
                 isUploaded: false,
                 onTap: () {
                   Get.to(() => NationalIdScreen());
@@ -77,7 +78,7 @@ class _UploadYourDocumentsState extends State<UploadYourDocuments> {
               ),
 
               CustomBoxItems(
-                documentTitle: 'Driving Licence',
+                documentTitle: AppString.drivingLicenceLabel,
                 isUploaded: false,
                 onTap: () {
                   Get.to(() => DrivingLicenseScreen());
@@ -85,7 +86,7 @@ class _UploadYourDocumentsState extends State<UploadYourDocuments> {
                 },
               ),
               CustomBoxItems(
-                documentTitle: 'Car information',
+                documentTitle: AppString.carInformationLabel,
                 isUploaded: false,
                 onTap: () {
                   Get.to(() => CarInformationScreen());
@@ -93,7 +94,7 @@ class _UploadYourDocumentsState extends State<UploadYourDocuments> {
                 },
               ),
               CustomBoxItems(
-                documentTitle: 'Your Picture',
+                documentTitle: AppString.yourPictureLabel,
                 isUploaded: false,
                 onTap: () {
                   Get.to(() => UploadProfilePictureScreen());

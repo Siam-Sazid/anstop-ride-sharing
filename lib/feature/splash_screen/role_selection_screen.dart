@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
+import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/feature/splash_screen/driver_auth_selection_screen.dart';
 import 'package:ride_sharing/feature/splash_screen/passenger_auth_selection_screen.dart';
 import 'package:ride_sharing/widgets/custom_fade_slide.dart';
@@ -38,7 +39,7 @@ class RoleSelectionScreen extends StatelessWidget {
                     CustomFadeSlide(
                       delay: 300,
                       child: Text(
-                        'WELCOME To Our App',
+                        AppString.roleWelcomeTitle,
                         style: TextStyle(
                           fontSize: 24.sp,
                           fontWeight: FontWeight.bold,
@@ -50,7 +51,7 @@ class RoleSelectionScreen extends StatelessWidget {
                     CustomFadeSlide(
                       delay: 450,
                       child: const Text(
-                        'Seamless, affordable, and reliable ride-sharing at your fingertips.',
+                        AppString.roleTagline,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 14,
@@ -113,16 +114,13 @@ class RoleSelectionScreen extends StatelessWidget {
                             ),
                             SizedBox(width: 10.w),
                             Text(
-                              'As a Passenger',
+                              AppString.asPassengerButton,
                               style: TextStyle(fontSize: 16.sp),
                             ),
                           ],
                         ),
                       ),
-
                       SizedBox(height: 15.h),
-
-                      // Driver Button
                       OutlinedButton(
                         onPressed: () {
                           Get.to(() => const DriverAuthSelectionScreen());
@@ -147,7 +145,7 @@ class RoleSelectionScreen extends StatelessWidget {
                             ),
                             SizedBox(width: 10.w),
                             Text(
-                              'Driver',
+                              AppString.driverButton,
                               style: TextStyle(fontSize: 16.sp),
                             ),
                           ],

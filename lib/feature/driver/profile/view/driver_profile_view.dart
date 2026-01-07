@@ -1,3 +1,4 @@
+import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/feature/auth/driver/upload_your_documents_screen.dart';
 import 'package:ride_sharing/feature/auth/passenger/terms_of_services.dart';
 import 'package:ride_sharing/utils/driver/driver_custom_drawer.dart';
@@ -85,7 +86,7 @@ class _DriverProfileViewState extends State<DriverProfileView> {
     return Scaffold(
       backgroundColor: MessagingColors.profileBackgroundColor,
       key: _scaffoldKey,
-      appBar: CustomAppBarTitle(scaffoldKey: _scaffoldKey,title: "Profile",),
+      appBar: CustomAppBarTitle(scaffoldKey: _scaffoldKey,title: AppString.profileTitle,),
       drawer: DriverCustomDrawer(),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -138,7 +139,7 @@ class _DriverProfileViewState extends State<DriverProfileView> {
                           color: Color(0XFF8A8A8A),
                           size: 24.sp,
                         ),
-                        hintText: 'Name',
+                        hintText: AppString.nameLabel,
                         hintextSize: 14.sp,
                         hintextColor: Color(0XFF8A8A8A),
                       ),
@@ -150,7 +151,7 @@ class _DriverProfileViewState extends State<DriverProfileView> {
                           color: Color(0XFF8A8A8A),
                           size: 24.sp,
                         ),
-                        hintText: 'E-mail',
+                        hintText: AppString.emailLabel,
                         hintextSize: 14.sp,
                         hintextColor: Color(0XFF8A8A8A),
                       ),
@@ -178,7 +179,7 @@ class _DriverProfileViewState extends State<DriverProfileView> {
                               color: Color(0XFF8A8A8A),
                               size: 24.sp,
                             ),
-                            hintText: 'Select Birthday',
+                            hintText: AppString.selectBirthdayHint,
                             hintextSize: 14.sp,
                             hintextColor: Color(0XFF8A8A8A),
                           ),
@@ -204,7 +205,7 @@ class _DriverProfileViewState extends State<DriverProfileView> {
                                 color: Color(0XFF8A8A8A),
                                 size: 24,
                               ),
-                              hintText: 'Gender',
+                              hintText: AppString.genderHintText,
                               hintStyle: TextStyle(
                                 fontSize: 14,
                                 color: Color(0XFF8A8A8A),
@@ -239,7 +240,7 @@ class _DriverProfileViewState extends State<DriverProfileView> {
                           color: Color(0XFF8A8A8A),
                           size: 24.sp,
                         ),
-                        hintText: 'Address',
+                        hintText: AppString.addressHintText,
                         hintextSize: 14.sp,
                         hintextColor: Color(0XFF8A8A8A),
                       ),
@@ -253,7 +254,7 @@ class _DriverProfileViewState extends State<DriverProfileView> {
                           color: Color(0XFF8A8A8A),
                           size: 24.sp,
                         ),
-                        hintText: 'Enter Password',
+                        hintText: AppString.enterPasswordHintText,
                         hintextSize: 14.sp,
                         hintextColor: Color(0XFF8A8A8A),
                       ),
@@ -267,7 +268,7 @@ class _DriverProfileViewState extends State<DriverProfileView> {
                           color: Color(0XFF8A8A8A),
                           size: 24.sp,
                         ),
-                        hintText: 'Enter Password',
+                        hintText: AppString.enterPasswordHintText,
                         hintextSize: 14.sp,
                         hintextColor: Color(0XFF8A8A8A),
                       ),

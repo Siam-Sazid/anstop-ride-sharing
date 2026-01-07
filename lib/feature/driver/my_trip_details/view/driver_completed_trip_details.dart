@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
+import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/feature/driver/invoice/view/invoice_view.dart';
 import 'package:ride_sharing/utils/user_info_section.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
@@ -21,7 +22,7 @@ class DriverCompletedTripDetails extends StatelessWidget {
             Navigator.of(context).pop();
           },
         ),
-        title: Text("Trip Details"),
+        title: Text(AppString.tripDetailsTitle),
         centerTitle: true,
       ),
 
@@ -40,7 +41,7 @@ class DriverCompletedTripDetails extends StatelessWidget {
                   "https://media.wired.com/photos/59269cd37034dc5f91bec0f1/191:100/w_1280,c_limit/GoogleMapTA.jpg",
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
-                    return Center(child: Text("Map image not available"));
+                    return Center(child: Text(AppString.mapImageNotAvailable));
                   },
                 ),
               ),
@@ -58,16 +59,16 @@ class DriverCompletedTripDetails extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Text('Siam',style: TextStyle(fontSize: 18.sp,fontWeight: FontWeight.bold),),
+                          Text(AppString.passengerNameExample,style: TextStyle(fontSize: 18.sp,fontWeight: FontWeight.bold),),
                           Spacer(),
-                          Text('26th December',style: TextStyle(fontSize: 18.sp,fontWeight: FontWeight.bold),),
+                          Text(AppString.dateExample,style: TextStyle(fontSize: 18.sp,fontWeight: FontWeight.bold),),
                         ],
                       ),
                       Row(
                         children: [
-                          Text('Completed',style: TextStyle(color: Colors.green),),
+                          Text(AppString.completedStatus,style: TextStyle(color: Colors.green),),
                           Spacer(),
-                          Text('9:00 pm') ,
+                          Text(AppString.timeExample) ,
                         ],
                       ),
                     ],
@@ -84,14 +85,14 @@ class DriverCompletedTripDetails extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Your Trip',style: TextStyle(fontSize: 18.sp,fontWeight: FontWeight.bold),),
+                    Text(AppString.yourTripLabel,style: TextStyle(fontSize: 18.sp,fontWeight: FontWeight.bold),),
                     SizedBox(height: 8.sp,),
                     Row(children: [
                       Container(
                         child: Image.asset(AppImage.greetings),
                       ),
                       SizedBox(width: 5.sp,),
-                      Text('Block b / Banasree, Dhaka'),
+                      Text(AppString.pickupLocationExample),
 
                     ],),
                     CustomVerticalLine(height: 20.h, color: Colors.black),
@@ -100,7 +101,7 @@ class DriverCompletedTripDetails extends StatelessWidget {
                         child: Icon(Icons.location_on,color: AppColors.primaryColor,),
                       ),
                       SizedBox(width: 5.sp,),
-                      Text('Green Road Dhaka'),
+                      Text(AppString.dropoffLocationExample),
 
                     ],),
                     SizedBox(height: 8.sp,),
@@ -109,12 +110,12 @@ class DriverCompletedTripDetails extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Distance',style: TextStyle(
+                          AppString.distanceLabel,style: TextStyle(
                             fontSize: 18.sp,color: Colors.black
                         ),
                         ),
                         SizedBox(width: 5.sp,),
-                        Text('89 km'),
+                        Text(AppString.distanceExample),
 
                       ],),
                     SizedBox(height: 8.h,),
@@ -138,9 +139,9 @@ class DriverCompletedTripDetails extends StatelessWidget {
                   padding:  EdgeInsets.symmetric(horizontal:  16.sp),
                   child: Row(
                     children: [
-                      Text('Ride value'),
+                      Text(AppString.rideValueLabel),
                       Spacer(),
-                      Text('\$ 25.69') ,
+                      Text(AppString.fareExample2) ,
                     ],
                   ),
                 ),

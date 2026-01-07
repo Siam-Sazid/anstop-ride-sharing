@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:ride_sharing/custom_assets/app_string.dart';
 import '../../../app/utils/app_colors.dart';
 import '../../../widgets/custom_text_field.dart';
 
@@ -36,7 +37,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
-          'Change Password',
+          AppString.changePasswordOption,
           style: TextStyle(
             color: SettingsColors.primaryText,
             fontSize: 18,
@@ -53,7 +54,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Current Password'),
+                  Text(AppString.currentPasswordLabel),
                   CustomTextField(
                     isObscureText: true,
                     isPassword: true,
@@ -63,12 +64,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       color: Color(0XFF8A8A8A),
                       size: 24.sp,
                     ),
-                    hintText: 'Enter old Password',
+                    hintText: AppString.enterOldPasswordHint,
                     hintextSize: 14.sp,
                     hintextColor: Color(0XFF8A8A8A),
                   ),
                   SizedBox(height: 12.h),
-                  Text('New Password'),
+                  Text(AppString.newPasswordLabel),
                   CustomTextField(
                     isObscureText: true,
                     isPassword: true,
@@ -78,12 +79,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       color: Color(0XFF8A8A8A),
                       size: 24.sp,
                     ),
-                    hintText: 'Enter new Password',
+                    hintText: AppString.enterNewPasswordHint,
                     hintextSize: 14.sp,
                     hintextColor: Color(0XFF8A8A8A),
                   ),
                   SizedBox(height: 12.h),
-                  Text('Password'),
+                  Text(AppString.passwordLabel),
                   CustomTextField(
                     isObscureText: true,
                     isPassword: true,
@@ -93,7 +94,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       color: Color(0XFF8A8A8A),
                       size: 24.sp,
                     ),
-                    hintText: 'Re-enter Password',
+                    hintText: AppString.reenterPasswordHint,
                     hintextSize: 14.sp,
                     hintextColor: Color(0XFF8A8A8A),
                   ),
@@ -112,7 +113,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
                       child: const Text(
-                        'Forgot Password?',
+                        AppString.forgetPasswordTextButton,
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w400,
@@ -144,7 +145,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   ),
                 ),
                 child: const Text(
-                  'Update password',
+                  AppString.resetPasswordConfirmButton,
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -179,7 +180,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               ),
               const SizedBox(height: 16),
               const Text(
-                'Password Updated',
+                AppString.resetPasswordAppBarText,
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
@@ -188,7 +189,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               ),
               const SizedBox(height: 8),
               const Text(
-                'Your password has been updated successfully.',
+                AppString.reportSubmittedMessage,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14,
@@ -213,7 +214,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     ),
                   ),
                   child: const Text(
-                    'OK',
+                    AppString.okButton,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,

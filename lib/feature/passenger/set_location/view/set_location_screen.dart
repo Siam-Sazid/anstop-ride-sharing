@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/feature/passenger/set_location/controller/set_location_controller.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 import 'package:ride_sharing/widgets/custom_app_bar_title.dart';
@@ -59,7 +60,7 @@ class SetLocationScreen extends StatelessWidget {
                               controller: controller.locationTEController,
                               prefixIcon: Icon(Icons.location_on, color: AppColors.primaryColor),
                               suffixIcon: Icon(CupertinoIcons.search_circle),
-                              hintText: 'Where are you headed?',
+                              hintText: AppString.whereAreYouHeadedHint,
                               borderColor: AppColors.primaryColor,
                               borderRadio: 20,
                             ),
@@ -72,7 +73,7 @@ class SetLocationScreen extends StatelessWidget {
                                   child: CustomButton(
 
                                       onPressed: (){},
-                                     title: Text('Set Location',style: TextStyle(color: AppColors.white),),
+                                     title: Text(AppString.setLocationButton,style: TextStyle(color: AppColors.white),),
 
 
 

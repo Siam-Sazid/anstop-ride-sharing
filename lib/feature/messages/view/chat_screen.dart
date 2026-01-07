@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/feature/messages/message_utils/chat_bubble.dart';
 import 'package:ride_sharing/feature/messages/models/message_models.dart';
 import 'package:ride_sharing/feature/messages/view/block_dialog.dart';
@@ -83,7 +84,7 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
             const SizedBox(height: 20),
             _buildMenuOption(
-              'View media',
+              AppString.viewMediaOption,
                   () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -95,7 +96,7 @@ class _ChatScreenState extends State<ChatScreen> {
               },
             ),
             _buildMenuOption(
-              'Report',
+              AppString.reportOption,
                   () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -107,7 +108,7 @@ class _ChatScreenState extends State<ChatScreen> {
               },
             ),
             _buildMenuOption(
-              'Block',
+              AppString.blockOption,
                   () {
                 Navigator.pop(context);
                 _showBlockDialog();
@@ -264,7 +265,7 @@ class _ChatScreenState extends State<ChatScreen> {
               child: TextField(
                 controller: _messageController,
                 decoration: const InputDecoration(
-                  hintText: 'Type a message...',
+                  hintText: AppString.typeMessageHint,
                   hintStyle: TextStyle(
                     color: MessagingColors.secondaryText,
                     fontSize: 14,

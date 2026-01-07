@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
 import 'package:get/get.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
+import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/feature/auth/driver/registration.dart';
 import 'package:ride_sharing/feature/auth/log_in_screen.dart';
 import 'package:ride_sharing/feature/auth/passenger/registration.dart';
@@ -31,7 +32,7 @@ class DriverAuthSelectionScreen extends StatelessWidget {
 
               const SizedBox(height: 30),
               const Text(
-                'Welcome TO Our App',
+                AppString.driverWelcomeTitle,
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -40,7 +41,7 @@ class DriverAuthSelectionScreen extends StatelessWidget {
               ),
               const SizedBox(height: 10),
                Text(
-                'Seamless, affordable, and reliable ride-sharing at your fingertips.',
+                AppString.driverAuthTagline,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 18.sp,
@@ -62,7 +63,7 @@ class DriverAuthSelectionScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
-                  child: Text("Log in")
+                  child: Text(AppString.logInButton)
               ),
               const SizedBox(height: 15),
               OutlinedButton(
@@ -78,7 +79,7 @@ class DriverAuthSelectionScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                child: Text("Register") ,
+                child: Text(AppString.registerButton) ,
               ),
             ],
           ),

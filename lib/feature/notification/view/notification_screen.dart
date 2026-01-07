@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/feature/notification/model/notification_model.dart';
 import 'package:ride_sharing/feature/notification/utils/notification_date_header.dart';
 import 'package:ride_sharing/feature/notification/utils/notification_item.dart';
@@ -26,16 +27,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
         dateLabel: 'Today',
         notifications: [
           NotificationModel(
-            title: 'Payment Successfully!',
-            description:
-                'Lorem ipsum dolor sit amet consectetur. Ultricies tincidunt alefend vitae',
+            title: AppString.notificationPaymentSuccess,
+            description: AppString.notificationDescription,
             type: NotificationType.payment,
             dateTime: DateTime.now(),
           ),
           NotificationModel(
-            title: '30% Special Discount!',
-            description:
-                'Lorem ipsum dolor sit amet consectetur. Ultricies tincidunt alefend vitae',
+            title: AppString.notificationSpecialDiscount30,
+            description: AppString.notificationDescription,
             type: NotificationType.discount,
             dateTime: DateTime.now(),
           ),
@@ -106,7 +105,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           onPressed: () {},
         ),
         title: const Text(
-          'Notification',
+          AppString.notificationTitle,
           style: TextStyle(
             color: NotificationColors.primaryText,
             fontSize: 18,
@@ -220,7 +219,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     ),
                   ),
                   child: const Text(
-                    'Close',
+                    AppString.closeButton,
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,

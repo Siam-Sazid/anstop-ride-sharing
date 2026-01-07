@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ride_sharing/custom_assets/app_string.dart';
 
 import '../../../app/utils/app_colors.dart';
 
@@ -30,7 +31,7 @@ class BlockDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             const Text(
-              'Block',
+              AppString.blockTitle,
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.w700,
@@ -42,7 +43,7 @@ class BlockDialog extends StatelessWidget {
 
 
             Text(
-              'Are you sure want to block $userName right now ?',
+              '${AppString.blockConfirmMessage} $userName ${AppString.blockConfirmMessageSuffix}',
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 15,
@@ -70,7 +71,7 @@ class BlockDialog extends StatelessWidget {
                       ),
                     ),
                     child: const Text(
-                      'No',
+                      AppString.noButton,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -92,7 +93,7 @@ class BlockDialog extends StatelessWidget {
                       ),
                     ),
                     child: const Text(
-                      'Yes',
+                      AppString.yesButton,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,

@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
 import 'package:get/get.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
+import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/feature/auth/log_in_screen.dart';
 import 'package:ride_sharing/feature/auth/passenger/registration.dart';
 class PassengerAuthSelectionScreen extends StatelessWidget {
@@ -30,7 +31,7 @@ class PassengerAuthSelectionScreen extends StatelessWidget {
 
               const SizedBox(height: 30),
               const Text(
-                'Welcome TO Our App',
+                AppString.passengerWelcomeTitle,
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -39,7 +40,7 @@ class PassengerAuthSelectionScreen extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               const Text(
-                'Seamless, affordable, and reliable ride-sharing at your fingertips.',
+                AppString.passengerAuthTagline,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14,
@@ -61,7 +62,7 @@ class PassengerAuthSelectionScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                child: Text("Log in")
+                child: Text(AppString.logInButton)
               ),
               const SizedBox(height: 15),
               OutlinedButton(
@@ -77,7 +78,7 @@ class PassengerAuthSelectionScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                child: Text("Register") ,
+                child: Text(AppString.registerButton) ,
               ),
             ],
           ),

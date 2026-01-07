@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/feature/passenger/wallet/view/passenger_wallet_dialog_view.dart';
 import 'package:ride_sharing/utils/balanced_card.dart';
 import 'package:ride_sharing/utils/transaction_items.dart';
@@ -50,7 +51,7 @@ class _PassengerWalletPageState extends State<PassengerWalletPage> {
       backgroundColor: AppColors.backgroundColor,
       appBar:  CustomAppBarTitle(
         scaffoldKey: _scaffoldKey,
-        title: 'Wallet',
+        title: AppString.walletTitle,
         titleColor: AppColors.blackShade300,
       ),
       body: SingleChildScrollView(
@@ -86,25 +87,25 @@ class _PassengerWalletPageState extends State<PassengerWalletPage> {
 
                   // Transaction List
                   const TransactionItem(
-                    title: 'Welton',
+                    title: AppString.transactionNameExample1,
                     time: 'Today at 09:20 am',
                     amount: '570.00',
                     isPositive: false,
                   ),
                   const TransactionItem(
-                    title: 'Add in Wallet',
+                    title: AppString.transactionTypeExample,
                     time: 'Today at 09:20 am',
                     amount: '570.00',
                     isPositive: true,
                   ),
                   const TransactionItem(
-                    title: 'Welton',
+                    title: AppString.transactionNameExample1,
                     time: 'Today at 09:20 am',
                     amount: '570.00',
                     isPositive: false,
                   ),
                   const TransactionItem(
-                    title: 'Add in Wallet',
+                    title: AppString.transactionTypeExample,
                     time: 'Today at 09:20 am',
                     amount: '570.00',
                     isPositive: true,

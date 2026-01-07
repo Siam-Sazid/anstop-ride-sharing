@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
+import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 
 class SupportPage extends StatefulWidget {
@@ -12,13 +13,13 @@ class SupportPage extends StatefulWidget {
 class _SupportPageState extends State<SupportPage> {
   // Updated: renamed to avoid collisions
   final List<Map<String, String>> _supportComplaints = [
-    {"key": "v1", "label": "Vehicle not clean"},
-    {"key": "v2", "label": "Vehicle too small"},
-    {"key": "d1", "label": "Driver was rude"},
-    {"key": "d2", "label": "Driver requested extra money"},
-    {"key": "d3", "label": "Driver took a long route"},
-    {"key": "v3", "label": "Vehicle AC not working"},
-    {"key": "o1", "label": "Other issue"},
+    {"key": "v1", "label": AppString.supportVehicleNotClean},
+    {"key": "v2", "label": AppString.supportVehicleTooSmall},
+    {"key": "d1", "label": AppString.supportDriverRude},
+    {"key": "d2", "label": AppString.supportDriverExtraMoney},
+    {"key": "d3", "label": AppString.supportDriverLongRoute},
+    {"key": "v3", "label": AppString.supportVehicleACNotWorking},
+    {"key": "o1", "label": AppString.supportOtherIssue},
   ];
 
   // Updated: unique name to prevent library-wide conflicts
@@ -47,7 +48,7 @@ class _SupportPageState extends State<SupportPage> {
                       const Icon(Icons.menu, size: 28, color: Colors.black),
 
                       const Text(
-                        "Support",
+                        AppString.supportTitle,
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
@@ -68,8 +69,8 @@ class _SupportPageState extends State<SupportPage> {
                 const SizedBox(height: 12),
                  LogoWidget(),
                 const SizedBox(height: 12),
-                Center(child: Text('If you have any kind of problem')),
-                Center(child: Text('Feel free to contact us')),
+                Center(child: Text(AppString.supportMessage1)),
+                Center(child: Text(AppString.supportMessage2)),
                 // ================= DROP DOWN =================
                 const SizedBox(height: 12),
                 Padding(
@@ -144,7 +145,7 @@ class _SupportPageState extends State<SupportPage> {
                       controller: _descriptionController,
                       maxLines: 5,
                       decoration: const InputDecoration(
-                        hintText: "Write your complaint...",
+                        hintText: AppString.writeComplaintHint,
                         border: InputBorder.none,
                       ),
                     ),
@@ -167,7 +168,7 @@ class _SupportPageState extends State<SupportPage> {
                       ),
                       alignment: Alignment.center,
                       child: const Text(
-                        "Send To Admin",
+                        AppString.sendToAdminButton,
                         style: TextStyle(
                           fontSize: 17,
                           fontWeight: FontWeight.w600,
@@ -210,7 +211,7 @@ class _SupportPageState extends State<SupportPage> {
                 const SizedBox(height: 14),
 
                 const Text(
-                  "Submitted Successfully",
+                  AppString.submittedSuccessfullyTitle,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 20,
@@ -222,7 +223,7 @@ class _SupportPageState extends State<SupportPage> {
                 const SizedBox(height: 10),
 
                 const Text(
-                  "Your complaint has been submitted.\nWe will take action shortly.",
+                  AppString.complaintSubmittedMessage,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14,

@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
+import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:get/get.dart';
 import 'package:ride_sharing/routes/app_routes.dart';
 
@@ -13,7 +14,7 @@ class SetLocationOptionPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.secondaryBgColor,
       appBar: AppBar(
-        title: Text("Set your location"),
+        title: Text(AppString.setYourLocationTitle),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
@@ -34,7 +35,7 @@ class SetLocationOptionPage extends StatelessWidget {
               Get.toNamed(AppRoutes.setLocationScreen);
             },
             decoration: InputDecoration(
-              hintText: 'Search address',
+              hintText: AppString.searchAddressHint,
               prefixIcon: Container(
                 padding: EdgeInsets.symmetric(horizontal: 24.sp,vertical: 2.sp),
                 decoration: BoxDecoration(
@@ -57,7 +58,7 @@ class SetLocationOptionPage extends StatelessWidget {
               children: [
                 SetLocationOptionCard(
                   icon: Icons.pin_drop_rounded,
-                  title: 'Set on Map',
+                  title: AppString.setOnMapOption,
                   onTap: () {
                     Get.toNamed(AppRoutes.setLocationScreen);
                     print('Home tapped');
@@ -65,7 +66,7 @@ class SetLocationOptionPage extends StatelessWidget {
                 ),
                 SetLocationOptionCard(
                   icon: Icons.home,
-                  title: 'Home',
+                  title: AppString.homeOption,
                   onTap: () {
                     Get.toNamed(AppRoutes.setLocationScreen);
                     print('Home tapped');
@@ -73,7 +74,7 @@ class SetLocationOptionPage extends StatelessWidget {
                 ),
                 SetLocationOptionCard(
                   icon: Icons.work,
-                  title: 'Work',
+                  title: AppString.workOption,
                   onTap: () {
                     Get.toNamed(AppRoutes.setLocationScreen);
                     print('Work tapped');
@@ -81,7 +82,7 @@ class SetLocationOptionPage extends StatelessWidget {
                 ),
                 SetLocationOptionCard(
                   icon: Icons.bookmark,
-                  title: 'Bookmarks',
+                  title: AppString.bookmarksOption,
                   onTap: () {
                     Get.toNamed(AppRoutes.setLocationScreen);
                     print('Bookmarks tapped');
@@ -127,7 +128,7 @@ class SetLocationOptionCard extends StatelessWidget {
             child: Icon(icon, color: AppColors.iconColor), // Icon inside the circle
           ),
           title: Text(title),
-          subtitle: Text('Set Address'),
+          subtitle: Text(AppString.setAddressSubtitle),
           onTap: onTap,
         ),
       ),

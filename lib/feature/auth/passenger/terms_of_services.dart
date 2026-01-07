@@ -17,7 +17,7 @@ class _TermsOfServicesState extends State<TermsOfServices> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Terms of Services'),
+        title: Text(AppString.termsOfServicesTitle),
         backgroundColor: Colors.white,
         forceMaterialTransparency: true,
       ),
@@ -28,7 +28,7 @@ class _TermsOfServicesState extends State<TermsOfServices> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Our Terms of Services',style: TextStyle(
+            Text(AppString.ourTermsOfServices,style: TextStyle(
               fontSize: 16.sp,
               color: Color(0XFF4E4E4E),
             ),),
@@ -58,7 +58,7 @@ class _TermsOfServicesState extends State<TermsOfServices> {
                     });
                   },
                 ),
-                Text('Agree with Terms of Services  &  Privacy Policy ',style: TextStyle(
+                Text(AppString.agreeWithTermsAndPrivacy,style: TextStyle(
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w400,
                   color: Color(0XFF4E4E4E),

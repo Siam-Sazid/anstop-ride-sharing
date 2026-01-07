@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
+import 'package:ride_sharing/custom_assets/app_string.dart';
 import '../feature/passenger/car_booking/utils/driver_arrived_bottom_sheet.dart';
 
 class CancelDriverWidget extends StatelessWidget {
@@ -15,7 +16,7 @@ class CancelDriverWidget extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text('Cancel this ride?'),
+          Text(AppString.cancelRideQuestion),
           ElevatedButton(
             onPressed: () {
               // Handle button press

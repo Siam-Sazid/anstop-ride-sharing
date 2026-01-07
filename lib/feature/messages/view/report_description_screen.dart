@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:ride_sharing/custom_assets/app_string.dart';
 
 import '../../../app/utils/app_colors.dart';
 
@@ -37,7 +38,7 @@ class _ReportDescriptionScreenState extends State<ReportDescriptionScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
-          'Report',
+          AppString.reportTitle,
           style: TextStyle(
             color: MessagingColors.primaryText,
             fontSize: 18,
@@ -56,7 +57,7 @@ class _ReportDescriptionScreenState extends State<ReportDescriptionScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Find Support or Report User',
+                      AppString.reportSubtitle,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
@@ -65,7 +66,7 @@ class _ReportDescriptionScreenState extends State<ReportDescriptionScreen> {
                     ),
                     const SizedBox(height: 8),
                     const Text(
-                      'Help us understanding what\'s happening',
+                      AppString.reportHelpMessage,
                       style: TextStyle(
                         fontSize: 14,
                         color: MessagingColors.secondaryText,
@@ -113,7 +114,7 @@ class _ReportDescriptionScreenState extends State<ReportDescriptionScreen> {
 
                     // Description Section
                     const Text(
-                      'Describe your Complain',
+                      AppString.describeComplainLabel,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -122,7 +123,7 @@ class _ReportDescriptionScreenState extends State<ReportDescriptionScreen> {
                     ),
                     const SizedBox(height: 12),
                     const Text(
-                      'Hate speech involves harmful communication that originates hate (sex, religion, or gender). It harms diverse discrimination, and violence. Combating hate speech requires a balance between free expression and public safety.',
+                      AppString.hateSpeechDescription,
                       style: TextStyle(
                         fontSize: 13,
                         color: MessagingColors.secondaryText,
@@ -155,7 +156,7 @@ class _ReportDescriptionScreenState extends State<ReportDescriptionScreen> {
                   ),
                 ),
                 child: const Text(
-                  'Submit',
+                  AppString.submitButton,
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -190,7 +191,7 @@ class _ReportDescriptionScreenState extends State<ReportDescriptionScreen> {
               ),
               const SizedBox(height: 16),
               const Text(
-                'Report Submitted',
+                AppString.reportSubmittedTitle,
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
@@ -199,7 +200,7 @@ class _ReportDescriptionScreenState extends State<ReportDescriptionScreen> {
               ),
               const SizedBox(height: 8),
               const Text(
-                'Thank you for your report. We will review it shortly.',
+                AppString.reportSubmittedMessage,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14,
@@ -223,7 +224,7 @@ class _ReportDescriptionScreenState extends State<ReportDescriptionScreen> {
                     ),
                   ),
                   child: const Text(
-                    'OK',
+                    AppString.okButton,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,

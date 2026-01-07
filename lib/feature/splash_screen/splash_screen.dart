@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
+import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/feature/auth/driver/registration.dart';
 import 'package:ride_sharing/feature/auth/log_in_screen.dart';
 import 'package:ride_sharing/feature/auth/passenger/registration.dart';
@@ -57,21 +58,21 @@ class _SplashScreenState extends State<SplashScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      const Text('English'),
+                      const Text(AppString.splashEnglishLabel),
                       Switch(
                         value: false, // You can manage state for language toggle
                         onChanged: (value) {},
                         activeColor: Colors.white,
                         activeTrackColor: Colors.grey[300],
                       ),
-                      const Text('French'),
+                      const Text(AppString.splashFrenchLabel),
                     ],
                   ),
                   const Spacer(),
                   LogoWidget(),
                   const SizedBox(height: 20),
                   const Text(
-                    'Seamless, affordable, and reliable ride-sharing at your fingertips.',
+                    AppString.splashTagline,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.white,

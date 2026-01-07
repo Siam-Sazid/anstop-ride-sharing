@@ -4,7 +4,9 @@
       "Bash(find:*)",
       "Bash(cat:*)",
       "Bash(flutter pub get:*)",
-      "Bash(flutter analyze:*)"
+      "Bash(flutter analyze:*)",
+      "Bash(tree:*)",
+      "Bash(done)"
     ]
   }
 }

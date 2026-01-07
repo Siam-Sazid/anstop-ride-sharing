@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
+import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/widgets/custom_button.dart'; // Assuming CustomButton is imported from your widgets
 import '../../../../app/utils/app_colors.dart';
 import '../../../../widgets/custom_textfield_with_checkbox.dart';
@@ -21,7 +22,7 @@ class _CancelTaxiScreenState extends State<CancelTaxiScreen> {
     return Scaffold(
       backgroundColor: Color(0xFFEEEEEE),
       appBar: AppBar(
-        title: Text('Cancel Taxi'),
+        title: Text(AppString.cancelTaxiTitle),
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
@@ -53,7 +54,7 @@ class _CancelTaxiScreenState extends State<CancelTaxiScreen> {
                 _isChecked1 = value!;
               });
             },
-            hintText: 'Enter cancellation reason...',
+            hintText: AppString.cancellationReasonHint,
           ),
           SizedBox(height: 10.h,),
           CustomTextFieldWithCheckbox(
@@ -63,7 +64,7 @@ class _CancelTaxiScreenState extends State<CancelTaxiScreen> {
                 _isChecked2 = value!;
               });
             },
-            hintText: 'Enter another cancellation reason...',
+            hintText: AppString.anotherCancellationReasonHint,
           ),
           SizedBox(height: 10.h,),
           CustomTextFieldWithCheckbox(
@@ -73,7 +74,7 @@ class _CancelTaxiScreenState extends State<CancelTaxiScreen> {
                 _isChecked2 = value!;
               });
             },
-            hintText: 'Enter another cancellation reason...',
+            hintText: AppString.anotherCancellationReasonHint,
           ),SizedBox(height: 10.h,),
           CustomTextFieldWithCheckbox(
             isChecked: _isChecked2,
@@ -82,7 +83,7 @@ class _CancelTaxiScreenState extends State<CancelTaxiScreen> {
                 _isChecked2 = value!;
               });
             },
-            hintText: 'Enter another cancellation reason...',
+            hintText: AppString.anotherCancellationReasonHint,
           ),SizedBox(height: 10.h,),
           CustomTextFieldWithCheckbox(
             isChecked: _isChecked2,
@@ -91,7 +92,7 @@ class _CancelTaxiScreenState extends State<CancelTaxiScreen> {
                 _isChecked2 = value!;
               });
             },
-            hintText: 'Enter another cancellation reason...',
+            hintText: AppString.anotherCancellationReasonHint,
           ),
           // Add more widgets here if necessary
         ],
@@ -102,7 +103,7 @@ class _CancelTaxiScreenState extends State<CancelTaxiScreen> {
             _showThankYouDialog(context);
           },
           title: Text(
-            'Submit',
+            AppString.submitButton,
             style: TextStyle(color: AppColors.white),
           ),
         ),
@@ -152,7 +153,7 @@ class _CancelTaxiScreenState extends State<CancelTaxiScreen> {
                     Navigator.of(context).pop(); // Close the dialog
                   },
                   title: Text(
-                    'Close',
+                    AppString.closeButton,
                     style: TextStyle(fontSize: 20, color: AppColors.white),
                   ),
                 ),

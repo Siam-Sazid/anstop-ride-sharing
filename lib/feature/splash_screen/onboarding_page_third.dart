@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
+import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/feature/auth/log_in_screen.dart';
 import 'package:ride_sharing/feature/splash_screen/passenger_auth_selection_screen.dart';
 import 'package:ride_sharing/feature/splash_screen/role_selection_screen.dart';
@@ -56,7 +57,7 @@ class OnboardingPageThird extends StatelessWidget{
                CustomFadeSlide(
                  delay: 300,
                  child: Text(
-                  'Easy and Convenient',
+                  AppString.onboardingEasyAndConvenient,
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -68,7 +69,7 @@ class OnboardingPageThird extends StatelessWidget{
                 delay: 350,
                 child: Center(
                   child: Text(
-                    'Booking',
+                    AppString.onboardingBooking,
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -81,7 +82,7 @@ class OnboardingPageThird extends StatelessWidget{
               CustomFadeSlide(
                 delay: 450,
                 child: Text(
-                  'Book your ride in just a few taps. Quick, easy, and hassle-free.',
+                  AppString.onboardingBookingMessage,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 18.sp,
@@ -120,7 +121,7 @@ class OnboardingPageThird extends StatelessWidget{
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
-                  child: const Text('Get started !!'),
+                  child: const Text(AppString.getStartedButton),
                 ),
               ),
 
@@ -141,7 +142,7 @@ Widget _skipButton() {
       color: Colors.grey[200],
       borderRadius: BorderRadius.circular(20),
     ),
-    child: const Text('Skip'),
+    child: const Text(AppString.skipButton),
   );
 }
 

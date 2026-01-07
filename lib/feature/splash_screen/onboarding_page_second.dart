@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
+import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/feature/splash_screen/onboarding_page_third.dart';
 
 import '../../widgets/custom_fade_slide.dart';
@@ -53,7 +54,7 @@ class OnboardingPageSecond extends StatelessWidget {
                CustomFadeSlide(
                  delay: 300,
                  child: Text(
-                  'Safe and Secure',
+                  AppString.onboardingSafeAndSecure,
                   style: TextStyle(
                     fontSize: 26.sp ,
                     fontWeight: FontWeight.bold,
@@ -65,7 +66,7 @@ class OnboardingPageSecond extends StatelessWidget {
                 delay: 450,
                 child: Center(
                   child: Text(
-                    'Journeys',
+                    AppString.onboardingJourneys,
                     style: TextStyle(
                       fontSize: 26.sp,
                       fontWeight: FontWeight.bold,
@@ -78,7 +79,7 @@ class OnboardingPageSecond extends StatelessWidget {
                CustomFadeSlide(
                  delay: 500,
                  child: Text(
-                  'Your safety is our top priority. Every ride is monitored for your peace of mind.',
+                  AppString.onboardingSafetyMessage,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14.sp ,
@@ -119,7 +120,7 @@ class OnboardingPageSecond extends StatelessWidget {
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
-                  child: const Text('Get started !!'),
+                  child: const Text(AppString.getStartedButton),
                 ),
               ),
 
@@ -138,7 +139,7 @@ class OnboardingPageSecond extends StatelessWidget {
         color: Colors.grey[200],
         borderRadius: BorderRadius.circular(20),
       ),
-      child: const Text('Skip'),
+      child: const Text(AppString.skipButton),
     );
   }
 }

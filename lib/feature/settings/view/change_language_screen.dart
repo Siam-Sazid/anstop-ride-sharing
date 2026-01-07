@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:ride_sharing/custom_assets/app_string.dart';
 import '../../../app/utils/app_colors.dart';
 
 
@@ -12,11 +13,11 @@ class ChangeLanguageScreen extends StatefulWidget {
 }
 
 class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
-  String selectedLanguage = 'English';
+  String selectedLanguage = AppString.englishLanguage;
 
   final List<String> languages = [
-    'English',
-    'French',
+    AppString.englishLanguage,
+    AppString.frenchLanguage,
   ];
 
   @override
@@ -36,7 +37,7 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
-          'Change Language',
+          AppString.changeLanguageTitle,
           style: TextStyle(
             color: SettingsColors.primaryText,
             fontSize: 18,

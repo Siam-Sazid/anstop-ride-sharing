@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/feature/auth/passenger/terms_of_services.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 
@@ -30,7 +31,7 @@ class _NationalIdScreenState extends State<NationalIdScreen> {
       ),
       bottomNavigationBar: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.sp, vertical: 16.sp),
-        child: CustomButton(onPressed: () {}, label: 'Submit'),
+        child: CustomButton(onPressed: () {}, label: AppString.submitButton),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -42,7 +43,7 @@ class _NationalIdScreenState extends State<NationalIdScreen> {
 
                 SizedBox(height: 20.h),
                 Text(
-                  'National ID',
+                  AppString.nationalIdTitle,
                   style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 29.h),
@@ -53,7 +54,7 @@ class _NationalIdScreenState extends State<NationalIdScreen> {
                   child: Padding(
                     padding: EdgeInsets.only(left: 4.sp),
                     child: Text(
-                      'National Id number',
+                      AppString.nationalIdNumberLabel,
                       textAlign: TextAlign.start,
                       style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.normal),
                     ),
@@ -68,7 +69,7 @@ class _NationalIdScreenState extends State<NationalIdScreen> {
                 Padding(
                   padding: EdgeInsets.only(left: 4.sp),
                   child: Text(
-                    'Upload your National ID picture (Front)',
+                    AppString.uploadNationalIdFront,
                     textAlign: TextAlign.start,
                     style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.normal),
                   ),
@@ -86,7 +87,7 @@ class _NationalIdScreenState extends State<NationalIdScreen> {
                 Padding(
                   padding: EdgeInsets.only(left: 4.sp),
                   child: Text(
-                    'Upload your National ID picture (Front)',
+                    AppString.uploadNationalIdFront,
                     textAlign: TextAlign.start,
                     style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.normal),
                   ),

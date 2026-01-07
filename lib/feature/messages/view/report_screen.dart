@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/feature/messages/view/report_description_screen.dart';
 import '../../../app/utils/app_colors.dart';
 
@@ -16,14 +17,14 @@ class _ReportScreenState extends State<ReportScreen> {
   String? selectedReason;
 
   final List<String> reportReasons = [
-    'Hate Speech',
-    'Threat',
-    'Harassment',
-    'Pretending to be something',
-    'Fraud Or Scam',
-    'Fake Identity',
-    'Something Else',
-    'Other',
+    AppString.reportHateSpeech,
+    AppString.reportThreat,
+    AppString.reportHarassment,
+    AppString.reportPretending,
+    AppString.reportFraud,
+    AppString.reportFakeIdentity,
+    AppString.reportSomethingElse,
+    AppString.reportOther,
   ];
 
   @override
@@ -43,7 +44,7 @@ class _ReportScreenState extends State<ReportScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
-          'Report',
+          AppString.reportTitle,
           style: TextStyle(
             color: MessagingColors.primaryText,
             fontSize: 18,
@@ -62,7 +63,7 @@ class _ReportScreenState extends State<ReportScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Find Support or Report User',
+                      AppString.reportSubtitle,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
@@ -71,7 +72,7 @@ class _ReportScreenState extends State<ReportScreen> {
                     ),
                     const SizedBox(height: 8),
                     const Text(
-                      'Help us understanding what\'s happening',
+                      AppString.reportHelpMessage,
                       style: TextStyle(
                         fontSize: 14,
                         color: MessagingColors.secondaryText,
@@ -118,7 +119,7 @@ class _ReportScreenState extends State<ReportScreen> {
                   ),
                 ),
                 child: const Text(
-                  'Continue',
+                  AppString.continueButton,
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:ride_sharing/custom_assets/app_string.dart';
 
 void showDeleteORSuccessDialog(BuildContext context,
     {required VoidCallback onTap,
@@ -26,7 +27,7 @@ void showDeleteORSuccessDialog(BuildContext context,
             if (!isSuccess)
               const Icon(Icons.warning_amber_rounded, color: Colors.red),
             SizedBox(width: 8.w),
-            Flexible(child: Text(title?? 'Delete Item')),
+            Flexible(child: Text(title?? AppString.deleteItemTitle)),
           ],
         ),
         content: Text(
@@ -44,7 +45,7 @@ void showDeleteORSuccessDialog(BuildContext context,
             onPressed: () {
               Navigator.of(context).pop();
             },
-            child: const Text("Cancel"),
+            child: const Text(AppString.cancelButton),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -56,7 +57,7 @@ void showDeleteORSuccessDialog(BuildContext context,
               ),
             ),
             onPressed: onTap,
-            child: Text(buttonLabel ?? "Delete"),
+            child: Text(buttonLabel ?? AppString.deleteButton),
           ),
         ],
       );

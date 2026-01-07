@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
+import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/passenger/controller/pick_up_location_controller.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/passenger/set_on_map_screen.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/utils/find_car_bottom_sheet.dart';
@@ -94,7 +95,7 @@ class PickUpLocationScreen extends StatelessWidget {
                           SizedBox(height: 8),
                           Padding(
                             padding:  EdgeInsets.symmetric( horizontal:  8.sp),
-                            child: Text('Your pick up point'),
+                            child: Text(AppString.yourPickUpPointLabel),
                           ),
                           CustomTextField(
                             onTap: () {
@@ -103,7 +104,7 @@ class PickUpLocationScreen extends StatelessWidget {
                             controller: controller.locationTEController,
                             prefixIcon: Icon(Icons.location_on, color: AppColors.primaryColor),
                             suffixIcon: Icon(CupertinoIcons.search_circle),
-                            hintText: 'Where are you headed?',
+                            hintText: AppString.whereAreYouHeadedHint,
                             borderColor: AppColors.primaryColor,
                             borderRadio: 20,
                             onChanged: (address) {
@@ -114,7 +115,7 @@ class PickUpLocationScreen extends StatelessWidget {
                           SizedBox(height: 8),
                           Padding(
                             padding:  EdgeInsets.symmetric( horizontal:  8.sp),
-                            child: Text('Your destination'),
+                            child: Text(AppString.yourDestinationLabel),
                           ),
                           CustomTextField(
                             onTap: () {
@@ -123,7 +124,7 @@ class PickUpLocationScreen extends StatelessWidget {
                             controller: controller.locationTEController,
                             prefixIcon: Icon(Icons.location_on, color: AppColors.primaryColor),
                             suffixIcon: Icon(CupertinoIcons.search_circle),
-                            hintText: 'Where are you headed?',
+                            hintText: AppString.whereAreYouHeadedHint,
                             borderColor: AppColors.primaryColor,
                             borderRadio: 20,
                             onChanged: (address) {
@@ -136,9 +137,9 @@ class PickUpLocationScreen extends StatelessWidget {
                             padding:  EdgeInsets.fromLTRB(16.sp,16.sp,16.sp,0.sp),
                             child: Row(
                               children: [
-                                Text('Saved Adress', style:  TextStyle(fontSize: 18.sp),),
+                                Text(AppString.savedAddressLabel, style:  TextStyle(fontSize: 18.sp),),
                                 Spacer(),
-                                Text('See all >', style:  TextStyle(fontSize: 15.sp,color: AppColors.greenShade50),)
+                                Text(AppString.seeAllLink, style:  TextStyle(fontSize: 15.sp,color: AppColors.greenShade50),)
                               ],
                             ),
                           ),
@@ -159,8 +160,8 @@ class PickUpLocationScreen extends StatelessWidget {
                                   children: [
                                     CustomLocationButton(
                                       imageUrl: AppImage.home,
-                                      mainText: 'Home',
-                                      subText: 'Set address',
+                                      mainText: AppString.homeOption,
+                                      subText: AppString.setAddressSubtitle,
                                       onTap: () {
                                         print('Location button tapped');
                                         Get.to(SetLocationOptionPage());
@@ -169,8 +170,8 @@ class PickUpLocationScreen extends StatelessWidget {
                                     VerticalDivider(color: AppColors.white, width: 2),
                                     CustomLocationButton(
                                       imageUrl: AppImage.briefcase,
-                                      mainText: 'Work',
-                                      subText: 'Set address',
+                                      mainText: AppString.workOption,
+                                      subText: AppString.setAddressSubtitle,
                                       onTap: () {
                                         print('Location button tapped');
                                       },
@@ -235,7 +236,7 @@ class PickUpLocationScreen extends StatelessWidget {
               );
             },
             title: Text(
-              'Next',
+              AppString.continueButton,
               style: TextStyle(color: AppColors.white),
             ),
           ),
