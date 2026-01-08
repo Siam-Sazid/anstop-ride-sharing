@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ride_sharing/custom_assets/app_string.dart';
+import 'package:ride_sharing/l10n/l10n_helper.dart';
 import '../../../app/utils/app_colors.dart';
 
 
@@ -13,15 +13,20 @@ class ChangeLanguageScreen extends StatefulWidget {
 }
 
 class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
-  String selectedLanguage = AppString.englishLanguage;
-
-  final List<String> languages = [
-    AppString.englishLanguage,
-    AppString.frenchLanguage,
-  ];
+  String selectedLanguage = '';
 
   @override
   Widget build(BuildContext context) {
+
+    if (selectedLanguage.isEmpty) {
+      selectedLanguage = L10n.tr.englishLanguage;
+    }
+
+    final List<String> languages = [
+      L10n.tr.englishLanguage,
+      L10n.tr.frenchLanguage,
+    ];
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -36,9 +41,9 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
           ),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          AppString.changeLanguageTitle,
-          style: TextStyle(
+        title: Text(
+          L10n.tr.changeLanguageTitle,
+          style: const TextStyle(
             color: SettingsColors.primaryText,
             fontSize: 18,
             fontWeight: FontWeight.w600,

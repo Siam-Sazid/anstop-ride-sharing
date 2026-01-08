@@ -1,3 +1,4 @@
+import 'package:ride_sharing/l10n/l10n_helper.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 
 class ResetPasswordScreen extends StatelessWidget {
@@ -11,7 +12,7 @@ class ResetPasswordScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppString.resetPasswordAppBarText),
+        title: Text(L10n.tr.resetPasswordAppBarText),
         backgroundColor: AppColors.appBarColor,
         centerTitle: true,
         foregroundColor: Color(0XFF0A0A0A),
@@ -29,7 +30,7 @@ class ResetPasswordScreen extends StatelessWidget {
                 SizedBox(height: 52.h),
                 CustomTextField(
                   controller: _passwordTEController,
-                  hintText: AppString.resetPasswordHintText,
+                  hintText: L10n.tr.resetPasswordHintText,
                   hintextColor: Color(0XFF02243E),
                   hintextSize: 14.sp,
                   prefixIcon: Icon(Icons.key, color: Color(0XFF191A44)),
@@ -39,7 +40,7 @@ class ResetPasswordScreen extends StatelessWidget {
                 SizedBox(height: 16.h),
                 CustomTextField(
                   controller: _confirmPasswordTEController,
-                  hintText: AppString.resetConfirmPasswordHintText,
+                  hintText: L10n.tr.resetConfirmPasswordHintText,
                   hintextColor: Color(0XFF02243E),
                   hintextSize: 14.sp,
                   prefixIcon: Icon(Icons.key, color: Color(0XFF191A44)),
@@ -50,7 +51,7 @@ class ResetPasswordScreen extends StatelessWidget {
                 SizedBox(height: 32.h),
                 CustomButton(
                   onPressed: () {},
-                  label: AppString.resetPasswordConfirmButton,
+                  label: L10n.tr.resetPasswordConfirmButton,
                 ),
               ],
             ),

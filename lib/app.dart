@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:ride_sharing/app/theme/app_theme.dart';
+import 'package:ride_sharing/l10n/app_localizations.dart';
 import 'package:ride_sharing/routes/app_routes.dart';
 
 class RideSharingApp extends StatelessWidget {
@@ -23,6 +25,16 @@ class RideSharingApp extends StatelessWidget {
             final bool bottomNavigationVisible = isBottomNavigationVisible(context);
             return SafeArea(top: false, bottom: bottomNavigationVisible, child: child!);
           },
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('en'), // English
+            Locale('fr'), // French
+          ],
         //  darkTheme: AppThemeData.darkThemeData,
           debugShowCheckedModeBanner: false,
           initialRoute: AppRoutes.splashScreen, // Initial route

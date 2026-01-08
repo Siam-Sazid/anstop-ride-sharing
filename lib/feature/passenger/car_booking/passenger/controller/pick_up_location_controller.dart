@@ -2,7 +2,9 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/material.dart';
-import 'package:ride_sharing/custom_assets/app_string.dart';
+import 'package:ride_sharing/l10n/l10n_helper.dart';
+
+import '../../../../../l10n/app_localizations.dart';
 
 class PickUpLocationController extends GetxController {
   final TextEditingController locationTEController = TextEditingController();
@@ -62,12 +64,13 @@ class PickUpLocationController extends GetxController {
       currentPosition = position;
       isLoading = false;
 
-      // Add marker for current location
+
+      final l10n = AppLocalizations.of(Get.context!)!;
       markers.add(
         Marker(
           markerId: MarkerId('current_location'),
           position: LatLng(position.latitude, position.longitude),
-          infoWindow: InfoWindow(title: AppString.yourLocationMarker),
+          infoWindow: InfoWindow(title: L10n.tr.yourLocationMarker),
           icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
         ),
       );

@@ -1,7 +1,6 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
-import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/feature/passenger/homepage/view/home_page.dart';
 import 'package:ride_sharing/utils/user_info_section.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
@@ -69,14 +68,14 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(AppString.yourTripLabel,style: TextStyle(fontSize: 18.sp,fontWeight: FontWeight.bold),),
+                  Text(L10n.tr.yourTripLabel,style: TextStyle(fontSize: 18.sp,fontWeight: FontWeight.bold),),
                   SizedBox(height: 8.sp,),
                   Row(children: [
                     Container(
                       child: Image.asset(AppImage.greetings),
                     ),
                     SizedBox(width: 5.sp,),
-                    Text(AppString.pickupLocationExample),
+                    Text(L10n.tr.pickupLocationExample),
 
                   ],),
                   CustomVerticalLine(height: 20.h, color: Colors.black),
@@ -85,7 +84,7 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
                       child: Icon(Icons.location_on,color: AppColors.green300,),
                     ),
                     SizedBox(width: 5.sp,),
-                    Text(AppString.dropoffLocationExample),
+                    Text(L10n.tr.dropoffLocationExample),
 
                   ],),
                   SizedBox(height: 8.sp,),
@@ -94,12 +93,12 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        AppString.distanceLabel,style: TextStyle(
+                        L10n.tr.distanceLabel,style: TextStyle(
                           fontSize: 18.sp,color: Colors.black
                       ),
                       ),
                       SizedBox(width: 5.sp,),
-                      Text(AppString.distanceExample,),
+                      Text(L10n.tr.distanceExample,),
 
                     ],),
                   SizedBox(height: 8.h,),
@@ -107,12 +106,13 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Travel time ',style: TextStyle(
+                        L10n.tr.timeExample,
+                        style: TextStyle(
                           fontSize: 18.sp,color: Colors.black
                       ),
                       ),
                       SizedBox(width: 5.sp,),
-                      Text(AppString.durationExample),
+                      Text(L10n.tr.durationExample),
 
                     ],),
 
@@ -134,9 +134,9 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
                 children: [
                   Image.asset(AppImage.wallet),
                   SizedBox(width: 2.sp,),
-                  Text(AppString.payViaWalletLabel,style: TextStyle(fontSize: 20.sp),),
+                  Text(L10n.tr.payViaWalletLabel,style: TextStyle(fontSize: 20.sp),),
                   Spacer(),
-                  Text(AppString.fareExample,style: TextStyle(fontSize: 20  .sp),),
+                  Text(L10n.tr.fareExample,style: TextStyle(fontSize: 20  .sp),),
                 ],
               ),
             ),
@@ -150,7 +150,7 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
         child: CustomButton(onPressed: (){
           _showRatingDialog(context);
         },
-       title: Text(AppString.confirmPaymentTitle,style: TextStyle(color: AppColors.white),),
+       title: Text(L10n.tr.confirmPaymentTitle,style: TextStyle(color: AppColors.white),),
       ),
       ),
     );
@@ -227,7 +227,7 @@ void _showRatingDialog(BuildContext context) {
                   TextField(
                     maxLines: 3,
                     decoration: InputDecoration(
-                      hintText: AppString.writeCommentsHint,
+                      hintText: L10n.tr.writeCommentsHint,
                       border: OutlineInputBorder(),
                       contentPadding: EdgeInsets.all(10),
                     ),
@@ -295,7 +295,7 @@ void _showThankYouDialog(BuildContext context) {
                   onPressed: () {
                    Get.to(HomePage());
                   },
-                  title: Text(AppString.backToHomeButton, style: TextStyle(fontSize: 20, color: AppColors.white)),
+                  title: Text(L10n.tr.backToHomeButton, style: TextStyle(fontSize: 20, color: AppColors.white)),
                 ),
               ),
             ],

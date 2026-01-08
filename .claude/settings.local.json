@@ -6,7 +6,13 @@
       "Bash(flutter pub get:*)",
       "Bash(flutter analyze:*)",
       "Bash(tree:*)",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(mkdir:*)",
+      "Bash(flutter gen-l10n:*)",
+      "Bash(dir C:UsersSiamride_sharing_applibl10n)",
+      "Bash(bash:*)",
+      "Bash(powershell:*)",
+      "Bash(git diff:*)"
     ]
   }
 }

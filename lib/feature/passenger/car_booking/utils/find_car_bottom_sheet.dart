@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
-import 'package:ride_sharing/custom_assets/app_string.dart';
+import 'package:ride_sharing/l10n/l10n_helper.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/utils/accept_car_bottom_sheet.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/utils/payment_method_dropdown.dart';
 
@@ -16,13 +16,13 @@ class FindCarBottomSheet extends StatefulWidget {
 
 class _FindCarBottomSheetState extends State<FindCarBottomSheet> {
   final TextEditingController locationTEController = TextEditingController();
-  final TextEditingController descriptionController = TextEditingController(); // Controller for the description text field
+  final TextEditingController descriptionController = TextEditingController();
 
-  int childrenCount = 0; // Default number of children
+  int childrenCount = 0;
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.85, // Adjust height as needed
+      height: MediaQuery.of(context).size.height * 0.85,
       width: double.infinity,
       color: AppColors.white,
       padding: EdgeInsets.all(16),
@@ -41,14 +41,14 @@ class _FindCarBottomSheetState extends State<FindCarBottomSheet> {
                child: Column(
                  crossAxisAlignment: CrossAxisAlignment.start,
                  children: [
-                   Text(AppString.yourTripLabel,style: TextStyle(fontSize: 18.sp,fontWeight: FontWeight.bold),),
+                   Text(L10n.tr.yourTripLabel,style: TextStyle(fontSize: 18.sp,fontWeight: FontWeight.bold),),
                    SizedBox(height: 8.sp,),
                    Row(children: [
                      Container(
                        child: Image.asset(AppImage.greetings),
                      ),
                      SizedBox(width: 5.sp,),
-                     Text(AppString.pickupLocationExample),
+                     Text(L10n.tr.pickupLocationExample),
 
                    ],),
                    SizedBox(height: 8.sp,),
@@ -57,7 +57,7 @@ class _FindCarBottomSheetState extends State<FindCarBottomSheet> {
                        child: Icon(Icons.location_on,color: AppColors.primaryColor,),
                      ),
                      SizedBox(width: 5.sp,),
-                     Text(AppString.dropoffLocationExample),
+                     Text(L10n.tr.dropoffLocationExample),
 
                    ],),
                    SizedBox(height: 8.sp,),
@@ -65,12 +65,12 @@ class _FindCarBottomSheetState extends State<FindCarBottomSheet> {
                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                      children: [
                      Text(
-                      AppString.distanceLabel,style: TextStyle(
+                      L10n.tr.distanceLabel,style: TextStyle(
                        fontSize: 18.sp,color: Colors.black
                      ),
                      ),
                      SizedBox(width: 5.sp,),
-                     Text(AppString.distanceExample),
+                     Text(L10n.tr.distanceExample),
 
                    ],),
                 SizedBox(height: 8.h,),
@@ -106,7 +106,6 @@ class _FindCarBottomSheetState extends State<FindCarBottomSheet> {
           ),
           SizedBox(height: 8.sp),
 
-          // Dropdown to select payment method
           PaymentMethodDropdown(),
           SizedBox(height: 10.sp),
           Container(
@@ -126,7 +125,7 @@ class _FindCarBottomSheetState extends State<FindCarBottomSheet> {
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // 👇 Up Arrow with GestureDetector
+
                       GestureDetector(
                         onTap: () {
                           setState(() {
@@ -136,10 +135,10 @@ class _FindCarBottomSheetState extends State<FindCarBottomSheet> {
                         child: Icon(
                           Icons.keyboard_arrow_up_outlined,
                           color: AppColors.primaryColor,
-                          size: 20.sp, // Slightly larger for better tap area
+                          size: 20.sp,
                         ),
                       ),
-                      // 👇 Down Arrow with GestureDetector
+
                       GestureDetector(
                         onTap: () {
                           setState(() {
@@ -154,7 +153,7 @@ class _FindCarBottomSheetState extends State<FindCarBottomSheet> {
                       ),
                     ],
                   ),
-                  SizedBox(width: 8.w), // spacing between arrows and number
+                  SizedBox(width: 8.w),
                   Text(
                     '$childrenCount',
                     style: TextStyle(fontSize: 15.sp, color: AppColors.primaryColor),
@@ -173,7 +172,7 @@ class _FindCarBottomSheetState extends State<FindCarBottomSheet> {
               controller: descriptionController,
               maxLines: 5,
               decoration: InputDecoration(
-                hintText: AppString.noteToDriverHint,
+                hintText: L10n.tr.noteToDriverHint,
                 contentPadding: EdgeInsets.symmetric(horizontal: 10.sp, vertical: 12.sp),
                 border: InputBorder.none,
               ),
@@ -194,6 +193,7 @@ class _FindCarBottomSheetState extends State<FindCarBottomSheet> {
             },
             title: Text(
               'Find Car',
+             // L10n.tr.,
               style: TextStyle(color: AppColors.white),
             ),
           ),

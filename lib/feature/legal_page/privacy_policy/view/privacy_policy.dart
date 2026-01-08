@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:ride_sharing/custom_assets/app_string.dart';
+﻿import 'package:flutter/material.dart';
+import '../../../../l10n/l10n_helper.dart';
 import '../../legal_page_widget.dart';
 class PrivacyPolicyView extends StatelessWidget {
   const PrivacyPolicyView({super.key});
@@ -22,8 +22,8 @@ class PrivacyPolicyView extends StatelessWidget {
               ),
             ],
           ),
-          child: const LegalPage(
-            title: AppString.privacyPolicyTitle,
+          child: LegalPage(
+            title: L10n.tr.privacyPolicyTitle,
             content: '''
 Lorem ipsum dolor sit amet consectetur. Enim massa aenean ac odio leo habitasse tortor tempor. Ut id urna odio dui leo congue. Ultrices pharetra ornare nam faucibus. Integer id varius consectetur non.
 

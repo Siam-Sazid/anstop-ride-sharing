@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ride_sharing/custom_assets/app_string.dart';
+import 'package:ride_sharing/l10n/l10n_helper.dart';
 import 'package:ride_sharing/feature/messages/message_utils/message_list_items.dart';
 import 'package:ride_sharing/feature/messages/models/message_models.dart';
 import 'package:ride_sharing/feature/messages/view/chat_screen.dart';
@@ -85,7 +85,7 @@ class _MessagesListScreenState extends State<MessagesListScreen> {
               color: MessagingColors.searchIconColor,
               size: 22,
               ),
-              hintText: AppString.searchByNameHint,
+              hintText: L10n.tr.searchByNameHint,
               hintextColor: MessagingColors.secondaryText,
               ),
               ),

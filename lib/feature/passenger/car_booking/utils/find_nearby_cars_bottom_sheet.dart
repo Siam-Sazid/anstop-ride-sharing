@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
-import 'package:ride_sharing/custom_assets/app_string.dart';
+import 'package:ride_sharing/l10n/l10n_helper.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/utils/booking_car_bottomsheet.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/utils/driver_arrived_bottom_sheet.dart';
 
@@ -141,7 +141,7 @@ class _FindNearbyCarsBottomSheetState extends State<FindNearbyCarsBottomSheet> {
                   child: Image.asset(AppImage.greetings),
                 ),
                 SizedBox(width: 5.sp),
-                Text(AppString.pickupLocationExample2), // Starting location
+                Text(L10n.tr.pickupLocationExample2), // Starting location
               ],
             ),
           ),
@@ -160,7 +160,7 @@ class _FindNearbyCarsBottomSheetState extends State<FindNearbyCarsBottomSheet> {
             children: [
               Icon(Icons.location_on, color: AppColors.primaryColor),
               SizedBox(width: 5.sp),
-              Text(AppString.dropoffLocationExample2), // Destination location
+              Text(L10n.tr.dropoffLocationExample2), // Destination location
             ],
           ),
 
@@ -171,9 +171,9 @@ class _FindNearbyCarsBottomSheetState extends State<FindNearbyCarsBottomSheet> {
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
-                Text(AppString.distanceLabel),
+                Text(L10n.tr.distanceLabel),
                 Spacer(),
-                Text(AppString.distanceValueExample) // Distance Value
+                Text(L10n.tr.distanceValueExample) // Distance Value
               ],
             ),
           ),
@@ -194,7 +194,7 @@ class _FindNearbyCarsBottomSheetState extends State<FindNearbyCarsBottomSheet> {
               children: [
                 Image.asset(AppImage.wallet),
                 SizedBox(width: 2.sp,),
-                Text(AppString.payViaWalletLabel,style: TextStyle(fontSize: 20.sp),)
+                Text(L10n.tr.payViaWalletLabel,style: TextStyle(fontSize: 20.sp),)
               ],
             ),
           ),
@@ -213,7 +213,7 @@ class _FindNearbyCarsBottomSheetState extends State<FindNearbyCarsBottomSheet> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(AppString.cancelRideQuestion),
+                Text(L10n.tr.cancelRideQuestion),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context);

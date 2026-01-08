@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:ride_sharing/custom_assets/app_string.dart';
+import 'package:ride_sharing/l10n/l10n_helper.dart';
 
 class TermsOfServices extends StatefulWidget {
   const TermsOfServices({super.key});
@@ -17,7 +17,7 @@ class _TermsOfServicesState extends State<TermsOfServices> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppString.termsOfServicesTitle),
+        title: Text(L10n.tr.termsOfServicesTitle),
         backgroundColor: Colors.white,
         forceMaterialTransparency: true,
       ),
@@ -28,7 +28,7 @@ class _TermsOfServicesState extends State<TermsOfServices> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(AppString.ourTermsOfServices,style: TextStyle(
+            Text(L10n.tr.ourTermsOfServices,style: TextStyle(
               fontSize: 16.sp,
               color: Color(0XFF4E4E4E),
             ),),
@@ -41,7 +41,7 @@ class _TermsOfServicesState extends State<TermsOfServices> {
                   borderRadius: BorderRadius.circular(15.r),
                   border: Border.all(color: Color(0XFF4E4E4E).withOpacity(0.2)),
                 ),
-                child: Text(AppString.termsAndConditionText, style: TextStyle()),
+                child: Text(L10n.tr.termsAndConditionText, style: TextStyle()),
               ),
             ),
             SizedBox(height: 33.h),
@@ -58,7 +58,7 @@ class _TermsOfServicesState extends State<TermsOfServices> {
                     });
                   },
                 ),
-                Text(AppString.agreeWithTermsAndPrivacy,style: TextStyle(
+                Text(L10n.tr.agreeWithTermsAndPrivacy,style: TextStyle(
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w400,
                   color: Color(0XFF4E4E4E),

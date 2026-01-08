@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
-import 'package:ride_sharing/custom_assets/app_string.dart';
+import 'package:ride_sharing/l10n/l10n_helper.dart';
 import 'package:ride_sharing/feature/auth/log_in_screen.dart';
 import 'package:ride_sharing/feature/driver/homepage/view/driver_homescreen.dart';
 import 'package:ride_sharing/feature/passenger/my_ride/view/my_ride.dart';
@@ -38,7 +38,7 @@ class PassengerCustomDrawer extends StatelessWidget {
 
               ),
               child: CustomUserRating(
-                name: AppString.exampleUserName,
+                name: L10n.tr.exampleUserName,
                 imageUrl: "https://picsum.photos/250?image=9",
               //  price: 24,
              //   distance: 28,
@@ -63,13 +63,13 @@ class PassengerCustomDrawer extends StatelessWidget {
                   children: [
                     _drawerItem(
                       imagePath: AppImage.notification,
-                      text: AppString.notificationMenuItem,
+                      text: L10n.tr.notificationMenuItem,
                       onTap: () {},
                     ),
 
                     _drawerItem(
                       imagePath: AppImage.carDrawer,
-                      text: AppString.myRideMenuItem,
+                      text: L10n.tr.myRideMenuItem,
                       onTap: () {
                       //  Get.to(MyRidePage());
                         Get.toNamed(AppRoutes.passengerMyRideScreen);
@@ -78,7 +78,7 @@ class PassengerCustomDrawer extends StatelessWidget {
 
                     _drawerItem(
                       imagePath: AppImage.walletDrawer,
-                      text: AppString.walletMenuItem,
+                      text: L10n.tr.walletMenuItem,
                       onTap: () {
                        // Get.to(PassengerWalletPage());
                         Get.toNamed(AppRoutes.passengerWalletScreen);
@@ -86,14 +86,14 @@ class PassengerCustomDrawer extends StatelessWidget {
                       },
                     ), _drawerItem(
                       imagePath: AppImage.support,
-                      text: AppString.supportMenuItem,
+                      text: L10n.tr.supportMenuItem,
                       onTap: () {
                         Get.to(SupportPage());
 
                       },
                     ), _drawerItem(
                       imagePath: AppImage.settings,
-                      text: AppString.settingsMenuItem,
+                      text: L10n.tr.settingsMenuItem,
                       onTap: () {
                         Get.to(SettingsScreen());
 
@@ -101,7 +101,7 @@ class PassengerCustomDrawer extends StatelessWidget {
                      ),
                     _drawerItem(
                       imagePath: AppImage.logout,
-                      text: AppString.logoutMenuItem,
+                      text: L10n.tr.logoutMenuItem,
                       onTap: () async {
                         // Show the logout dialog
                         final result = await LogoutDialog.show(context);
@@ -130,7 +130,7 @@ class PassengerCustomDrawer extends StatelessWidget {
                //   Get.to(DriverHomeScreen());
                   Get.toNamed(AppRoutes.driverHomeScreen);
                 },
-             title: Text(AppString.switchToDriverButton,style: TextStyle(color: AppColors.white),),
+             title: Text(L10n.tr.switchToDriverButton,style: TextStyle(color: AppColors.white),),
             ),
           )
         ],

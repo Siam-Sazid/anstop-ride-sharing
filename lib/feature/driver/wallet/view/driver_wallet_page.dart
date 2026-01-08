@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:ride_sharing/custom_assets/app_string.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:ride_sharing/feature/passenger/wallet/view/passenger_wallet_dialog_view.dart';
 import 'package:ride_sharing/utils/balanced_card.dart';
 import 'package:ride_sharing/utils/transaction_items.dart';
 import 'package:ride_sharing/widgets/custom_app_bar_title.dart';
 import '../../../../app/utils/app_colors.dart';
+import '../../../../l10n/l10n_helper.dart';
 
 
 class DriverWalletPage extends StatefulWidget {
@@ -53,7 +53,7 @@ class _DriverWalletPageState extends State<DriverWalletPage> {
       backgroundColor: AppColors.backgroundColor,
       appBar: CustomAppBarTitle(
       scaffoldKey: _scaffoldKey,
-      title: AppString.walletTitle,
+      title: L10n.tr.walletTitle,
       titleColor: AppColors.blackShade300,
     ),
       body: SingleChildScrollView(
@@ -88,26 +88,26 @@ class _DriverWalletPageState extends State<DriverWalletPage> {
                   const SizedBox(height: 16),
 
                   // Transaction List
-                  const TransactionItem(
-                    title: AppString.transactionNameExample1,
+                  TransactionItem(
+                    title: L10n.tr.transactionNameExample1,
                     time: 'Today at 09:20 am',
                     amount: '570.00',
                     isPositive: false,
                   ),
-                  const TransactionItem(
-                    title: AppString.transactionTypeExample,
+                  TransactionItem(
+                    title: L10n.tr.transactionTypeExample,
                     time: 'Today at 09:20 am',
                     amount: '570.00',
                     isPositive: true,
                   ),
-                  const TransactionItem(
-                    title: AppString.transactionNameExample1,
+                  TransactionItem(
+                    title: L10n.tr.transactionNameExample1,
                     time: 'Today at 09:20 am',
                     amount: '570.00',
                     isPositive: false,
                   ),
-                  const TransactionItem(
-                    title: AppString.transactionTypeExample,
+                  TransactionItem(
+                    title: L10n.tr.transactionTypeExample,
                     time: 'Today at 09:20 am',
                     amount: '570.00',
                     isPositive: true,

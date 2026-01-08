@@ -1,5 +1,4 @@
-import 'package:ride_sharing/custom_assets/app_string.dart';
-import 'package:ride_sharing/feature/auth/driver/upload_your_documents_screen.dart';
+﻿import 'package:ride_sharing/feature/auth/driver/upload_your_documents_screen.dart';
 import 'package:ride_sharing/feature/auth/passenger/terms_of_services.dart';
 import 'package:ride_sharing/utils/driver/driver_custom_drawer.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
@@ -86,7 +85,7 @@ class _DriverProfileViewState extends State<DriverProfileView> {
     return Scaffold(
       backgroundColor: MessagingColors.profileBackgroundColor,
       key: _scaffoldKey,
-      appBar: CustomAppBarTitle(scaffoldKey: _scaffoldKey,title: AppString.profileTitle,),
+      appBar: CustomAppBarTitle(scaffoldKey: _scaffoldKey,title: L10n.tr.profileTitle,),
       drawer: DriverCustomDrawer(),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -139,7 +138,7 @@ class _DriverProfileViewState extends State<DriverProfileView> {
                           color: Color(0XFF8A8A8A),
                           size: 24.sp,
                         ),
-                        hintText: AppString.nameLabel,
+                        hintText: L10n.tr.nameLabel,
                         hintextSize: 14.sp,
                         hintextColor: Color(0XFF8A8A8A),
                       ),
@@ -151,7 +150,7 @@ class _DriverProfileViewState extends State<DriverProfileView> {
                           color: Color(0XFF8A8A8A),
                           size: 24.sp,
                         ),
-                        hintText: AppString.emailLabel,
+                        hintText: L10n.tr.emailLabel,
                         hintextSize: 14.sp,
                         hintextColor: Color(0XFF8A8A8A),
                       ),
@@ -179,7 +178,7 @@ class _DriverProfileViewState extends State<DriverProfileView> {
                               color: Color(0XFF8A8A8A),
                               size: 24.sp,
                             ),
-                            hintText: AppString.selectBirthdayHint,
+                            hintText: L10n.tr.selectBirthdayHint,
                             hintextSize: 14.sp,
                             hintextColor: Color(0XFF8A8A8A),
                           ),
@@ -205,7 +204,7 @@ class _DriverProfileViewState extends State<DriverProfileView> {
                                 color: Color(0XFF8A8A8A),
                                 size: 24,
                               ),
-                              hintText: AppString.genderHintText,
+                              hintText: L10n.tr.genderHintText,
                               hintStyle: TextStyle(
                                 fontSize: 14,
                                 color: Color(0XFF8A8A8A),
@@ -240,7 +239,7 @@ class _DriverProfileViewState extends State<DriverProfileView> {
                           color: Color(0XFF8A8A8A),
                           size: 24.sp,
                         ),
-                        hintText: AppString.addressHintText,
+                        hintText: L10n.tr.addressHintText,
                         hintextSize: 14.sp,
                         hintextColor: Color(0XFF8A8A8A),
                       ),
@@ -254,7 +253,7 @@ class _DriverProfileViewState extends State<DriverProfileView> {
                           color: Color(0XFF8A8A8A),
                           size: 24.sp,
                         ),
-                        hintText: AppString.enterPasswordHintText,
+                        hintText: L10n.tr.enterPasswordHintText,
                         hintextSize: 14.sp,
                         hintextColor: Color(0XFF8A8A8A),
                       ),
@@ -268,7 +267,7 @@ class _DriverProfileViewState extends State<DriverProfileView> {
                           color: Color(0XFF8A8A8A),
                           size: 24.sp,
                         ),
-                        hintText: AppString.enterPasswordHintText,
+                        hintText: L10n.tr.enterPasswordHintText,
                         hintextSize: 14.sp,
                         hintextColor: Color(0XFF8A8A8A),
                       ),

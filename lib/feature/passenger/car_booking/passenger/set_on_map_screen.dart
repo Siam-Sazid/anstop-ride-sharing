@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
-import 'package:ride_sharing/custom_assets/app_string.dart';
+import 'package:ride_sharing/l10n/l10n_helper.dart';
 import 'package:ride_sharing/feature/auth/email_validation_screen.dart';
 import 'package:ride_sharing/feature/passenger/set_location/view/set_location_option_page.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
@@ -36,14 +36,14 @@ class SetOnMapScreen extends StatelessWidget {
                   controller: locationTEController,
                   prefixIcon: Icon(Icons.location_on, color: AppColors.primaryColor),
                   suffixIcon: Icon(CupertinoIcons.search_circle),
-                  hintText: AppString.whereAreYouHeadedHint,
+                  hintText: L10n.tr.whereAreYouHeadedHint,
                   borderColor: AppColors.primaryColor,
                   borderRadio: 20,
                 ),
                 SizedBox(height: 8),// Optional, adjust if needed
                 SetLocationOptionCard(
                   icon: Icons.pin_drop_rounded,
-                  title: AppString.setOnMapOption,
+                  title: L10n.tr.setOnMapOption,
                   onTap: () {
                     Get.toNamed(AppRoutes.setLocationScreen);
                     print('Home tapped');
@@ -65,8 +65,8 @@ class SetOnMapScreen extends StatelessWidget {
                         children: [
                           CustomLocationButton(
                             imageUrl: AppImage.home,
-                            mainText: AppString.homeOption,
-                            subText: AppString.setAddressSubtitle,
+                            mainText: L10n.tr.homeOption,
+                            subText: L10n.tr.setAddressSubtitle,
                             onTap: () {
                               print('Location button tapped');
                               Get.to(SetLocationOptionPage());
@@ -75,8 +75,8 @@ class SetOnMapScreen extends StatelessWidget {
                           VerticalDivider(color: AppColors.white, width: 2),
                           CustomLocationButton(
                             imageUrl: AppImage.briefcase,
-                            mainText: AppString.workOption,
-                            subText: AppString.setAddressSubtitle,
+                            mainText: L10n.tr.workOption,
+                            subText: L10n.tr.setAddressSubtitle,
                             onTap: () {
                               print('Location button tapped');
                             },
@@ -93,21 +93,21 @@ class SetOnMapScreen extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: (){},
-                      child: Text(AppString.recentPlacesLabel,style: TextStyle(
+                      child: Text(L10n.tr.recentPlacesLabel,style: TextStyle(
                         color: AppColors.grey400,fontSize: 16.sp
                       ),),
                     ),
 
                     GestureDetector(
                       onTap: (){},
-                      child: Text(AppString.clearAllButton,style: TextStyle(
+                      child: Text(L10n.tr.clearAllButton,style: TextStyle(
                           color: AppColors.green300),),
                     )
                   ],
                 ),
                 CustomListTile(
                   icon: Icon(CupertinoIcons.clock,color: AppColors.appGreyColor,),
-                  title: AppString.coffeeCategory,
+                  title: L10n.tr.coffeeCategory,
                   subTitle: '35/3,Shantinagar Bazar Road',
 
                   trailing: Text(
@@ -134,7 +134,7 @@ class SetOnMapScreen extends StatelessWidget {
                 SizedBox(height: 8.h,),
                 CustomListTile(
                   icon: Icon(CupertinoIcons.clock,color: AppColors.appGreyColor,),
-                  title: AppString.restaurantCategory,
+                  title: L10n.tr.restaurantCategory,
                   subTitle: '35/3,Banani Road',  // Subtitle of the ListTile
 
                   trailing: Text(

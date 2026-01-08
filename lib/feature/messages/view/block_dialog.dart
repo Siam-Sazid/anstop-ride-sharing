@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ride_sharing/custom_assets/app_string.dart';
+import 'package:ride_sharing/l10n/l10n_helper.dart';
 
 import '../../../app/utils/app_colors.dart';
 
@@ -30,9 +30,9 @@ class BlockDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              AppString.blockTitle,
-              style: TextStyle(
+            Text(
+              L10n.tr.blockTitle,
+              style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.w700,
                 color: MessagingColors.darkRed,
@@ -43,7 +43,7 @@ class BlockDialog extends StatelessWidget {
 
 
             Text(
-              '${AppString.blockConfirmMessage} $userName ${AppString.blockConfirmMessageSuffix}',
+              '${L10n.tr.blockConfirmMessage} $userName ${L10n.tr.blockConfirmMessageSuffix}',
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 15,
@@ -70,9 +70,9 @@ class BlockDialog extends StatelessWidget {
                         borderRadius: BorderRadius.circular(25),
                       ),
                     ),
-                    child: const Text(
-                      AppString.noButton,
-                      style: TextStyle(
+                    child: Text(
+                      L10n.tr.noButton,
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
@@ -92,9 +92,9 @@ class BlockDialog extends StatelessWidget {
                         borderRadius: BorderRadius.circular(25),
                       ),
                     ),
-                    child: const Text(
-                      AppString.yesButton,
-                      style: TextStyle(
+                    child: Text(
+                      L10n.tr.yesButton,
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),

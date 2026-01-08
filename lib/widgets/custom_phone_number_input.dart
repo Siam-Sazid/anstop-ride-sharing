@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
-import 'package:ride_sharing/custom_assets/app_string.dart';
+import 'package:ride_sharing/l10n/l10n_helper.dart';
 
 class PhoneNumberInput extends StatelessWidget {
   final TextEditingController controller;
@@ -32,8 +32,8 @@ class PhoneNumberInput extends StatelessWidget {
       textFieldController: controller,
       formatInput: false,
       inputDecoration: InputDecoration(
-        labelText: AppString.phoneNumberLabel,
-        hintText: AppString.enterPhoneNumberHint,
+        labelText: L10n.tr.phoneNumberLabel,
+        hintText: L10n.tr.enterPhoneNumberHint,
         labelStyle: TextStyle(color: Color(0XFF8A8A8A)),
         hintStyle: TextStyle(color: Color(0XFF8A8A8A), fontSize: 14),
         border: OutlineInputBorder(

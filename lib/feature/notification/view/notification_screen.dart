@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/feature/notification/model/notification_model.dart';
 import 'package:ride_sharing/feature/notification/utils/notification_date_header.dart';
 import 'package:ride_sharing/feature/notification/utils/notification_item.dart';
 import '../../../app/utils/app_colors.dart';
+import '../../../l10n/l10n_helper.dart';
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({Key? key}) : super(key: key);
 
@@ -27,14 +27,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
         dateLabel: 'Today',
         notifications: [
           NotificationModel(
-            title: AppString.notificationPaymentSuccess,
-            description: AppString.notificationDescription,
+            title: L10n.tr.notificationPaymentSuccess,
+            description: L10n.tr.notificationDescription,
             type: NotificationType.payment,
             dateTime: DateTime.now(),
           ),
           NotificationModel(
-            title: AppString.notificationSpecialDiscount30,
-            description: AppString.notificationDescription,
+            title: L10n.tr.notificationSpecialDiscount30,
+            description: L10n.tr.notificationDescription,
             type: NotificationType.discount,
             dateTime: DateTime.now(),
           ),
@@ -44,30 +44,26 @@ class _NotificationScreenState extends State<NotificationScreen> {
         dateLabel: 'Yesterday',
         notifications: [
           NotificationModel(
-            title: 'Payment Successfully!',
-            description:
-                'Lorem ipsum dolor sit amet consectetur. Ultricies tincidunt alefend vitae',
+            title: L10n.tr.notificationPaymentSuccess,
+            description: L10n.tr.notificationDescription,
             type: NotificationType.payment,
             dateTime: DateTime.now().subtract(const Duration(days: 1)),
           ),
           NotificationModel(
-            title: 'Credit Card added!',
-            description:
-                'Lorem ipsum dolor sit amet consectetur. Ultricies tincidunt alefend vitae',
+            title: L10n.tr.notificationCreditCardAdded,
+            description: L10n.tr.notificationDescription,
             type: NotificationType.creditCard,
             dateTime: DateTime.now().subtract(const Duration(days: 1)),
           ),
           NotificationModel(
-            title: 'Added Money wallet Successfully!',
-            description:
-                'Lorem ipsum dolor sit amet consectetur. Ultricies tincidunt alefend vitae',
+            title: L10n.tr.notificationWalletAddedSuccess,
+            description: L10n.tr.notificationDescription,
             type: NotificationType.wallet,
             dateTime: DateTime.now().subtract(const Duration(days: 1)),
           ),
           NotificationModel(
-            title: '5% Special Discount!',
-            description:
-                'Lorem ipsum dolor sit amet consectetur. Ultricies tincidunt alefend vitae',
+            title: L10n.tr.notificationSpecialDiscount5,
+            description: L10n.tr.notificationDescription,
             type: NotificationType.discount,
             dateTime: DateTime.now().subtract(const Duration(days: 1)),
           ),
@@ -77,9 +73,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
         dateLabel: 'May, 27 2023',
         notifications: [
           NotificationModel(
-            title: 'Payment Successfully!',
-            description:
-                'Lorem ipsum dolor sit amet consectetur. Ultricies tincidunt alefend vitae',
+            title: L10n.tr.notificationPaymentSuccess,
+            description: L10n.tr.notificationDescription,
             type: NotificationType.payment,
             dateTime: DateTime(2023, 5, 27),
           ),
@@ -104,9 +99,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
           ),
           onPressed: () {},
         ),
-        title: const Text(
-          AppString.notificationTitle,
-          style: TextStyle(
+        title: Text(
+          L10n.tr.notificationTitle,
+          style: const TextStyle(
             color: NotificationColors.primaryText,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -218,9 +213,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                   ),
-                  child: const Text(
-                    AppString.closeButton,
-                    style: TextStyle(
+                  child: Text(
+                    L10n.tr.closeButton,
+                    style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),

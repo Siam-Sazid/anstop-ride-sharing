@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ride_sharing/custom_assets/app_string.dart';
+import 'package:ride_sharing/l10n/l10n_helper.dart';
 import '../../../app/utils/app_colors.dart';
 import '../../../widgets/custom_text_field.dart';
 
@@ -36,9 +36,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           ),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          AppString.changePasswordOption,
-          style: TextStyle(
+        title: Text(
+          L10n.tr.changePasswordOption,
+          style: const TextStyle(
             color: SettingsColors.primaryText,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -54,7 +54,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(AppString.currentPasswordLabel),
+                  Text(L10n.tr.currentPasswordLabel),
                   CustomTextField(
                     isObscureText: true,
                     isPassword: true,
@@ -64,12 +64,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       color: Color(0XFF8A8A8A),
                       size: 24.sp,
                     ),
-                    hintText: AppString.enterOldPasswordHint,
+                    hintText: L10n.tr.enterOldPasswordHint,
                     hintextSize: 14.sp,
                     hintextColor: Color(0XFF8A8A8A),
                   ),
                   SizedBox(height: 12.h),
-                  Text(AppString.newPasswordLabel),
+                  Text(L10n.tr.newPasswordLabel),
                   CustomTextField(
                     isObscureText: true,
                     isPassword: true,
@@ -79,12 +79,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       color: Color(0XFF8A8A8A),
                       size: 24.sp,
                     ),
-                    hintText: AppString.enterNewPasswordHint,
+                    hintText: L10n.tr.enterNewPasswordHint,
                     hintextSize: 14.sp,
                     hintextColor: Color(0XFF8A8A8A),
                   ),
                   SizedBox(height: 12.h),
-                  Text(AppString.passwordLabel),
+                  Text(L10n.tr.passwordLabel),
                   CustomTextField(
                     isObscureText: true,
                     isPassword: true,
@@ -94,7 +94,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       color: Color(0XFF8A8A8A),
                       size: 24.sp,
                     ),
-                    hintText: AppString.reenterPasswordHint,
+                    hintText: L10n.tr.reenterPasswordHint,
                     hintextSize: 14.sp,
                     hintextColor: Color(0XFF8A8A8A),
                   ),
@@ -112,9 +112,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         minimumSize: const Size(0, 0),
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
-                      child: const Text(
-                        AppString.forgetPasswordTextButton,
-                        style: TextStyle(
+                      child: Text(
+                        L10n.tr.forgetPasswordTextButton,
+                        style: const TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w400,
                           decoration: TextDecoration.underline,
@@ -144,9 +144,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     borderRadius: BorderRadius.circular(25),
                   ),
                 ),
-                child: const Text(
-                  AppString.resetPasswordConfirmButton,
-                  style: TextStyle(
+                child: Text(
+                  L10n.tr.resetPasswordConfirmButton,
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                   ),
@@ -179,19 +179,19 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 size: 64,
               ),
               const SizedBox(height: 16),
-              const Text(
-                AppString.resetPasswordAppBarText,
-                style: TextStyle(
+              Text(
+                L10n.tr.resetPasswordAppBarText,
+                style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
                   color: SettingsColors.primaryText,
                 ),
               ),
               const SizedBox(height: 8),
-              const Text(
-                AppString.reportSubmittedMessage,
+              Text(
+                L10n.tr.reportSubmittedMessage,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 14,
                   color: SettingsColors.secondaryText,
                 ),
@@ -213,9 +213,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       borderRadius: BorderRadius.circular(25),
                     ),
                   ),
-                  child: const Text(
-                    AppString.okButton,
-                    style: TextStyle(
+                  child: Text(
+                    L10n.tr.okButton,
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),

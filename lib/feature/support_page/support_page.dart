@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
-import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 
 class SupportPage extends StatefulWidget {
@@ -11,17 +10,6 @@ class SupportPage extends StatefulWidget {
 }
 
 class _SupportPageState extends State<SupportPage> {
-  // Updated: renamed to avoid collisions
-  final List<Map<String, String>> _supportComplaints = [
-    {"key": "v1", "label": AppString.supportVehicleNotClean},
-    {"key": "v2", "label": AppString.supportVehicleTooSmall},
-    {"key": "d1", "label": AppString.supportDriverRude},
-    {"key": "d2", "label": AppString.supportDriverExtraMoney},
-    {"key": "d3", "label": AppString.supportDriverLongRoute},
-    {"key": "v3", "label": AppString.supportVehicleACNotWorking},
-    {"key": "o1", "label": AppString.supportOtherIssue},
-  ];
-
   // Updated: unique name to prevent library-wide conflicts
   String _selectedKey = "v1";
 
@@ -29,6 +17,17 @@ class _SupportPageState extends State<SupportPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Updated: renamed to avoid collisions
+    final List<Map<String, String>> _supportComplaints = [
+      {"key": "v1", "label": L10n.tr.supportVehicleNotClean},
+      {"key": "v2", "label": L10n.tr.supportVehicleTooSmall},
+      {"key": "d1", "label": L10n.tr.supportDriverRude},
+      {"key": "d2", "label": L10n.tr.supportDriverExtraMoney},
+      {"key": "d3", "label": L10n.tr.supportDriverLongRoute},
+      {"key": "v3", "label": L10n.tr.supportVehicleACNotWorking},
+      {"key": "o1", "label": L10n.tr.supportOtherIssue},
+    ];
+
     final width = 375.0; // as requested
 
     return Scaffold(
@@ -47,9 +46,9 @@ class _SupportPageState extends State<SupportPage> {
                     children: [
                       const Icon(Icons.menu, size: 28, color: Colors.black),
 
-                      const Text(
-                        AppString.supportTitle,
-                        style: TextStyle(
+                      Text(
+                        L10n.tr.supportTitle,
+                        style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
                           color: Color(0xFF1E1E1E),
@@ -69,8 +68,8 @@ class _SupportPageState extends State<SupportPage> {
                 const SizedBox(height: 12),
                  LogoWidget(),
                 const SizedBox(height: 12),
-                Center(child: Text(AppString.supportMessage1)),
-                Center(child: Text(AppString.supportMessage2)),
+                Center(child: Text(L10n.tr.supportMessage1)),
+                Center(child: Text(L10n.tr.supportMessage2)),
                 // ================= DROP DOWN =================
                 const SizedBox(height: 12),
                 Padding(
@@ -144,8 +143,8 @@ class _SupportPageState extends State<SupportPage> {
                     child: TextField(
                       controller: _descriptionController,
                       maxLines: 5,
-                      decoration: const InputDecoration(
-                        hintText: AppString.writeComplaintHint,
+                      decoration: InputDecoration(
+                        hintText: L10n.tr.writeComplaintHint,
                         border: InputBorder.none,
                       ),
                     ),
@@ -167,9 +166,9 @@ class _SupportPageState extends State<SupportPage> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       alignment: Alignment.center,
-                      child: const Text(
-                        AppString.sendToAdminButton,
-                        style: TextStyle(
+                      child: Text(
+                        L10n.tr.sendToAdminButton,
+                        style: const TextStyle(
                           fontSize: 17,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
@@ -210,10 +209,10 @@ class _SupportPageState extends State<SupportPage> {
 
                 const SizedBox(height: 14),
 
-                const Text(
-                  AppString.submittedSuccessfullyTitle,
+                Text(
+                  L10n.tr.submittedSuccessfullyTitle,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
                     color: Color(0xFF1E1E1E),
@@ -222,10 +221,10 @@ class _SupportPageState extends State<SupportPage> {
 
                 const SizedBox(height: 10),
 
-                const Text(
-                  AppString.complaintSubmittedMessage,
+                Text(
+                  L10n.tr.complaintSubmittedMessage,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
                     color: Color(0xFF777777),
                   ),

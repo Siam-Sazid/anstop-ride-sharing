@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:ride_sharing/custom_assets/app_string.dart';
+import 'package:ride_sharing/l10n/l10n_helper.dart';
 import 'package:ride_sharing/feature/messages/view/report_description_screen.dart';
 import '../../../app/utils/app_colors.dart';
 
@@ -16,19 +16,18 @@ class ReportScreen extends StatefulWidget {
 class _ReportScreenState extends State<ReportScreen> {
   String? selectedReason;
 
-  final List<String> reportReasons = [
-    AppString.reportHateSpeech,
-    AppString.reportThreat,
-    AppString.reportHarassment,
-    AppString.reportPretending,
-    AppString.reportFraud,
-    AppString.reportFakeIdentity,
-    AppString.reportSomethingElse,
-    AppString.reportOther,
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final List<String> reportReasons = [
+      L10n.tr.reportHateSpeech,
+      L10n.tr.reportThreat,
+      L10n.tr.reportHarassment,
+      L10n.tr.reportPretending,
+      L10n.tr.reportFraud,
+      L10n.tr.reportFakeIdentity,
+      L10n.tr.reportSomethingElse,
+      L10n.tr.reportOther,
+    ];
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -43,9 +42,9 @@ class _ReportScreenState extends State<ReportScreen> {
           ),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          AppString.reportTitle,
-          style: TextStyle(
+        title: Text(
+          L10n.tr.reportTitle,
+          style: const TextStyle(
             color: MessagingColors.primaryText,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -62,18 +61,18 @@ class _ReportScreenState extends State<ReportScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      AppString.reportSubtitle,
-                      style: TextStyle(
+                    Text(
+                      L10n.tr.reportSubtitle,
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                         color: MessagingColors.primaryText,
                       ),
                     ),
                     const SizedBox(height: 8),
-                    const Text(
-                      AppString.reportHelpMessage,
-                      style: TextStyle(
+                    Text(
+                      L10n.tr.reportHelpMessage,
+                      style: const TextStyle(
                         fontSize: 14,
                         color: MessagingColors.secondaryText,
                       ),
@@ -118,9 +117,9 @@ class _ReportScreenState extends State<ReportScreen> {
                     borderRadius: BorderRadius.circular(25),
                   ),
                 ),
-                child: const Text(
-                  AppString.continueButton,
-                  style: TextStyle(
+                child: Text(
+                  L10n.tr.continueButton,
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                   ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ride_sharing/custom_assets/app_string.dart';
+import 'package:ride_sharing/l10n/l10n_helper.dart';
 
 import '../app/utils/app_colors.dart';
 import '../custom_assets/app_image.dart';
@@ -28,7 +28,7 @@ class UserInfoRow extends StatelessWidget {
         SizedBox(width: 5.w),
         CustomVerticalLine(height: 10.h, color: Colors.grey), // Your Custom Vertical Line
         SizedBox(width: 5.w),
-        Text('$trips ${AppString.tripsCountLabel}', style: TextStyle(fontSize: 10.sp)),
+        Text('$trips ${L10n.tr.tripsCountLabel}', style: TextStyle(fontSize: 10.sp)),
         SizedBox(width: 5.w),
         CustomVerticalLine(height: 10.h, color: Colors.grey), // Your Custom Vertical Line
         SizedBox(width: 5.w),

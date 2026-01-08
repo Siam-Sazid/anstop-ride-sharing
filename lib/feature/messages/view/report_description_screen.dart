@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:ride_sharing/custom_assets/app_string.dart';
+import 'package:ride_sharing/l10n/l10n_helper.dart';
 
 import '../../../app/utils/app_colors.dart';
 
@@ -37,9 +37,9 @@ class _ReportDescriptionScreenState extends State<ReportDescriptionScreen> {
           ),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          AppString.reportTitle,
-          style: TextStyle(
+        title: Text(
+          L10n.tr.reportTitle,
+          style: const TextStyle(
             color: MessagingColors.primaryText,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -56,18 +56,18 @@ class _ReportDescriptionScreenState extends State<ReportDescriptionScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      AppString.reportSubtitle,
-                      style: TextStyle(
+                    Text(
+                      L10n.tr.reportSubtitle,
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                         color: MessagingColors.primaryText,
                       ),
                     ),
                     const SizedBox(height: 8),
-                    const Text(
-                      AppString.reportHelpMessage,
-                      style: TextStyle(
+                    Text(
+                      L10n.tr.reportHelpMessage,
+                      style: const TextStyle(
                         fontSize: 14,
                         color: MessagingColors.secondaryText,
                       ),
@@ -113,18 +113,18 @@ class _ReportDescriptionScreenState extends State<ReportDescriptionScreen> {
                     const SizedBox(height: 28),
 
                     // Description Section
-                    const Text(
-                      AppString.describeComplainLabel,
-                      style: TextStyle(
+                    Text(
+                      L10n.tr.describeComplainLabel,
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: MessagingColors.primaryText,
                       ),
                     ),
                     const SizedBox(height: 12),
-                    const Text(
-                      AppString.hateSpeechDescription,
-                      style: TextStyle(
+                    Text(
+                      L10n.tr.hateSpeechDescription,
+                      style: const TextStyle(
                         fontSize: 13,
                         color: MessagingColors.secondaryText,
                         height: 1.5,
@@ -155,9 +155,9 @@ class _ReportDescriptionScreenState extends State<ReportDescriptionScreen> {
                     borderRadius: BorderRadius.circular(25),
                   ),
                 ),
-                child: const Text(
-                  AppString.submitButton,
-                  style: TextStyle(
+                child: Text(
+                  L10n.tr.submitButton,
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                   ),
@@ -190,19 +190,19 @@ class _ReportDescriptionScreenState extends State<ReportDescriptionScreen> {
                 size: 64,
               ),
               const SizedBox(height: 16),
-              const Text(
-                AppString.reportSubmittedTitle,
-                style: TextStyle(
+              Text(
+                L10n.tr.reportSubmittedTitle,
+                style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
                   color: MessagingColors.primaryText,
                 ),
               ),
               const SizedBox(height: 8),
-              const Text(
-                AppString.reportSubmittedMessage,
+              Text(
+                L10n.tr.reportSubmittedMessage,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 14,
                   color: MessagingColors.secondaryText,
                 ),
@@ -223,9 +223,9 @@ class _ReportDescriptionScreenState extends State<ReportDescriptionScreen> {
                       borderRadius: BorderRadius.circular(25),
                     ),
                   ),
-                  child: const Text(
-                    AppString.okButton,
-                    style: TextStyle(
+                  child: Text(
+                    L10n.tr.okButton,
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),

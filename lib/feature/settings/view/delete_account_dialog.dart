@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ride_sharing/custom_assets/app_string.dart';
+import 'package:ride_sharing/l10n/l10n_helper.dart';
 
 import '../../../app/utils/app_colors.dart';
 
@@ -27,19 +27,19 @@ class DeleteAccountDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              AppString.deleteAccountTitle,
-              style: TextStyle(
+            Text(
+              L10n.tr.deleteAccountTitle,
+              style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.w600,
                 color: SettingsColors.primaryText,
               ),
             ),
             const SizedBox(height: 20),
-            const Text(
-              AppString.deleteAccountMessage,
+            Text(
+              L10n.tr.deleteAccountMessage,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 15,
                 color: SettingsColors.secondaryText,
                 height: 1.4,
@@ -60,9 +60,9 @@ class DeleteAccountDialog extends StatelessWidget {
                         borderRadius: BorderRadius.circular(25),
                       ),
                     ),
-                    child: const Text(
-                      AppString.cancelButton,
-                      style: TextStyle(
+                    child: Text(
+                      L10n.tr.cancelButton,
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
@@ -82,9 +82,9 @@ class DeleteAccountDialog extends StatelessWidget {
                         borderRadius: BorderRadius.circular(25),
                       ),
                     ),
-                    child: const Text(
-                      AppString.yesDeleteButton,
-                      style: TextStyle(
+                    child: Text(
+                      L10n.tr.yesDeleteButton,
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),

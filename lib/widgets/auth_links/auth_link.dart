@@ -4,7 +4,7 @@ export 'package:get/get.dart';
 export 'package:ride_sharing/app/utils/app_colors.dart';
 export 'package:ride_sharing/widgets/widgets.dart';
 export 'package:ride_sharing/widgets/logo.dart';
-export 'package:ride_sharing/custom_assets/app_string.dart';
+export 'package:ride_sharing/l10n/l10n_helper.dart';
 export '../../../widgets/custom_phone_number_input.dart';
 export '../../../widgets/custom_box_items.dart';
 export '../../../widgets/custom_upload_items.dart';

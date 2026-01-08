@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:ride_sharing/custom_assets/app_string.dart';
+import 'package:ride_sharing/l10n/l10n_helper.dart';
 import 'package:ride_sharing/feature/driver/profile/view/driver_profile_view.dart';
 class CustomUserRating extends StatefulWidget {
   final String name;
@@ -61,7 +61,7 @@ class _CustomUserRatingState extends State<CustomUserRating> {
                 onTap: (){
                   Get.to(DriverProfileView());
                 },
-                  child: Text(AppString.goToProfileLink,style: TextStyle(color: Colors.green,fontSize: 10.sp),
+                  child: Text(L10n.tr.goToProfileLink,style: TextStyle(color: Colors.green,fontSize: 10.sp),
 
                   )
 

@@ -1,4 +1,5 @@
 import 'package:ride_sharing/feature/auth/reset_password_screen.dart';
+import 'package:ride_sharing/l10n/l10n_helper.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 
 class OtpVarificationScreen extends StatelessWidget {
@@ -8,7 +9,7 @@ class OtpVarificationScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppString.otpAppBarText),
+        title: Text(L10n.tr.otpAppBarText),
         backgroundColor: AppColors.appBarColor,
         centerTitle: true,
         foregroundColor: Color(0XFF0A0A0A),
@@ -31,7 +32,7 @@ class OtpVarificationScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      AppString.otpDidNotGetText,
+                      L10n.tr.otpDidNotGetText,
                       style: TextStyle(
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w400,
@@ -39,7 +40,7 @@ class OtpVarificationScreen extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      AppString.resendButtonText,
+                      L10n.tr.resendButtonText,
                       style: TextStyle(
                         color: Colors.red,
                         fontSize: 14.sp,
@@ -58,7 +59,7 @@ class OtpVarificationScreen extends StatelessWidget {
                 onPressed: () {
                   Get.to(() => ResetPasswordScreen());
                 },
-                label: AppString.otpVarificationButtonText,
+                label: L10n.tr.otpVarificationButtonText,
               ),
               Spacer(),
               Spacer(),

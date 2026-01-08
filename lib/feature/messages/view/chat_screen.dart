@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:ride_sharing/custom_assets/app_string.dart';
+import 'package:ride_sharing/l10n/l10n_helper.dart';
 import 'package:ride_sharing/feature/messages/message_utils/chat_bubble.dart';
 import 'package:ride_sharing/feature/messages/models/message_models.dart';
 import 'package:ride_sharing/feature/messages/view/block_dialog.dart';
 import 'package:ride_sharing/feature/messages/view/media_grid_screen.dart';
 import 'package:ride_sharing/feature/messages/view/report_screen.dart';
 import '../../../app/utils/app_colors.dart';
+import '../../../l10n/l10n_helper.dart';
 
 
 class ChatScreen extends StatefulWidget {
@@ -84,7 +85,7 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
             const SizedBox(height: 20),
             _buildMenuOption(
-              AppString.viewMediaOption,
+              L10n.tr.viewMediaOption,
                   () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -96,7 +97,7 @@ class _ChatScreenState extends State<ChatScreen> {
               },
             ),
             _buildMenuOption(
-              AppString.reportOption,
+              L10n.tr.reportOption,
                   () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -108,7 +109,7 @@ class _ChatScreenState extends State<ChatScreen> {
               },
             ),
             _buildMenuOption(
-              AppString.blockOption,
+              L10n.tr.blockOption,
                   () {
                 Navigator.pop(context);
                 _showBlockDialog();
@@ -264,9 +265,9 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
               child: TextField(
                 controller: _messageController,
-                decoration: const InputDecoration(
-                  hintText: AppString.typeMessageHint,
-                  hintStyle: TextStyle(
+                decoration: InputDecoration(
+                  hintText: L10n.tr.typeMessageHint,
+                  hintStyle: const TextStyle(
                     color: MessagingColors.secondaryText,
                     fontSize: 14,
                   ),

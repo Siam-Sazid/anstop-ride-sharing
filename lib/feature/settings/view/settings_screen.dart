@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:ride_sharing/custom_assets/app_string.dart';
+import 'package:ride_sharing/l10n/l10n_helper.dart';
 import 'package:ride_sharing/feature/auth/passenger/terms_of_services.dart';
 import 'package:ride_sharing/feature/settings/utils/settings_menu_item.dart';
 import 'package:ride_sharing/feature/settings/view/change_password_screen.dart';
@@ -30,9 +30,9 @@ class SettingsScreen extends StatelessWidget {
           ),
           onPressed: () {},
         ),
-        title: const Text(
-          AppString.settingsTitle,
-          style: TextStyle(
+        title: Text(
+          L10n.tr.settingsTitle,
+          style: const TextStyle(
             color: SettingsColors.primaryText,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -45,9 +45,9 @@ class SettingsScreen extends StatelessWidget {
             child: CircleAvatar(
               radius: 18,
               backgroundColor: SettingsColors.primaryGreen,
-              child: const Text(
-                AppString.logoLabel,
-                style: TextStyle(
+              child: Text(
+                L10n.tr.logoLabel,
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 8,
                   fontWeight: FontWeight.w600,
@@ -74,7 +74,7 @@ class SettingsScreen extends StatelessWidget {
                 children: [
                   SettingsMenuItem(
                     icon: Icons.lock_outline,
-                    title: AppString.changePasswordOption,
+                    title: L10n.tr.changePasswordOption,
                     onTap: () {
                       Navigator.push(
                         context,
@@ -86,24 +86,24 @@ class SettingsScreen extends StatelessWidget {
                   ),
                   SettingsMenuItem(
                     icon: Icons.info_outline,
-                    title: AppString.aboutUsOption,
+                    title: L10n.tr.aboutUsOption,
                     onTap: () {},
                   ),
                   SettingsMenuItem(
                     icon: Icons.shield_outlined,
-                    title: AppString.privacyPolicyOption,
+                    title: L10n.tr.privacyPolicyOption,
                     onTap: () {},
                   ),
                   SettingsMenuItem(
                     icon: Icons.description_outlined,
-                    title: AppString.termsOfServiceOption,
+                    title: L10n.tr.termsOfServiceOption,
                     onTap: () {
                       Get.to(() => TermsOfServices());
                     },
                   ),
                   SettingsMenuItem(
                     icon: Icons.language,
-                    title: AppString.changeLanguageOption,
+                    title: L10n.tr.changeLanguageOption,
                     onTap: () {
                       Navigator.push(
                         context,
@@ -142,12 +142,12 @@ class SettingsScreen extends StatelessWidget {
                 backgroundColor: SettingsColors.redButtonColor,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Icon(Icons.delete_outline, size: 20,color: AppColors.white,),
-                    SizedBox(width: 8),
+                  children: [
+                    const Icon(Icons.delete_outline, size: 20,color: AppColors.white,),
+                    const SizedBox(width: 8),
                     Text(
-                      AppString.deleteAccountButton,
-                      style: TextStyle(
+                      L10n.tr.deleteAccountButton,
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: AppColors.white

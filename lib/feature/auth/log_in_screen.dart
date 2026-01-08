@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:ride_sharing/feature/auth/email_validation_screen.dart';
 import 'package:ride_sharing/feature/auth/reset_password_screen.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
+import '../../l10n/l10n_helper.dart';
 import '../../routes/app_routes.dart';
 
 class LogInScreen extends StatefulWidget {
@@ -33,8 +34,8 @@ class _LogInScreenState extends State<LogInScreen> {
     } else {
       // Show error message
       Get.snackbar(
-        'Validation Error',
-        'Please fill in all required fields correctly',
+        L10n.tr.validationErrorTitle,
+        L10n.tr.validationErrorMessage,
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red.withOpacity(0.8),
         colorText: Colors.white,
@@ -60,7 +61,7 @@ class _LogInScreenState extends State<LogInScreen> {
                   SizedBox(height: 52.h),
                   CustomTextField(
                     controller: _emailTEController,
-                    hintText: AppString.emailHintText,
+                    hintText: L10n.tr.emailHintText,
                     hintextColor: Color(0XFF02243E),
                     hintextSize: 14.sp,
                     prefixIcon: Icon(
@@ -72,7 +73,7 @@ class _LogInScreenState extends State<LogInScreen> {
                   SizedBox(height: 16.h),
                   CustomTextField(
                     controller: _passwordTEController,
-                    hintText: AppString.passwordHintText,
+                    hintText: L10n.tr.passwordHintText,
                     hintextColor: Color(0XFF02243E),
                     hintextSize: 14.sp,
                     prefixIcon: Icon(Icons.key, color: Color(0XFF191A44)),
@@ -85,7 +86,7 @@ class _LogInScreenState extends State<LogInScreen> {
                       Get.to(ResetPasswordScreen());
                     },
                     child: Text(
-                      AppString.forgetPasswordTextButton,
+                      L10n.tr.forgetPasswordTextButton,
                       style: TextStyle(
                           color: AppColors.errorColor,
                           fontSize: 12.sp,
@@ -97,7 +98,7 @@ class _LogInScreenState extends State<LogInScreen> {
                   SizedBox(height: 13.h),
                   CustomButton(
                     onPressed: _handleLogin,
-                    label: AppString.logInButtonText,
+                    label: L10n.tr.logInButtonText,
                   ),
                 ],
               ),

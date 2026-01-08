@@ -1,8 +1,7 @@
-import 'package:flutter/cupertino.dart';
+﻿import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
-import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/passenger/set_on_map_screen.dart';
 import 'package:ride_sharing/feature/passenger/homepage/controller/home_page_controller.dart';
 import 'package:ride_sharing/feature/passenger/set_location/view/set_location_option_page.dart';
@@ -68,7 +67,7 @@ class HomePage extends StatelessWidget {
                               controller: controller.locationTEController,
                               prefixIcon: Icon(Icons.location_on, color: AppColors.primaryColor),
                               suffixIcon: Icon(CupertinoIcons.search_circle),
-                              hintText: AppString.whereAreYouHeadedHint,
+                              hintText: L10n.tr.whereAreYouHeadedHint,
                               borderColor: AppColors.primaryColor,
                               borderRadio: 20,
                             ),
@@ -89,8 +88,8 @@ class HomePage extends StatelessWidget {
                                     children: [
                                       CustomLocationButton(
                                         imageUrl: AppImage.home,
-                                        mainText: AppString.homeOption,
-                                        subText: AppString.setAddressSubtitle,
+                                        mainText: L10n.tr.homeOption,
+                                        subText: L10n.tr.setAddressSubtitle,
                                         onTap: () {
                                           print('Location button tapped');
                                           Get.to(SetLocationOptionPage());
@@ -99,8 +98,8 @@ class HomePage extends StatelessWidget {
                                       VerticalDivider(color: AppColors.white, width: 5),
                                       CustomLocationButton(
                                         imageUrl: AppImage.briefcase,
-                                        mainText: AppString.workOption,
-                                        subText: AppString.setAddressSubtitle,
+                                        mainText: L10n.tr.workOption,
+                                        subText: L10n.tr.setAddressSubtitle,
                                         onTap: () {
                                           print('Location button tapped');
                                         },

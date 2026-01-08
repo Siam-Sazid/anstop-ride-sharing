@@ -1,8 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:ride_sharing/custom_assets/app_string.dart';
-
-
-
+﻿import 'package:flutter/material.dart';
+import 'package:ride_sharing/l10n/l10n_helper.dart';
 class LegalPagesHome extends StatelessWidget {
   const LegalPagesHome({super.key});
 
@@ -28,8 +25,8 @@ class LegalPagesHome extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: const LegalPage(
-                  title: AppString.aboutUsTitle,
+                child: LegalPage(
+                  title: L10n.tr.aboutUsTitle,
                   content: '''
 Lorem ipsum dolor sit amet consectetur. Enim massa aenean ac odio leo habitasse tortor tempor. Ut id urna odio dui leo congue. Ultrices pharetra ornare nam faucibus. Integer id varius consectetur non.
 
@@ -55,8 +52,8 @@ Lorem ipsum dolor sit amet consectetur. Enim massa aenean ac odio leo habitasse 
                     ),
                   ],
                 ),
-                child: const LegalPage(
-                  title: AppString.privacyPolicyTitle,
+                child: LegalPage(
+                  title: L10n.tr.privacyPolicyTitle,
                   content: '''
 Lorem ipsum dolor sit amet consectetur. Enim massa aenean ac odio leo habitasse tortor tempor. Ut id urna odio dui leo congue. Ultrices pharetra ornare nam faucibus. Integer id varius consectetur non.
 
@@ -82,8 +79,8 @@ Lorem ipsum dolor sit amet consectetur. Enim massa aenean ac odio leo habitasse 
                     ),
                   ],
                 ),
-                child: const LegalPage(
-                  title: AppString.termsOfServiceTitle,
+                child: LegalPage(
+                  title: L10n.tr.termsOfServiceTitle,
                   content: '''
 Lorem ipsum dolor sit amet consectetur. Enim massa aenean ac odio leo habitasse tortor tempor. Ut id urna odio dui leo congue. Ultrices pharetra ornare nam faucibus. Integer id varius consectetur non.
 
