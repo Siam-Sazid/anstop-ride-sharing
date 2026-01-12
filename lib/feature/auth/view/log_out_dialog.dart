@@ -23,7 +23,7 @@ class LogoutDialog extends StatelessWidget {
           children: [
             // Title
             Text(
-              L10n.tr.logOutTitle,
+              AppLocalization.tr.logOutTitle,
               style: TextStyle(
                 fontSize: 20.sp,
                 fontWeight: FontWeight.w600,
@@ -34,7 +34,7 @@ class LogoutDialog extends StatelessWidget {
 
             // Message
             Text(
-              L10n.tr.logOutMessage,
+              AppLocalization.tr.logOutMessage,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14.sp,
@@ -63,7 +63,7 @@ class LogoutDialog extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      L10n.tr.cancelButton,
+                      AppLocalization.tr.cancelButton,
                       style: TextStyle(
                         fontSize: 16.sp,
                         color: Colors.black,
@@ -89,7 +89,7 @@ class LogoutDialog extends StatelessWidget {
                       elevation: 0,
                     ),
                     child: Text(
-                      L10n.tr.logoutButton,
+                      AppLocalization.tr.logoutButton,
                       style: TextStyle(
                         fontSize: 16.sp,
                         color: Colors.white,

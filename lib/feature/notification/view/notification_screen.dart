@@ -27,14 +27,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
         dateLabel: 'Today',
         notifications: [
           NotificationModel(
-            title: L10n.tr.notificationPaymentSuccess,
-            description: L10n.tr.notificationDescription,
+            title: AppLocalization.tr.notificationPaymentSuccess,
+            description: AppLocalization.tr.notificationDescription,
             type: NotificationType.payment,
             dateTime: DateTime.now(),
           ),
           NotificationModel(
-            title: L10n.tr.notificationSpecialDiscount30,
-            description: L10n.tr.notificationDescription,
+            title: AppLocalization.tr.notificationSpecialDiscount30,
+            description: AppLocalization.tr.notificationDescription,
             type: NotificationType.discount,
             dateTime: DateTime.now(),
           ),
@@ -44,26 +44,26 @@ class _NotificationScreenState extends State<NotificationScreen> {
         dateLabel: 'Yesterday',
         notifications: [
           NotificationModel(
-            title: L10n.tr.notificationPaymentSuccess,
-            description: L10n.tr.notificationDescription,
+            title: AppLocalization.tr.notificationPaymentSuccess,
+            description: AppLocalization.tr.notificationDescription,
             type: NotificationType.payment,
             dateTime: DateTime.now().subtract(const Duration(days: 1)),
           ),
           NotificationModel(
-            title: L10n.tr.notificationCreditCardAdded,
-            description: L10n.tr.notificationDescription,
+            title: AppLocalization.tr.notificationCreditCardAdded,
+            description: AppLocalization.tr.notificationDescription,
             type: NotificationType.creditCard,
             dateTime: DateTime.now().subtract(const Duration(days: 1)),
           ),
           NotificationModel(
-            title: L10n.tr.notificationWalletAddedSuccess,
-            description: L10n.tr.notificationDescription,
+            title: AppLocalization.tr.notificationWalletAddedSuccess,
+            description: AppLocalization.tr.notificationDescription,
             type: NotificationType.wallet,
             dateTime: DateTime.now().subtract(const Duration(days: 1)),
           ),
           NotificationModel(
-            title: L10n.tr.notificationSpecialDiscount5,
-            description: L10n.tr.notificationDescription,
+            title: AppLocalization.tr.notificationSpecialDiscount5,
+            description: AppLocalization.tr.notificationDescription,
             type: NotificationType.discount,
             dateTime: DateTime.now().subtract(const Duration(days: 1)),
           ),
@@ -73,8 +73,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
         dateLabel: 'May, 27 2023',
         notifications: [
           NotificationModel(
-            title: L10n.tr.notificationPaymentSuccess,
-            description: L10n.tr.notificationDescription,
+            title: AppLocalization.tr.notificationPaymentSuccess,
+            description: AppLocalization.tr.notificationDescription,
             type: NotificationType.payment,
             dateTime: DateTime(2023, 5, 27),
           ),
@@ -100,7 +100,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           onPressed: () {},
         ),
         title: Text(
-          L10n.tr.notificationTitle,
+          AppLocalization.tr.notificationTitle,
           style: const TextStyle(
             color: NotificationColors.primaryText,
             fontSize: 18,
@@ -214,7 +214,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     ),
                   ),
                   child: Text(
-                    L10n.tr.closeButton,
+                    AppLocalization.tr.closeButton,
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,

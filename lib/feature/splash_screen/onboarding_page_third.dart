@@ -4,8 +4,8 @@ import 'package:get/get.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/custom_assets/app_string.dart';
-import 'package:ride_sharing/feature/auth/log_in_screen.dart';
-import 'package:ride_sharing/feature/splash_screen/passenger_auth_selection_screen.dart';
+import 'package:ride_sharing/feature/auth/view/log_in_screen.dart';
+import 'package:ride_sharing/feature/splash_screen/auth_selection_screen.dart';
 import 'package:ride_sharing/feature/splash_screen/role_selection_screen.dart';
 
 import '../../widgets/custom_fade_slide.dart';

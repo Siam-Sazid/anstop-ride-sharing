@@ -21,7 +21,7 @@ class DriverCompletedTripDetails extends StatelessWidget {
             Navigator.of(context).pop();
           },
         ),
-        title: Text(L10n.tr.tripDetailsTitle),
+        title: Text(AppLocalization.tr.tripDetailsTitle),
         centerTitle: true,
       ),
 
@@ -40,7 +40,7 @@ class DriverCompletedTripDetails extends StatelessWidget {
                   "https://media.wired.com/photos/59269cd37034dc5f91bec0f1/191:100/w_1280,c_limit/GoogleMapTA.jpg",
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
-                    return Center(child: Text(L10n.tr.mapImageNotAvailable));
+                    return Center(child: Text(AppLocalization.tr.mapImageNotAvailable));
                   },
                 ),
               ),
@@ -58,16 +58,16 @@ class DriverCompletedTripDetails extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Text(L10n.tr.passengerNameExample,style: TextStyle(fontSize: 18.sp,fontWeight: FontWeight.bold),),
+                          Text(AppLocalization.tr.passengerNameExample,style: TextStyle(fontSize: 18.sp,fontWeight: FontWeight.bold),),
                           Spacer(),
-                          Text(L10n.tr.dateExample,style: TextStyle(fontSize: 18.sp,fontWeight: FontWeight.bold),),
+                          Text(AppLocalization.tr.dateExample,style: TextStyle(fontSize: 18.sp,fontWeight: FontWeight.bold),),
                         ],
                       ),
                       Row(
                         children: [
-                          Text(L10n.tr.completedStatus,style: TextStyle(color: Colors.green),),
+                          Text(AppLocalization.tr.completedStatus,style: TextStyle(color: Colors.green),),
                           Spacer(),
-                          Text(L10n.tr.timeExample) ,
+                          Text(AppLocalization.tr.timeExample) ,
                         ],
                       ),
                     ],
@@ -84,14 +84,14 @@ class DriverCompletedTripDetails extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(L10n.tr.yourTripLabel,style: TextStyle(fontSize: 18.sp,fontWeight: FontWeight.bold),),
+                    Text(AppLocalization.tr.yourTripLabel,style: TextStyle(fontSize: 18.sp,fontWeight: FontWeight.bold),),
                     SizedBox(height: 8.sp,),
                     Row(children: [
                       Container(
                         child: Image.asset(AppImage.greetings),
                       ),
                       SizedBox(width: 5.sp,),
-                      Text(L10n.tr.pickupLocationExample),
+                      Text(AppLocalization.tr.pickupLocationExample),
 
                     ],),
                     CustomVerticalLine(height: 20.h, color: Colors.black),
@@ -100,7 +100,7 @@ class DriverCompletedTripDetails extends StatelessWidget {
                         child: Icon(Icons.location_on,color: AppColors.primaryColor,),
                       ),
                       SizedBox(width: 5.sp,),
-                      Text(L10n.tr.dropoffLocationExample),
+                      Text(AppLocalization.tr.dropoffLocationExample),
 
                     ],),
                     SizedBox(height: 8.sp,),
@@ -109,12 +109,12 @@ class DriverCompletedTripDetails extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          L10n.tr.distanceLabel,style: TextStyle(
+                          AppLocalization.tr.distanceLabel,style: TextStyle(
                             fontSize: 18.sp,color: Colors.black
                         ),
                         ),
                         SizedBox(width: 5.sp,),
-                        Text(L10n.tr.distanceExample),
+                        Text(AppLocalization.tr.distanceExample),
 
                       ],),
                     SizedBox(height: 8.h,),
@@ -138,9 +138,9 @@ class DriverCompletedTripDetails extends StatelessWidget {
                   padding:  EdgeInsets.symmetric(horizontal:  16.sp),
                   child: Row(
                     children: [
-                      Text(L10n.tr.rideValueLabel),
+                      Text(AppLocalization.tr.rideValueLabel),
                       Spacer(),
-                      Text(L10n.tr.fareExample2) ,
+                      Text(AppLocalization.tr.fareExample2) ,
                     ],
                   ),
                 ),

@@ -85,7 +85,7 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
             const SizedBox(height: 20),
             _buildMenuOption(
-              L10n.tr.viewMediaOption,
+              AppLocalization.tr.viewMediaOption,
                   () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -97,7 +97,7 @@ class _ChatScreenState extends State<ChatScreen> {
               },
             ),
             _buildMenuOption(
-              L10n.tr.reportOption,
+              AppLocalization.tr.reportOption,
                   () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -109,7 +109,7 @@ class _ChatScreenState extends State<ChatScreen> {
               },
             ),
             _buildMenuOption(
-              L10n.tr.blockOption,
+              AppLocalization.tr.blockOption,
                   () {
                 Navigator.pop(context);
                 _showBlockDialog();
@@ -266,7 +266,7 @@ class _ChatScreenState extends State<ChatScreen> {
               child: TextField(
                 controller: _messageController,
                 decoration: InputDecoration(
-                  hintText: L10n.tr.typeMessageHint,
+                  hintText: AppLocalization.tr.typeMessageHint,
                   hintStyle: const TextStyle(
                     color: MessagingColors.secondaryText,
                     fontSize: 14,

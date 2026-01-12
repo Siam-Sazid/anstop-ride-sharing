@@ -1,6 +1,6 @@
 import 'package:ride_sharing/feature/auth/driver/upload_your_documents_screen.dart';
 import 'package:ride_sharing/l10n/l10n_helper.dart';
-import 'package:ride_sharing/feature/auth/log_in_screen.dart';
+import 'package:ride_sharing/feature/auth/view/log_in_screen.dart';
 import 'package:ride_sharing/feature/auth/passenger/terms_of_services.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
@@ -99,12 +99,12 @@ class _DriverRegistrationState extends State<DriverRegistration> {
             children: [
               SizedBox(height: 46.h),
               Text(
-                L10n.tr.createAccountTitle,
+                AppLocalization.tr.createAccountTitle,
                 style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w400),
               ),
               SizedBox(height: 8.h),
               Text(
-                L10n.tr.createAccountSubtitle,
+                AppLocalization.tr.createAccountSubtitle,
                 style: TextStyle(fontSize: 12.sp),
               ),
               SizedBox(height: 29.h),
@@ -120,7 +120,7 @@ class _DriverRegistrationState extends State<DriverRegistration> {
                           color: Color(0XFF8A8A8A),
                           size: 24.sp,
                         ),
-                        hintText: L10n.tr.nameHintText,
+                        hintText: AppLocalization.tr.nameHintText,
                         hintextSize: 14.sp,
                         hintextColor: Color(0XFF8A8A8A),
                       ),
@@ -132,7 +132,7 @@ class _DriverRegistrationState extends State<DriverRegistration> {
                           color: Color(0XFF8A8A8A),
                           size: 24.sp,
                         ),
-                        hintText: L10n.tr.enterEmailHintText,
+                        hintText: AppLocalization.tr.enterEmailHintText,
                         hintextSize: 14.sp,
                         hintextColor: Color(0XFF8A8A8A),
                       ),
@@ -160,7 +160,7 @@ class _DriverRegistrationState extends State<DriverRegistration> {
                               color: Color(0XFF8A8A8A),
                               size: 24.sp,
                             ),
-                            hintText: L10n.tr.selectBirthdayHint,
+                            hintText: AppLocalization.tr.selectBirthdayHint,
                             hintextSize: 14.sp,
                             hintextColor: Color(0XFF8A8A8A),
                           ),
@@ -186,7 +186,7 @@ class _DriverRegistrationState extends State<DriverRegistration> {
                                 color: Color(0XFF8A8A8A),
                                 size: 24,
                               ),
-                              hintText: L10n.tr.selectGenderHint,
+                              hintText: AppLocalization.tr.selectGenderHint,
                               hintStyle: TextStyle(
                                 fontSize: 14,
                                 color: Color(0XFF8A8A8A),
@@ -221,7 +221,7 @@ class _DriverRegistrationState extends State<DriverRegistration> {
                           color: Color(0XFF8A8A8A),
                           size: 24.sp,
                         ),
-                        hintText: L10n.tr.addressHintText,
+                        hintText: AppLocalization.tr.addressHintText,
                         hintextSize: 14.sp,
                         hintextColor: Color(0XFF8A8A8A),
                       ),
@@ -235,7 +235,7 @@ class _DriverRegistrationState extends State<DriverRegistration> {
                           color: Color(0XFF8A8A8A),
                           size: 24.sp,
                         ),
-                        hintText: L10n.tr.enterPasswordHintText,
+                        hintText: AppLocalization.tr.enterPasswordHintText,
                         hintextSize: 14.sp,
                         hintextColor: Color(0XFF8A8A8A),
                       ),
@@ -249,7 +249,7 @@ class _DriverRegistrationState extends State<DriverRegistration> {
                           color: Color(0XFF8A8A8A),
                           size: 24.sp,
                         ),
-                        hintText: L10n.tr.enterPasswordHintText,
+                        hintText: AppLocalization.tr.enterPasswordHintText,
                         hintextSize: 14.sp,
                         hintextColor: Color(0XFF8A8A8A),
                       ),
@@ -273,14 +273,14 @@ class _DriverRegistrationState extends State<DriverRegistration> {
                             text: TextSpan(
                               children: [
                                 TextSpan(
-                                  text: L10n.tr.agreeWithText, style: TextStyle(
+                                  text: AppLocalization.tr.agreeWithText, style: TextStyle(
                                   fontSize: 12.sp,
                                   fontWeight: FontWeight.w400,
                                   color: Color(0XFF4E4E4E),
                                 ),
                                 ),
                                 WidgetSpan(child: GestureDetector(
-                                  child: Text(L10n.tr.termsOfServiceLink, style: TextStyle(
+                                  child: Text(AppLocalization.tr.termsOfServiceLink, style: TextStyle(
                                       fontSize: 12.sp,
                                       fontWeight: FontWeight.w400,
                                       color: Colors.red,
@@ -292,13 +292,13 @@ class _DriverRegistrationState extends State<DriverRegistration> {
                                     Get.to(() => TermsOfServices())
                                   },
                                 )),
-                                TextSpan(text: L10n.tr.andText, style: TextStyle(
+                                TextSpan(text: AppLocalization.tr.andText, style: TextStyle(
                                   fontSize: 12.sp,
                                   fontWeight: FontWeight.w400,
                                   color: Color(0XFF4E4E4E),
                                 )),
                                 TextSpan(
-                                    text: L10n.tr.privacyPolicyLink, style: TextStyle(
+                                    text: AppLocalization.tr.privacyPolicyLink, style: TextStyle(
                                     fontSize: 12.sp,
                                     fontWeight: FontWeight.w400,
                                     color: Colors.red,
@@ -315,7 +315,7 @@ class _DriverRegistrationState extends State<DriverRegistration> {
                       CustomButton(onPressed: () {
                         Get.to(() => UploadYourDocuments());
 
-                      }, label: L10n.tr.registerButton),
+                      }, label: AppLocalization.tr.registerButton),
                       SizedBox(height: 5.h),
                       GestureDetector(
                         onTap: (){
@@ -324,12 +324,12 @@ class _DriverRegistrationState extends State<DriverRegistration> {
                         child: RichText(
                           text: TextSpan(
                             children: [
-                              TextSpan(text: L10n.tr.haveAccountText, style: TextStyle(
+                              TextSpan(text: AppLocalization.tr.haveAccountText, style: TextStyle(
                                 fontSize: 12.sp,
                                 fontWeight: FontWeight.w400,
                                 color: Color(0XFF4E4E4E),
                               )),
-                               TextSpan(text: L10n.tr.loginLink, style: TextStyle(
+                               TextSpan(text: AppLocalization.tr.loginLink, style: TextStyle(
                                   fontSize: 12.sp,
                                   fontWeight: FontWeight.w400,
                                   color: Colors.red,

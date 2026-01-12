@@ -83,7 +83,7 @@ class MyTripCardWidget extends StatelessWidget {
                   height: 15.h,
                 ),
                 CustomButton(onPressed:onViewDetails,
-                title: Text(L10n.tr.viewDetailsButton,style: TextStyle(color: Colors.black),),
+                title: Text(AppLocalization.tr.viewDetailsButton,style: TextStyle(color: Colors.black),),
                   height: 40,
                   backgroundColor: AppColors.white,
                   bordersColor: Colors.grey,

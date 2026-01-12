@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:ride_sharing/l10n/app_localizations.dart';
 
-class L10n {
+class AppLocalization {
 
   static AppLocalizations get tr {
     final context = Get.context;

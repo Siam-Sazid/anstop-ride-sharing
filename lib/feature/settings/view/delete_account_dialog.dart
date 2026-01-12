@@ -28,7 +28,7 @@ class DeleteAccountDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              L10n.tr.deleteAccountTitle,
+              AppLocalization.tr.deleteAccountTitle,
               style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.w600,
@@ -37,7 +37,7 @@ class DeleteAccountDialog extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             Text(
-              L10n.tr.deleteAccountMessage,
+              AppLocalization.tr.deleteAccountMessage,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 15,
@@ -61,7 +61,7 @@ class DeleteAccountDialog extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      L10n.tr.cancelButton,
+                      AppLocalization.tr.cancelButton,
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -83,7 +83,7 @@ class DeleteAccountDialog extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      L10n.tr.yesDeleteButton,
+                      AppLocalization.tr.yesDeleteButton,
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,

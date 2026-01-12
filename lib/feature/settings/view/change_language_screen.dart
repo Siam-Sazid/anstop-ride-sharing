@@ -19,12 +19,12 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
   Widget build(BuildContext context) {
 
     if (selectedLanguage.isEmpty) {
-      selectedLanguage = L10n.tr.englishLanguage;
+      selectedLanguage = AppLocalization.tr.englishLanguage;
     }
 
     final List<String> languages = [
-      L10n.tr.englishLanguage,
-      L10n.tr.frenchLanguage,
+      AppLocalization.tr.englishLanguage,
+      AppLocalization.tr.frenchLanguage,
     ];
 
     return Scaffold(
@@ -42,7 +42,7 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          L10n.tr.changeLanguageTitle,
+          AppLocalization.tr.changeLanguageTitle,
           style: const TextStyle(
             color: SettingsColors.primaryText,
             fontSize: 18,

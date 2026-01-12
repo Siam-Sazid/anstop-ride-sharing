@@ -3,16 +3,16 @@ import 'package:get/get.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/feature/auth/driver/registration.dart';
-import 'package:ride_sharing/feature/auth/log_in_screen.dart';
-import 'package:ride_sharing/feature/auth/passenger/registration.dart';
+import 'package:ride_sharing/feature/auth/view/log_in_screen.dart';
+import 'package:ride_sharing/feature/auth/view/registration.dart';
 import 'package:ride_sharing/feature/driver/homepage/view/driver_homescreen.dart';
 import 'package:ride_sharing/feature/splash_screen/onboarding_page_first.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 
 import '../../l10n/l10n_helper.dart';
-import '../auth/email_validation_screen.dart';
-import '../auth/otp_varification_screen.dart';
-import '../auth/reset_password_screen.dart';
+import '../auth/view/email_validation_screen.dart';
+import '../auth/view/otp_varification_screen.dart';
+import '../auth/view/reset_password_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -69,21 +69,21 @@ class _SplashScreenState extends State<SplashScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Text(L10n.tr.splashEnglishLabel),
+                      Text(AppLocalization.tr.splashEnglishLabel),
                       Switch(
                         value: isFrench,
                         onChanged: _toggleLanguage,
                         activeColor: Colors.white,
                         activeTrackColor: Colors.grey[300],
                       ),
-                      Text(L10n.tr.splashFrenchLabel),
+                      Text(AppLocalization.tr.splashFrenchLabel),
                     ],
                   ),
                   const Spacer(),
                   LogoWidget(),
                   const SizedBox(height: 20),
                   Text(
-                    L10n.tr.splashTagline,
+                    AppLocalization.tr.splashTagline,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       color: Colors.white,

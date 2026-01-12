@@ -68,14 +68,14 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(L10n.tr.yourTripLabel,style: TextStyle(fontSize: 18.sp,fontWeight: FontWeight.bold),),
+                  Text(AppLocalization.tr.yourTripLabel,style: TextStyle(fontSize: 18.sp,fontWeight: FontWeight.bold),),
                   SizedBox(height: 8.sp,),
                   Row(children: [
                     Container(
                       child: Image.asset(AppImage.greetings),
                     ),
                     SizedBox(width: 5.sp,),
-                    Text(L10n.tr.pickupLocationExample),
+                    Text(AppLocalization.tr.pickupLocationExample),
 
                   ],),
                   CustomVerticalLine(height: 20.h, color: Colors.black),
@@ -84,7 +84,7 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
                       child: Icon(Icons.location_on,color: AppColors.green300,),
                     ),
                     SizedBox(width: 5.sp,),
-                    Text(L10n.tr.dropoffLocationExample),
+                    Text(AppLocalization.tr.dropoffLocationExample),
 
                   ],),
                   SizedBox(height: 8.sp,),
@@ -93,12 +93,12 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        L10n.tr.distanceLabel,style: TextStyle(
+                        AppLocalization.tr.distanceLabel,style: TextStyle(
                           fontSize: 18.sp,color: Colors.black
                       ),
                       ),
                       SizedBox(width: 5.sp,),
-                      Text(L10n.tr.distanceExample,),
+                      Text(AppLocalization.tr.distanceExample,),
 
                     ],),
                   SizedBox(height: 8.h,),
@@ -106,13 +106,13 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        L10n.tr.timeExample,
+                        AppLocalization.tr.timeExample,
                         style: TextStyle(
                           fontSize: 18.sp,color: Colors.black
                       ),
                       ),
                       SizedBox(width: 5.sp,),
-                      Text(L10n.tr.durationExample),
+                      Text(AppLocalization.tr.durationExample),
 
                     ],),
 
@@ -134,9 +134,9 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
                 children: [
                   Image.asset(AppImage.wallet),
                   SizedBox(width: 2.sp,),
-                  Text(L10n.tr.payViaWalletLabel,style: TextStyle(fontSize: 20.sp),),
+                  Text(AppLocalization.tr.payViaWalletLabel,style: TextStyle(fontSize: 20.sp),),
                   Spacer(),
-                  Text(L10n.tr.fareExample,style: TextStyle(fontSize: 20  .sp),),
+                  Text(AppLocalization.tr.fareExample,style: TextStyle(fontSize: 20  .sp),),
                 ],
               ),
             ),
@@ -150,7 +150,7 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
         child: CustomButton(onPressed: (){
           _showRatingDialog(context);
         },
-       title: Text(L10n.tr.confirmPaymentTitle,style: TextStyle(color: AppColors.white),),
+       title: Text(AppLocalization.tr.confirmPaymentTitle,style: TextStyle(color: AppColors.white),),
       ),
       ),
     );
@@ -227,7 +227,7 @@ void _showRatingDialog(BuildContext context) {
                   TextField(
                     maxLines: 3,
                     decoration: InputDecoration(
-                      hintText: L10n.tr.writeCommentsHint,
+                      hintText: AppLocalization.tr.writeCommentsHint,
                       border: OutlineInputBorder(),
                       contentPadding: EdgeInsets.all(10),
                     ),
@@ -295,7 +295,7 @@ void _showThankYouDialog(BuildContext context) {
                   onPressed: () {
                    Get.to(HomePage());
                   },
-                  title: Text(L10n.tr.backToHomeButton, style: TextStyle(fontSize: 20, color: AppColors.white)),
+                  title: Text(AppLocalization.tr.backToHomeButton, style: TextStyle(fontSize: 20, color: AppColors.white)),
                 ),
               ),
             ],

@@ -67,7 +67,7 @@ class HomePage extends StatelessWidget {
                               controller: controller.locationTEController,
                               prefixIcon: Icon(Icons.location_on, color: AppColors.primaryColor),
                               suffixIcon: Icon(CupertinoIcons.search_circle),
-                              hintText: L10n.tr.whereAreYouHeadedHint,
+                              hintText: AppLocalization.tr.whereAreYouHeadedHint,
                               borderColor: AppColors.primaryColor,
                               borderRadio: 20,
                             ),
@@ -88,8 +88,8 @@ class HomePage extends StatelessWidget {
                                     children: [
                                       CustomLocationButton(
                                         imageUrl: AppImage.home,
-                                        mainText: L10n.tr.homeOption,
-                                        subText: L10n.tr.setAddressSubtitle,
+                                        mainText: AppLocalization.tr.homeOption,
+                                        subText: AppLocalization.tr.setAddressSubtitle,
                                         onTap: () {
                                           print('Location button tapped');
                                           Get.to(SetLocationOptionPage());
@@ -98,8 +98,8 @@ class HomePage extends StatelessWidget {
                                       VerticalDivider(color: AppColors.white, width: 5),
                                       CustomLocationButton(
                                         imageUrl: AppImage.briefcase,
-                                        mainText: L10n.tr.workOption,
-                                        subText: L10n.tr.setAddressSubtitle,
+                                        mainText: AppLocalization.tr.workOption,
+                                        subText: AppLocalization.tr.setAddressSubtitle,
                                         onTap: () {
                                           print('Location button tapped');
                                         },

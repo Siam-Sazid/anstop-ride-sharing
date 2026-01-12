@@ -26,7 +26,7 @@ class LegalPagesHome extends StatelessWidget {
                   ],
                 ),
                 child: LegalPage(
-                  title: L10n.tr.aboutUsTitle,
+                  title: AppLocalization.tr.aboutUsTitle,
                   content: '''
 Lorem ipsum dolor sit amet consectetur. Enim massa aenean ac odio leo habitasse tortor tempor. Ut id urna odio dui leo congue. Ultrices pharetra ornare nam faucibus. Integer id varius consectetur non.
 
@@ -53,7 +53,7 @@ Lorem ipsum dolor sit amet consectetur. Enim massa aenean ac odio leo habitasse 
                   ],
                 ),
                 child: LegalPage(
-                  title: L10n.tr.privacyPolicyTitle,
+                  title: AppLocalization.tr.privacyPolicyTitle,
                   content: '''
 Lorem ipsum dolor sit amet consectetur. Enim massa aenean ac odio leo habitasse tortor tempor. Ut id urna odio dui leo congue. Ultrices pharetra ornare nam faucibus. Integer id varius consectetur non.
 
@@ -80,7 +80,7 @@ Lorem ipsum dolor sit amet consectetur. Enim massa aenean ac odio leo habitasse 
                   ],
                 ),
                 child: LegalPage(
-                  title: L10n.tr.termsOfServiceTitle,
+                  title: AppLocalization.tr.termsOfServiceTitle,
                   content: '''
 Lorem ipsum dolor sit amet consectetur. Enim massa aenean ac odio leo habitasse tortor tempor. Ut id urna odio dui leo congue. Ultrices pharetra ornare nam faucibus. Integer id varius consectetur non.
 

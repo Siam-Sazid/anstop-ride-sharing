@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/l10n/l10n_helper.dart';
-import 'package:ride_sharing/feature/auth/log_in_screen.dart';
+import 'package:ride_sharing/feature/auth/view/log_in_screen.dart';
 import 'package:ride_sharing/feature/driver/homepage/view/driver_homescreen.dart';
 import 'package:ride_sharing/feature/passenger/my_ride/view/my_ride.dart';
 import 'package:ride_sharing/feature/passenger/wallet/view/passenger_wallet_page.dart';
@@ -12,7 +12,7 @@ import 'package:ride_sharing/feature/support_page/support_page.dart';
 import 'package:ride_sharing/routes/app_routes.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 
-import '../../feature/auth/log_out_dialog.dart';
+import '../../feature/auth/view/log_out_dialog.dart';
 import '../custom_user_rating.dart';
 
 class PassengerCustomDrawer extends StatelessWidget {
@@ -38,7 +38,7 @@ class PassengerCustomDrawer extends StatelessWidget {
 
               ),
               child: CustomUserRating(
-                name: L10n.tr.exampleUserName,
+                name: AppLocalization.tr.exampleUserName,
                 imageUrl: "https://picsum.photos/250?image=9",
               //  price: 24,
              //   distance: 28,
@@ -63,13 +63,13 @@ class PassengerCustomDrawer extends StatelessWidget {
                   children: [
                     _drawerItem(
                       imagePath: AppImage.notification,
-                      text: L10n.tr.notificationMenuItem,
+                      text: AppLocalization.tr.notificationMenuItem,
                       onTap: () {},
                     ),
 
                     _drawerItem(
                       imagePath: AppImage.carDrawer,
-                      text: L10n.tr.myRideMenuItem,
+                      text: AppLocalization.tr.myRideMenuItem,
                       onTap: () {
                       //  Get.to(MyRidePage());
                         Get.toNamed(AppRoutes.passengerMyRideScreen);
@@ -78,7 +78,7 @@ class PassengerCustomDrawer extends StatelessWidget {
 
                     _drawerItem(
                       imagePath: AppImage.walletDrawer,
-                      text: L10n.tr.walletMenuItem,
+                      text: AppLocalization.tr.walletMenuItem,
                       onTap: () {
                        // Get.to(PassengerWalletPage());
                         Get.toNamed(AppRoutes.passengerWalletScreen);
@@ -86,14 +86,14 @@ class PassengerCustomDrawer extends StatelessWidget {
                       },
                     ), _drawerItem(
                       imagePath: AppImage.support,
-                      text: L10n.tr.supportMenuItem,
+                      text: AppLocalization.tr.supportMenuItem,
                       onTap: () {
                         Get.to(SupportPage());
 
                       },
                     ), _drawerItem(
                       imagePath: AppImage.settings,
-                      text: L10n.tr.settingsMenuItem,
+                      text: AppLocalization.tr.settingsMenuItem,
                       onTap: () {
                         Get.to(SettingsScreen());
 
@@ -101,7 +101,7 @@ class PassengerCustomDrawer extends StatelessWidget {
                      ),
                     _drawerItem(
                       imagePath: AppImage.logout,
-                      text: L10n.tr.logoutMenuItem,
+                      text: AppLocalization.tr.logoutMenuItem,
                       onTap: () async {
                         // Show the logout dialog
                         final result = await LogoutDialog.show(context);
@@ -130,7 +130,7 @@ class PassengerCustomDrawer extends StatelessWidget {
                //   Get.to(DriverHomeScreen());
                   Get.toNamed(AppRoutes.driverHomeScreen);
                 },
-             title: Text(L10n.tr.switchToDriverButton,style: TextStyle(color: AppColors.white),),
+             title: Text(AppLocalization.tr.switchToDriverButton,style: TextStyle(color: AppColors.white),),
             ),
           )
         ],

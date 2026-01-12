@@ -27,7 +27,7 @@ void showDeleteORSuccessDialog(BuildContext context,
             if (!isSuccess)
               const Icon(Icons.warning_amber_rounded, color: Colors.red),
             SizedBox(width: 8.w),
-            Flexible(child: Text(title?? L10n.tr.deleteItemTitle)),
+            Flexible(child: Text(title?? AppLocalization.tr.deleteItemTitle)),
           ],
         ),
         content: Text(
@@ -45,7 +45,7 @@ void showDeleteORSuccessDialog(BuildContext context,
             onPressed: () {
               Navigator.of(context).pop();
             },
-            child: Text(L10n.tr.cancelButton),
+            child: Text(AppLocalization.tr.cancelButton),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -57,7 +57,7 @@ void showDeleteORSuccessDialog(BuildContext context,
               ),
             ),
             onPressed: onTap,
-            child: Text(buttonLabel ?? L10n.tr.deleteButton),
+            child: Text(buttonLabel ?? AppLocalization.tr.deleteButton),
           ),
         ],
       );

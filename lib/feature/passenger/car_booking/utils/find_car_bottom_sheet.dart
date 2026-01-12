@@ -41,14 +41,14 @@ class _FindCarBottomSheetState extends State<FindCarBottomSheet> {
                child: Column(
                  crossAxisAlignment: CrossAxisAlignment.start,
                  children: [
-                   Text(L10n.tr.yourTripLabel,style: TextStyle(fontSize: 18.sp,fontWeight: FontWeight.bold),),
+                   Text(AppLocalization.tr.yourTripLabel,style: TextStyle(fontSize: 18.sp,fontWeight: FontWeight.bold),),
                    SizedBox(height: 8.sp,),
                    Row(children: [
                      Container(
                        child: Image.asset(AppImage.greetings),
                      ),
                      SizedBox(width: 5.sp,),
-                     Text(L10n.tr.pickupLocationExample),
+                     Text(AppLocalization.tr.pickupLocationExample),
 
                    ],),
                    SizedBox(height: 8.sp,),
@@ -57,7 +57,7 @@ class _FindCarBottomSheetState extends State<FindCarBottomSheet> {
                        child: Icon(Icons.location_on,color: AppColors.primaryColor,),
                      ),
                      SizedBox(width: 5.sp,),
-                     Text(L10n.tr.dropoffLocationExample),
+                     Text(AppLocalization.tr.dropoffLocationExample),
 
                    ],),
                    SizedBox(height: 8.sp,),
@@ -65,12 +65,12 @@ class _FindCarBottomSheetState extends State<FindCarBottomSheet> {
                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                      children: [
                      Text(
-                      L10n.tr.distanceLabel,style: TextStyle(
+                      AppLocalization.tr.distanceLabel,style: TextStyle(
                        fontSize: 18.sp,color: Colors.black
                      ),
                      ),
                      SizedBox(width: 5.sp,),
-                     Text(L10n.tr.distanceExample),
+                     Text(AppLocalization.tr.distanceExample),
 
                    ],),
                 SizedBox(height: 8.h,),
@@ -172,7 +172,7 @@ class _FindCarBottomSheetState extends State<FindCarBottomSheet> {
               controller: descriptionController,
               maxLines: 5,
               decoration: InputDecoration(
-                hintText: L10n.tr.noteToDriverHint,
+                hintText: AppLocalization.tr.noteToDriverHint,
                 contentPadding: EdgeInsets.symmetric(horizontal: 10.sp, vertical: 12.sp),
                 border: InputBorder.none,
               ),

@@ -12,7 +12,7 @@ class ResetPasswordScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(L10n.tr.resetPasswordAppBarText),
+        title: Text(AppLocalization.tr.resetPasswordAppBarText),
         backgroundColor: AppColors.appBarColor,
         centerTitle: true,
         foregroundColor: Color(0XFF0A0A0A),
@@ -30,7 +30,7 @@ class ResetPasswordScreen extends StatelessWidget {
                 SizedBox(height: 52.h),
                 CustomTextField(
                   controller: _passwordTEController,
-                  hintText: L10n.tr.resetPasswordHintText,
+                  hintText: AppLocalization.tr.resetPasswordHintText,
                   hintextColor: Color(0XFF02243E),
                   hintextSize: 14.sp,
                   prefixIcon: Icon(Icons.key, color: Color(0XFF191A44)),
@@ -40,7 +40,7 @@ class ResetPasswordScreen extends StatelessWidget {
                 SizedBox(height: 16.h),
                 CustomTextField(
                   controller: _confirmPasswordTEController,
-                  hintText: L10n.tr.resetConfirmPasswordHintText,
+                  hintText: AppLocalization.tr.resetConfirmPasswordHintText,
                   hintextColor: Color(0XFF02243E),
                   hintextSize: 14.sp,
                   prefixIcon: Icon(Icons.key, color: Color(0XFF191A44)),
@@ -51,7 +51,7 @@ class ResetPasswordScreen extends StatelessWidget {
                 SizedBox(height: 32.h),
                 CustomButton(
                   onPressed: () {},
-                  label: L10n.tr.resetPasswordConfirmButton,
+                  label: AppLocalization.tr.resetPasswordConfirmButton,
                 ),
               ],
             ),

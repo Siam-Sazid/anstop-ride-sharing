@@ -61,7 +61,7 @@ class _CustomUserRatingState extends State<CustomUserRating> {
                 onTap: (){
                   Get.to(DriverProfileView());
                 },
-                  child: Text(L10n.tr.goToProfileLink,style: TextStyle(color: Colors.green,fontSize: 10.sp),
+                  child: Text(AppLocalization.tr.goToProfileLink,style: TextStyle(color: Colors.green,fontSize: 10.sp),
 
                   )
 

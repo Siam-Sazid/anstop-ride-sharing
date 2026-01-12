@@ -25,9 +25,9 @@ class TripIdWidget extends StatelessWidget {
             Column(
              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(L10n.tr.tripIdLabel,style: TextStyle(fontSize: 15.sp,fontWeight: FontWeight.bold),),
+                Text(AppLocalization.tr.tripIdLabel,style: TextStyle(fontSize: 15.sp,fontWeight: FontWeight.bold),),
                 SizedBox(height: 2.h,),
-                Text(L10n.tr.tripIdExample,style: TextStyle(fontSize: 20.sp,fontWeight: FontWeight.bold),),
+                Text(AppLocalization.tr.tripIdExample,style: TextStyle(fontSize: 20.sp,fontWeight: FontWeight.bold),),
 
 
               ],

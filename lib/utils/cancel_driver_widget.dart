@@ -16,7 +16,7 @@ class CancelDriverWidget extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(L10n.tr.cancelRideQuestion),
+          Text(AppLocalization.tr.cancelRideQuestion),
           ElevatedButton(
             onPressed: () {
               // Handle button press

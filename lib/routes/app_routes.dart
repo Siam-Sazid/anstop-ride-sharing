@@ -19,11 +19,11 @@ import 'package:ride_sharing/feature/auth/driver/national_id_screen.dart';
 import 'package:ride_sharing/feature/auth/driver/registration.dart';
 import 'package:ride_sharing/feature/auth/driver/upload_profile_picture.dart';
 import 'package:ride_sharing/feature/auth/driver/upload_your_documents_screen.dart';
-import 'package:ride_sharing/feature/auth/email_validation_screen.dart';
-import 'package:ride_sharing/feature/auth/log_in_screen.dart';
-import 'package:ride_sharing/feature/auth/otp_varification_screen.dart';
-import 'package:ride_sharing/feature/auth/passenger/registration.dart';
-import 'package:ride_sharing/feature/auth/reset_password_screen.dart';
+import 'package:ride_sharing/feature/auth/view/email_validation_screen.dart';
+import 'package:ride_sharing/feature/auth/view/log_in_screen.dart';
+import 'package:ride_sharing/feature/auth/view/otp_varification_screen.dart';
+import 'package:ride_sharing/feature/auth/view/registration.dart';
+import 'package:ride_sharing/feature/auth/view/reset_password_screen.dart';
 
 // Splash & Onboarding imports
 import 'package:ride_sharing/feature/splash_screen/binding/auth_selection_binding.dart';
@@ -32,7 +32,7 @@ import 'package:ride_sharing/feature/splash_screen/binding/role_selection_bindin
 import 'package:ride_sharing/feature/splash_screen/binding/splash_binding.dart';
 import 'package:ride_sharing/feature/splash_screen/driver_auth_selection_screen.dart';
 import 'package:ride_sharing/feature/splash_screen/onboarding_page_first.dart';
-import 'package:ride_sharing/feature/splash_screen/passenger_auth_selection_screen.dart';
+import 'package:ride_sharing/feature/splash_screen/auth_selection_screen.dart';
 import 'package:ride_sharing/feature/splash_screen/role_selection_screen.dart';
 import 'package:ride_sharing/feature/splash_screen/splash_screen.dart';
 
@@ -170,7 +170,7 @@ abstract class AppRoutes {
     ),
     GetPage(
       name: passengerAuthSelectionScreen,
-      page: () => PassengerAuthSelectionScreen(),
+      page: () => AuthSelectionScreen(),
       binding: AuthSelectionBinding(),
     ),
     GetPage(
@@ -202,7 +202,7 @@ abstract class AppRoutes {
     ),
     GetPage(
       name: passengerRegistrationScreen,
-      page: () => PassengerRegistration(),
+      page: () => RegistrationScreen(),
       binding: PassengerRegistrationBinding(),
     ),
     GetPage(

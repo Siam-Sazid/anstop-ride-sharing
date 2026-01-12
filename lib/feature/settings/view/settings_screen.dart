@@ -31,7 +31,7 @@ class SettingsScreen extends StatelessWidget {
           onPressed: () {},
         ),
         title: Text(
-          L10n.tr.settingsTitle,
+          AppLocalization.tr.settingsTitle,
           style: const TextStyle(
             color: SettingsColors.primaryText,
             fontSize: 18,
@@ -46,7 +46,7 @@ class SettingsScreen extends StatelessWidget {
               radius: 18,
               backgroundColor: SettingsColors.primaryGreen,
               child: Text(
-                L10n.tr.logoLabel,
+                AppLocalization.tr.logoLabel,
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 8,
@@ -74,7 +74,7 @@ class SettingsScreen extends StatelessWidget {
                 children: [
                   SettingsMenuItem(
                     icon: Icons.lock_outline,
-                    title: L10n.tr.changePasswordOption,
+                    title: AppLocalization.tr.changePasswordOption,
                     onTap: () {
                       Navigator.push(
                         context,
@@ -86,24 +86,24 @@ class SettingsScreen extends StatelessWidget {
                   ),
                   SettingsMenuItem(
                     icon: Icons.info_outline,
-                    title: L10n.tr.aboutUsOption,
+                    title: AppLocalization.tr.aboutUsOption,
                     onTap: () {},
                   ),
                   SettingsMenuItem(
                     icon: Icons.shield_outlined,
-                    title: L10n.tr.privacyPolicyOption,
+                    title: AppLocalization.tr.privacyPolicyOption,
                     onTap: () {},
                   ),
                   SettingsMenuItem(
                     icon: Icons.description_outlined,
-                    title: L10n.tr.termsOfServiceOption,
+                    title: AppLocalization.tr.termsOfServiceOption,
                     onTap: () {
                       Get.to(() => TermsOfServices());
                     },
                   ),
                   SettingsMenuItem(
                     icon: Icons.language,
-                    title: L10n.tr.changeLanguageOption,
+                    title: AppLocalization.tr.changeLanguageOption,
                     onTap: () {
                       Navigator.push(
                         context,
@@ -146,7 +146,7 @@ class SettingsScreen extends StatelessWidget {
                     const Icon(Icons.delete_outline, size: 20,color: AppColors.white,),
                     const SizedBox(width: 8),
                     Text(
-                      L10n.tr.deleteAccountButton,
+                      AppLocalization.tr.deleteAccountButton,
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,

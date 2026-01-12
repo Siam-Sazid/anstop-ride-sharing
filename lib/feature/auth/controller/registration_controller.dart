@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ride_sharing/feature/auth/data/signup_request_model.dart';
+import 'package:ride_sharing/feature/auth/service/auth_service.dart';
+import 'package:ride_sharing/feature/auth/view/email_validation_screen.dart';
+import 'package:ride_sharing/routes/app_routes.dart';
 
-class PassengerRegistrationController extends GetxController {
+class RegistrationController extends GetxController {
   // ==================== Text Controllers ====================
   final TextEditingController nameTEController = TextEditingController();
   final TextEditingController emailTEController = TextEditingController();
@@ -15,7 +19,11 @@ class PassengerRegistrationController extends GetxController {
   final RxBool obscureConfirmPassword = true.obs;
   final RxBool isAgreedToTerms = false.obs;
   final RxString errorMessage = ''.obs;
+  final RxString userRole = 'RIDER'.obs; // Default role
   final formKey = GlobalKey<FormState>();
+
+  // ==================== Services ====================
+  final AuthService _authService = AuthService();
 
   // ==================== Lifecycle ====================
   @override
@@ -46,6 +54,11 @@ class PassengerRegistrationController extends GetxController {
     isAgreedToTerms.value = value ?? false;
   }
 
+  // ==================== Set Role ====================
+  void setRole(String role) {
+    userRole.value = role;
+  }
+
   Future<void> register() async {
     if (!validateForm()) {
       return;
@@ -53,6 +66,13 @@ class PassengerRegistrationController extends GetxController {
 
     if (!isAgreedToTerms.value) {
       errorMessage.value = 'Please agree to terms and conditions';
+      Get.snackbar(
+        'Error',
+        'Please agree to terms and conditions',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
       return;
     }
 
@@ -60,14 +80,57 @@ class PassengerRegistrationController extends GetxController {
       isLoading.value = true;
       errorMessage.value = '';
 
-      // TODO: Implement actual registration API call
-      await Future.delayed(const Duration(seconds: 2));
+      // Create signup request model
+      final signUpRequest = SignUpRequestModel(
+        name: nameTEController.text.trim(),
+        email: emailTEController.text.trim(),
+        password: passwordTEController.text.trim(),
+        role: userRole.value,
+        // phoneNumber: phoneTEController.text.trim().isNotEmpty
+        //     ? phoneTEController.text.trim()
+        //     : null,
+      );
 
-      // TODO: Navigate to home or verification screen
-      // Get.offAllNamed(AppRoutes.passengerHomeScreen);
+      // Call signup API
+      final response = await _authService.signUp(signUpRequest);
 
+      if (response.isSuccess) {
+        // Show success message
+        // Get.snackbar(
+        //   'Success',
+        //   'Registration successful! Please verify your email.',
+        //   snackPosition: SnackPosition.BOTTOM,
+        //   backgroundColor: Colors.green,
+        //   colorText: Colors.white,
+        // );
+
+        // Navigate to email validation screen
+        Get.toNamed(
+          AppRoutes.emailValidationScreen,
+          arguments: {'email': emailTEController.text.trim()},
+        );
+      } else {
+        // Show error message
+        errorMessage.value = response.errorMessage;
+        Get.snackbar(
+          'Registration Failed',
+          response.errorMessage.isNotEmpty
+              ? response.errorMessage
+              : 'Something went wrong',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
     } catch (e) {
       errorMessage.value = e.toString();
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     } finally {
       isLoading.value = false;
     }

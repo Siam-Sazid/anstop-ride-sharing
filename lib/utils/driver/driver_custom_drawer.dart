@@ -13,8 +13,8 @@ import 'package:ride_sharing/feature/settings/view/settings_screen.dart';
 import 'package:ride_sharing/feature/support_page/support_page.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 
-import '../../feature/auth/log_in_screen.dart';
-import '../../feature/auth/log_out_dialog.dart';
+import '../../feature/auth/view/log_in_screen.dart';
+import '../../feature/auth/view/log_out_dialog.dart';
 import '../../routes/app_routes.dart';
 import '../custom_user_rating.dart';
 
@@ -41,7 +41,7 @@ class DriverCustomDrawer extends StatelessWidget {
 
               ),
               child: CustomUserRating(
-                name: L10n.tr.exampleUserName,
+                name: AppLocalization.tr.exampleUserName,
                 imageUrl:'https://img.freepik.com/premium-photo/happy-man-ai-generated-portrait-user-profile_1119669-1.jpg?w=2000',
 
                 //  price: 24,
@@ -67,7 +67,7 @@ class DriverCustomDrawer extends StatelessWidget {
                   children: [
                     _drawerItem(
                       imagePath: AppImage.notification,
-                      text: L10n.tr.notificationMenuItem,
+                      text: AppLocalization.tr.notificationMenuItem,
                       onTap: () {
                       //  Get.to(NotificationScreen());
                         Get.toNamed(AppRoutes.notificationScreen);
@@ -76,7 +76,7 @@ class DriverCustomDrawer extends StatelessWidget {
 
                     _drawerItem(
                       imagePath: AppImage.carDrawer,
-                      text: L10n.tr.myTripsMenuItem,
+                      text: AppLocalization.tr.myTripsMenuItem,
                       onTap: () {
                       //  Get.to(MyTripPage());
                         Get.toNamed(AppRoutes.driverMyTripScreen);
@@ -85,7 +85,7 @@ class DriverCustomDrawer extends StatelessWidget {
 
                     _drawerItem(
                       imagePath: AppImage.walletDrawer,
-                      text: L10n.tr.myEarningsMenuItem,
+                      text: AppLocalization.tr.myEarningsMenuItem,
                       onTap: () {
                       //  Get.to(DriverWalletPage());
                         Get.toNamed(AppRoutes.driverWalletScreen);
@@ -93,12 +93,12 @@ class DriverCustomDrawer extends StatelessWidget {
                     ),
                     _drawerItem(
                       imagePath: AppImage.invite,
-                      text: L10n.tr.inviteAndEarnsMenuItem,
+                      text: AppLocalization.tr.inviteAndEarnsMenuItem,
                       onTap: () {},
                     ),
                     _drawerItem(
                       imagePath: AppImage.support,
-                      text: L10n.tr.supportMenuItem,
+                      text: AppLocalization.tr.supportMenuItem,
                       onTap: () {
                         Get.to(SupportPage());
 
@@ -106,7 +106,7 @@ class DriverCustomDrawer extends StatelessWidget {
                     ),
                     _drawerItem(
                       imagePath: AppImage.logout,
-                      text: L10n.tr.logoutMenuItem,
+                      text: AppLocalization.tr.logoutMenuItem,
                       onTap: () async {
                         // Show the logout dialog
                         final result = await LogoutDialog.show(context);
@@ -134,7 +134,7 @@ class DriverCustomDrawer extends StatelessWidget {
                  //  Get.to(HomePage());
                 Get.toNamed(AppRoutes.passengerHomeScreen);
               },
-              title: Text(L10n.tr.switchToPassengerButton,style: TextStyle(color: AppColors.white),),
+              title: Text(AppLocalization.tr.switchToPassengerButton,style: TextStyle(color: AppColors.white),),
             ),
           )
         ],

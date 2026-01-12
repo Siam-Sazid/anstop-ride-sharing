@@ -31,7 +31,7 @@ class BlockDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              L10n.tr.blockTitle,
+              AppLocalization.tr.blockTitle,
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.w700,
@@ -43,7 +43,7 @@ class BlockDialog extends StatelessWidget {
 
 
             Text(
-              '${L10n.tr.blockConfirmMessage} $userName ${L10n.tr.blockConfirmMessageSuffix}',
+              '${AppLocalization.tr.blockConfirmMessage} $userName ${AppLocalization.tr.blockConfirmMessageSuffix}',
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 15,
@@ -71,7 +71,7 @@ class BlockDialog extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      L10n.tr.noButton,
+                      AppLocalization.tr.noButton,
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -93,7 +93,7 @@ class BlockDialog extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      L10n.tr.yesButton,
+                      AppLocalization.tr.yesButton,
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,

@@ -53,7 +53,7 @@ class _DriverWalletPageState extends State<DriverWalletPage> {
       backgroundColor: AppColors.backgroundColor,
       appBar: CustomAppBarTitle(
       scaffoldKey: _scaffoldKey,
-      title: L10n.tr.walletTitle,
+      title: AppLocalization.tr.walletTitle,
       titleColor: AppColors.blackShade300,
     ),
       body: SingleChildScrollView(
@@ -89,25 +89,25 @@ class _DriverWalletPageState extends State<DriverWalletPage> {
 
                   // Transaction List
                   TransactionItem(
-                    title: L10n.tr.transactionNameExample1,
+                    title: AppLocalization.tr.transactionNameExample1,
                     time: 'Today at 09:20 am',
                     amount: '570.00',
                     isPositive: false,
                   ),
                   TransactionItem(
-                    title: L10n.tr.transactionTypeExample,
+                    title: AppLocalization.tr.transactionTypeExample,
                     time: 'Today at 09:20 am',
                     amount: '570.00',
                     isPositive: true,
                   ),
                   TransactionItem(
-                    title: L10n.tr.transactionNameExample1,
+                    title: AppLocalization.tr.transactionNameExample1,
                     time: 'Today at 09:20 am',
                     amount: '570.00',
                     isPositive: false,
                   ),
                   TransactionItem(
-                    title: L10n.tr.transactionTypeExample,
+                    title: AppLocalization.tr.transactionTypeExample,
                     time: 'Today at 09:20 am',
                     amount: '570.00',
                     isPositive: true,

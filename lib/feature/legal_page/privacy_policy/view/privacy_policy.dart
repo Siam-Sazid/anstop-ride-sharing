@@ -23,7 +23,7 @@ class PrivacyPolicyView extends StatelessWidget {
             ],
           ),
           child: LegalPage(
-            title: L10n.tr.privacyPolicyTitle,
+            title: AppLocalization.tr.privacyPolicyTitle,
             content: '''
 Lorem ipsum dolor sit amet consectetur. Enim massa aenean ac odio leo habitasse tortor tempor. Ut id urna odio dui leo congue. Ultrices pharetra ornare nam faucibus. Integer id varius consectetur non.
 

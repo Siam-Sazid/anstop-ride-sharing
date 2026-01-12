@@ -19,14 +19,14 @@ class _ReportScreenState extends State<ReportScreen> {
   @override
   Widget build(BuildContext context) {
     final List<String> reportReasons = [
-      L10n.tr.reportHateSpeech,
-      L10n.tr.reportThreat,
-      L10n.tr.reportHarassment,
-      L10n.tr.reportPretending,
-      L10n.tr.reportFraud,
-      L10n.tr.reportFakeIdentity,
-      L10n.tr.reportSomethingElse,
-      L10n.tr.reportOther,
+      AppLocalization.tr.reportHateSpeech,
+      AppLocalization.tr.reportThreat,
+      AppLocalization.tr.reportHarassment,
+      AppLocalization.tr.reportPretending,
+      AppLocalization.tr.reportFraud,
+      AppLocalization.tr.reportFakeIdentity,
+      AppLocalization.tr.reportSomethingElse,
+      AppLocalization.tr.reportOther,
     ];
     return Scaffold(
       backgroundColor: Colors.white,
@@ -43,7 +43,7 @@ class _ReportScreenState extends State<ReportScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          L10n.tr.reportTitle,
+          AppLocalization.tr.reportTitle,
           style: const TextStyle(
             color: MessagingColors.primaryText,
             fontSize: 18,
@@ -62,7 +62,7 @@ class _ReportScreenState extends State<ReportScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      L10n.tr.reportSubtitle,
+                      AppLocalization.tr.reportSubtitle,
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
@@ -71,7 +71,7 @@ class _ReportScreenState extends State<ReportScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      L10n.tr.reportHelpMessage,
+                      AppLocalization.tr.reportHelpMessage,
                       style: const TextStyle(
                         fontSize: 14,
                         color: MessagingColors.secondaryText,
@@ -118,7 +118,7 @@ class _ReportScreenState extends State<ReportScreen> {
                   ),
                 ),
                 child: Text(
-                  L10n.tr.continueButton,
+                  AppLocalization.tr.continueButton,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,

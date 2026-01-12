@@ -4,10 +4,12 @@ import 'package:ride_sharing/app/utils/app_colors.dart';
 import 'package:get/get.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/custom_assets/app_string.dart';
-import 'package:ride_sharing/feature/auth/log_in_screen.dart';
-import 'package:ride_sharing/feature/auth/passenger/registration.dart';
-class PassengerAuthSelectionScreen extends StatelessWidget {
-  const PassengerAuthSelectionScreen({super.key});
+import 'package:ride_sharing/feature/auth/view/log_in_screen.dart';
+import 'package:ride_sharing/feature/auth/view/registration.dart';
+class AuthSelectionScreen extends StatelessWidget {
+  final String? role;
+
+  const AuthSelectionScreen({super.key, this.role});
 
   @override
   Widget build(BuildContext context) {
@@ -67,8 +69,7 @@ class PassengerAuthSelectionScreen extends StatelessWidget {
               const SizedBox(height: 15),
               OutlinedButton(
                 onPressed: () {
-                  Get.to(PassengerRegistration());
-
+                  Get.to(() => RegistrationScreen(role: role ?? 'RIDER'));
                 },
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.primaryColor,

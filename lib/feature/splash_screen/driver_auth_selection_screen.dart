@@ -5,8 +5,8 @@ import 'package:get/get.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/feature/auth/driver/registration.dart';
-import 'package:ride_sharing/feature/auth/log_in_screen.dart';
-import 'package:ride_sharing/feature/auth/passenger/registration.dart';
+import 'package:ride_sharing/feature/auth/view/log_in_screen.dart';
+import 'package:ride_sharing/feature/auth/view/registration.dart';
 class DriverAuthSelectionScreen extends StatelessWidget {
   const DriverAuthSelectionScreen({super.key});
 

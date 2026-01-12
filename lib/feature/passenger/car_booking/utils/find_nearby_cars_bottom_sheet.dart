@@ -141,7 +141,7 @@ class _FindNearbyCarsBottomSheetState extends State<FindNearbyCarsBottomSheet> {
                   child: Image.asset(AppImage.greetings),
                 ),
                 SizedBox(width: 5.sp),
-                Text(L10n.tr.pickupLocationExample2), // Starting location
+                Text(AppLocalization.tr.pickupLocationExample2), // Starting location
               ],
             ),
           ),
@@ -160,7 +160,7 @@ class _FindNearbyCarsBottomSheetState extends State<FindNearbyCarsBottomSheet> {
             children: [
               Icon(Icons.location_on, color: AppColors.primaryColor),
               SizedBox(width: 5.sp),
-              Text(L10n.tr.dropoffLocationExample2), // Destination location
+              Text(AppLocalization.tr.dropoffLocationExample2), // Destination location
             ],
           ),
 
@@ -171,9 +171,9 @@ class _FindNearbyCarsBottomSheetState extends State<FindNearbyCarsBottomSheet> {
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
-                Text(L10n.tr.distanceLabel),
+                Text(AppLocalization.tr.distanceLabel),
                 Spacer(),
-                Text(L10n.tr.distanceValueExample) // Distance Value
+                Text(AppLocalization.tr.distanceValueExample) // Distance Value
               ],
             ),
           ),
@@ -194,7 +194,7 @@ class _FindNearbyCarsBottomSheetState extends State<FindNearbyCarsBottomSheet> {
               children: [
                 Image.asset(AppImage.wallet),
                 SizedBox(width: 2.sp,),
-                Text(L10n.tr.payViaWalletLabel,style: TextStyle(fontSize: 20.sp),)
+                Text(AppLocalization.tr.payViaWalletLabel,style: TextStyle(fontSize: 20.sp),)
               ],
             ),
           ),
@@ -213,7 +213,7 @@ class _FindNearbyCarsBottomSheetState extends State<FindNearbyCarsBottomSheet> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(L10n.tr.cancelRideQuestion),
+                Text(AppLocalization.tr.cancelRideQuestion),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context);

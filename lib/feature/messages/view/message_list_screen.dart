@@ -85,7 +85,7 @@ class _MessagesListScreenState extends State<MessagesListScreen> {
               color: MessagingColors.searchIconColor,
               size: 22,
               ),
-              hintText: L10n.tr.searchByNameHint,
+              hintText: AppLocalization.tr.searchByNameHint,
               hintextColor: MessagingColors.secondaryText,
               ),
               ),

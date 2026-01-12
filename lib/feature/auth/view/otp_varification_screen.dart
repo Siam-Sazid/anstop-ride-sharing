@@ -1,15 +1,18 @@
-import 'package:ride_sharing/feature/auth/reset_password_screen.dart';
+import 'package:ride_sharing/feature/auth/view/reset_password_screen.dart';
 import 'package:ride_sharing/l10n/l10n_helper.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
+import 'package:ride_sharing/feature/auth/controller/otp_verification_controller.dart';
 
 class OtpVarificationScreen extends StatelessWidget {
-  const OtpVarificationScreen({super.key});
+  OtpVarificationScreen({super.key});
+
+  final OtpVerificationController _controller = Get.put(OtpVerificationController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(L10n.tr.otpAppBarText),
+        title: Text(AppLocalization.tr.otpAppBarText),
         backgroundColor: AppColors.appBarColor,
         centerTitle: true,
         foregroundColor: Color(0XFF0A0A0A),
@@ -24,7 +27,9 @@ class OtpVarificationScreen extends StatelessWidget {
               SizedBox(height: 66.h),
               LogoWidget(),
               SizedBox(height: 52.h),
-              CustomPinCodeTextField(),
+              CustomPinCodeTextField(
+                textEditingController: _controller.otpController,
+              ),
               SizedBox(height: 12.h),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -32,7 +37,7 @@ class OtpVarificationScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      L10n.tr.otpDidNotGetText,
+                      AppLocalization.tr.otpDidNotGetText,
                       style: TextStyle(
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w400,
@@ -40,7 +45,7 @@ class OtpVarificationScreen extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      L10n.tr.resendButtonText,
+                      AppLocalization.tr.resendButtonText,
                       style: TextStyle(
                         color: Colors.red,
                         fontSize: 14.sp,
@@ -55,12 +60,14 @@ class OtpVarificationScreen extends StatelessWidget {
               ),
               SizedBox(height: 67.h),
 
-              CustomButton(
-                onPressed: () {
-                  Get.to(() => ResetPasswordScreen());
+              Obx(() => CustomButton(
+                onPressed: _controller.isLoading.value ? null : () {
+                  _controller.verifyOTP();
                 },
-                label: L10n.tr.otpVarificationButtonText,
-              ),
+                label: _controller.isLoading.value
+                    ? 'Verifying...'
+                    : AppLocalization.tr.otpVarificationButtonText,
+              )),
               Spacer(),
               Spacer(),
             ],

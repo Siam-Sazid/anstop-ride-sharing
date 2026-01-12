@@ -70,7 +70,7 @@ class PickUpLocationController extends GetxController {
         Marker(
           markerId: MarkerId('current_location'),
           position: LatLng(position.latitude, position.longitude),
-          infoWindow: InfoWindow(title: L10n.tr.yourLocationMarker),
+          infoWindow: InfoWindow(title: AppLocalization.tr.yourLocationMarker),
           icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
         ),
       );

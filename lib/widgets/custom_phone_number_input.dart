@@ -32,8 +32,8 @@ class PhoneNumberInput extends StatelessWidget {
       textFieldController: controller,
       formatInput: false,
       inputDecoration: InputDecoration(
-        labelText: L10n.tr.phoneNumberLabel,
-        hintText: L10n.tr.enterPhoneNumberHint,
+        labelText: AppLocalization.tr.phoneNumberLabel,
+        hintText: AppLocalization.tr.enterPhoneNumberHint,
         labelStyle: TextStyle(color: Color(0XFF8A8A8A)),
         hintStyle: TextStyle(color: Color(0XFF8A8A8A), fontSize: 14),
         border: OutlineInputBorder(

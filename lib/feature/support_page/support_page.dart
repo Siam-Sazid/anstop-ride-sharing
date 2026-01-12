@@ -19,13 +19,13 @@ class _SupportPageState extends State<SupportPage> {
   Widget build(BuildContext context) {
     // Updated: renamed to avoid collisions
     final List<Map<String, String>> _supportComplaints = [
-      {"key": "v1", "label": L10n.tr.supportVehicleNotClean},
-      {"key": "v2", "label": L10n.tr.supportVehicleTooSmall},
-      {"key": "d1", "label": L10n.tr.supportDriverRude},
-      {"key": "d2", "label": L10n.tr.supportDriverExtraMoney},
-      {"key": "d3", "label": L10n.tr.supportDriverLongRoute},
-      {"key": "v3", "label": L10n.tr.supportVehicleACNotWorking},
-      {"key": "o1", "label": L10n.tr.supportOtherIssue},
+      {"key": "v1", "label": AppLocalization.tr.supportVehicleNotClean},
+      {"key": "v2", "label": AppLocalization.tr.supportVehicleTooSmall},
+      {"key": "d1", "label": AppLocalization.tr.supportDriverRude},
+      {"key": "d2", "label": AppLocalization.tr.supportDriverExtraMoney},
+      {"key": "d3", "label": AppLocalization.tr.supportDriverLongRoute},
+      {"key": "v3", "label": AppLocalization.tr.supportVehicleACNotWorking},
+      {"key": "o1", "label": AppLocalization.tr.supportOtherIssue},
     ];
 
     final width = 375.0; // as requested
@@ -47,7 +47,7 @@ class _SupportPageState extends State<SupportPage> {
                       const Icon(Icons.menu, size: 28, color: Colors.black),
 
                       Text(
-                        L10n.tr.supportTitle,
+                        AppLocalization.tr.supportTitle,
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
@@ -68,8 +68,8 @@ class _SupportPageState extends State<SupportPage> {
                 const SizedBox(height: 12),
                  LogoWidget(),
                 const SizedBox(height: 12),
-                Center(child: Text(L10n.tr.supportMessage1)),
-                Center(child: Text(L10n.tr.supportMessage2)),
+                Center(child: Text(AppLocalization.tr.supportMessage1)),
+                Center(child: Text(AppLocalization.tr.supportMessage2)),
                 // ================= DROP DOWN =================
                 const SizedBox(height: 12),
                 Padding(
@@ -144,7 +144,7 @@ class _SupportPageState extends State<SupportPage> {
                       controller: _descriptionController,
                       maxLines: 5,
                       decoration: InputDecoration(
-                        hintText: L10n.tr.writeComplaintHint,
+                        hintText: AppLocalization.tr.writeComplaintHint,
                         border: InputBorder.none,
                       ),
                     ),
@@ -167,7 +167,7 @@ class _SupportPageState extends State<SupportPage> {
                       ),
                       alignment: Alignment.center,
                       child: Text(
-                        L10n.tr.sendToAdminButton,
+                        AppLocalization.tr.sendToAdminButton,
                         style: const TextStyle(
                           fontSize: 17,
                           fontWeight: FontWeight.w600,
@@ -210,7 +210,7 @@ class _SupportPageState extends State<SupportPage> {
                 const SizedBox(height: 14),
 
                 Text(
-                  L10n.tr.submittedSuccessfullyTitle,
+                  AppLocalization.tr.submittedSuccessfullyTitle,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontSize: 20,
@@ -222,7 +222,7 @@ class _SupportPageState extends State<SupportPage> {
                 const SizedBox(height: 10),
 
                 Text(
-                  L10n.tr.complaintSubmittedMessage,
+                  AppLocalization.tr.complaintSubmittedMessage,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontSize: 14,

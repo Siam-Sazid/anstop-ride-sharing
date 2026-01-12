@@ -3,13 +3,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/feature/splash_screen/driver_auth_selection_screen.dart';
-import 'package:ride_sharing/feature/splash_screen/passenger_auth_selection_screen.dart';
+import 'package:ride_sharing/feature/splash_screen/auth_selection_screen.dart';
+import 'package:ride_sharing/feature/splash_screen/controller/role_selection_controller.dart';
 import 'package:ride_sharing/widgets/custom_fade_slide.dart';
 import '../../app/utils/app_colors.dart';
 import 'package:get/get.dart';
 
 class RoleSelectionScreen extends StatelessWidget {
-  const RoleSelectionScreen({super.key});
+  RoleSelectionScreen({super.key});
+
+  final RoleSelectionController _controller = Get.put(RoleSelectionController());
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +95,8 @@ class RoleSelectionScreen extends StatelessWidget {
                       // Passenger Button
                       ElevatedButton(
                         onPressed: () {
-                          Get.to(() => const PassengerAuthSelectionScreen());
+                          _controller.selectRole('RIDER');
+                          Get.to(() => AuthSelectionScreen(role: 'RIDER'));
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryColor,
@@ -123,7 +127,8 @@ class RoleSelectionScreen extends StatelessWidget {
                       SizedBox(height: 15.h),
                       OutlinedButton(
                         onPressed: () {
-                          Get.to(() => const DriverAuthSelectionScreen());
+                          _controller.selectRole('DRIVER');
+                          Get.to(() => AuthSelectionScreen(role: 'DRIVER'));
                         },
                         style: OutlinedButton.styleFrom(
                           foregroundColor: AppColors.green300,

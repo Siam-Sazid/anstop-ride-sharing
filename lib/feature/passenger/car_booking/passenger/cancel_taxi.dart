@@ -22,7 +22,7 @@ class _CancelTaxiScreenState extends State<CancelTaxiScreen> {
     return Scaffold(
       backgroundColor: Color(0xFFEEEEEE),
       appBar: AppBar(
-        title: Text(L10n.tr.cancelTaxiTitle),
+        title: Text(AppLocalization.tr.cancelTaxiTitle),
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
@@ -54,7 +54,7 @@ class _CancelTaxiScreenState extends State<CancelTaxiScreen> {
                 _isChecked1 = value!;
               });
             },
-            hintText: L10n.tr.cancellationReasonHint,
+            hintText: AppLocalization.tr.cancellationReasonHint,
           ),
           SizedBox(height: 10.h,),
           CustomTextFieldWithCheckbox(
@@ -64,7 +64,7 @@ class _CancelTaxiScreenState extends State<CancelTaxiScreen> {
                 _isChecked2 = value!;
               });
             },
-            hintText: L10n.tr.anotherCancellationReasonHint,
+            hintText: AppLocalization.tr.anotherCancellationReasonHint,
           ),
           SizedBox(height: 10.h,),
           CustomTextFieldWithCheckbox(
@@ -74,7 +74,7 @@ class _CancelTaxiScreenState extends State<CancelTaxiScreen> {
                 _isChecked2 = value!;
               });
             },
-            hintText: L10n.tr.anotherCancellationReasonHint,
+            hintText: AppLocalization.tr.anotherCancellationReasonHint,
           ),SizedBox(height: 10.h,),
           CustomTextFieldWithCheckbox(
             isChecked: _isChecked2,
@@ -83,7 +83,7 @@ class _CancelTaxiScreenState extends State<CancelTaxiScreen> {
                 _isChecked2 = value!;
               });
             },
-            hintText: L10n.tr.anotherCancellationReasonHint,
+            hintText: AppLocalization.tr.anotherCancellationReasonHint,
           ),SizedBox(height: 10.h,),
           CustomTextFieldWithCheckbox(
             isChecked: _isChecked2,
@@ -92,7 +92,7 @@ class _CancelTaxiScreenState extends State<CancelTaxiScreen> {
                 _isChecked2 = value!;
               });
             },
-            hintText: L10n.tr.anotherCancellationReasonHint,
+            hintText: AppLocalization.tr.anotherCancellationReasonHint,
           ),
           // Add more widgets here if necessary
         ],
@@ -103,7 +103,7 @@ class _CancelTaxiScreenState extends State<CancelTaxiScreen> {
             _showThankYouDialog(context);
           },
           title: Text(
-            L10n.tr.submitButton,
+            AppLocalization.tr.submitButton,
             style: TextStyle(color: AppColors.white),
           ),
         ),
@@ -153,7 +153,7 @@ class _CancelTaxiScreenState extends State<CancelTaxiScreen> {
                     Navigator.of(context).pop(); // Close the dialog
                   },
                   title: Text(
-                    L10n.tr.closeButton,
+                    AppLocalization.tr.closeButton,
                     style: TextStyle(fontSize: 20, color: AppColors.white),
                   ),
                 ),

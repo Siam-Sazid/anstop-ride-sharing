@@ -1,19 +1,29 @@
-import 'package:ride_sharing/feature/auth/log_in_screen.dart';
+import 'package:ride_sharing/feature/auth/view/log_in_screen.dart';
 import 'package:ride_sharing/l10n/l10n_helper.dart';
 import 'package:ride_sharing/feature/auth/passenger/terms_of_services.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
+import 'package:ride_sharing/feature/auth/controller/registration_controller.dart';
 
-class PassengerRegistration extends StatefulWidget {
-  const PassengerRegistration({super.key});
+class RegistrationScreen extends StatefulWidget {
+  final String? role;
+
+  const RegistrationScreen({super.key, this.role});
 
   @override
-  State<PassengerRegistration> createState() => _PassengerRegistrationState();
+  State<RegistrationScreen> createState() => _RegistrationScreenState();
 }
 
-class _PassengerRegistrationState extends State<PassengerRegistration> {
-  /// Controller are define here
-  final TextEditingController _nameTEController = TextEditingController();
-  bool isChecked = false;
+class _RegistrationScreenState extends State<RegistrationScreen> {
+  final RegistrationController _controller = Get.put(RegistrationController());
+  @override
+  void initState() {
+    super.initState();
+    // Set role if passed from previous screen
+    if (widget.role != null) {
+      _controller.setRole(widget.role!);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,40 +36,41 @@ class _PassengerRegistrationState extends State<PassengerRegistration> {
               Center(child: LogoWidget()),
               SizedBox(height: 15.h),
               Text(
-                L10n.tr.createAccountTitle,
+                AppLocalization.tr.createAccountTitle,
                 style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w400),
               ),
               SizedBox(height: 8.h),
               Text(
-                L10n.tr.createAccountSubtitle,
+                AppLocalization.tr.createAccountSubtitle,
                 style: TextStyle(fontSize: 12.sp),
               ),
               SizedBox(height: 29.h),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24),
                 child: Form(
+                  key: _controller.formKey,
                   child: Column(
                     children: [
                       CustomTextField(
-                        controller: _nameTEController,
+                        controller: _controller.nameTEController,
                         prefixIcon: Icon(
                           Icons.person,
                           color: Color(0XFF8A8A8A),
                           size: 24.sp,
                         ),
-                        hintText: L10n.tr.nameHintText,
+                        hintText: AppLocalization.tr.nameHintText,
                         hintextSize: 14.sp,
                         hintextColor: Color(0XFF8A8A8A),
                       ),
                       SizedBox(height: 12.h),
                       CustomTextField(
-                        controller: _nameTEController,
+                        controller: _controller.emailTEController,
                         prefixIcon: Icon(
                           Icons.email_outlined,
                           color: Color(0XFF8A8A8A),
                           size: 24.sp,
                         ),
-                        hintText: L10n.tr.enterEmailHintText,
+                        hintText: AppLocalization.tr.enterEmailHintText,
                         hintextSize: 14.sp,
                         hintextColor: Color(0XFF8A8A8A),
                       ),
@@ -67,13 +78,13 @@ class _PassengerRegistrationState extends State<PassengerRegistration> {
                       CustomTextField(
                         isObscureText: true,
                         isPassword: true,
-                        controller: _nameTEController,
+                        controller: _controller.passwordTEController,
                         prefixIcon: Icon(
                           Icons.key,
                           color: Color(0XFF8A8A8A),
                           size: 24.sp,
                         ),
-                        hintText: L10n.tr.enterPasswordHintText,
+                        hintText: AppLocalization.tr.enterPasswordHintText,
                         hintextSize: 14.sp,
                         hintextColor: Color(0XFF8A8A8A),
                       ),
@@ -81,28 +92,25 @@ class _PassengerRegistrationState extends State<PassengerRegistration> {
                       CustomTextField(
                         isObscureText: true,
                         isPassword: true,
-                        controller: _nameTEController,
+                        controller: _controller.confirmPasswordTEController,
                         prefixIcon: Icon(
                           Icons.key,
                           color: Color(0XFF8A8A8A),
                           size: 24.sp,
                         ),
-                        hintText: L10n.tr.enterPasswordHintText,
+                        hintText: AppLocalization.tr.enterPasswordHintText,
                         hintextSize: 14.sp,
                         hintextColor: Color(0XFF8A8A8A),
                       ),
                       SizedBox(height: 46.h),
-                      Row(
+                      Obx(() => Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Checkbox(
                             checkColor: Colors.white,
-                            // fillColor: Color(0XFF323232),
-                            value: isChecked,
+                            value: _controller.isAgreedToTerms.value,
                             onChanged: (bool? value) {
-                              setState(() {
-                                isChecked = value!;
-                              });
+                              _controller.toggleTermsAgreement(value);
                             },
                           ),
                           RichText(
@@ -111,14 +119,14 @@ class _PassengerRegistrationState extends State<PassengerRegistration> {
                             text: TextSpan(
                               children: [
                                 TextSpan(
-                                  text: L10n.tr.agreeWithText, style: TextStyle(
+                                  text: AppLocalization.tr.agreeWithText, style: TextStyle(
                                   fontSize: 12.sp,
                                   fontWeight: FontWeight.w400,
                                   color: Color(0XFF4E4E4E),
                                 ),
                                 ),
                                 WidgetSpan(child: GestureDetector(
-                                  child: Text(L10n.tr.termsOfServiceLink, style: TextStyle(
+                                  child: Text(AppLocalization.tr.termsOfServiceLink, style: TextStyle(
                                       fontSize: 12.sp,
                                       fontWeight: FontWeight.w400,
                                       color: Colors.red,
@@ -130,13 +138,13 @@ class _PassengerRegistrationState extends State<PassengerRegistration> {
                                     Get.to(() => TermsOfServices())
                                   },
                                 )),
-                                TextSpan(text: L10n.tr.andText, style: TextStyle(
+                                TextSpan(text: AppLocalization.tr.andText, style: TextStyle(
                                   fontSize: 12.sp,
                                   fontWeight: FontWeight.w400,
                                   color: Color(0XFF4E4E4E),
                                 )),
                                 TextSpan(
-                                    text: L10n.tr.privacyPolicyLink, style: TextStyle(
+                                    text: AppLocalization.tr.privacyPolicyLink, style: TextStyle(
                                     fontSize: 12.sp,
                                     fontWeight: FontWeight.w400,
                                     color: Colors.red,
@@ -147,10 +155,16 @@ class _PassengerRegistrationState extends State<PassengerRegistration> {
                             ),
                           )
                         ],
-                      )
-                      ,
+                      )),
                       SizedBox(height: 17.5.sp),
-                      CustomButton(onPressed: () {}, label: L10n.tr.registerButton),
+                      Obx(() => CustomButton(
+                        onPressed: _controller.isLoading.value ? null : () {
+                          _controller.register();
+                        },
+                        label: _controller.isLoading.value
+                          ? 'Loading...'
+                          : AppLocalization.tr.registerButton,
+                      )),
                       SizedBox(height: 16.h),
                       GestureDetector(
                         onTap: (){
@@ -159,12 +173,12 @@ class _PassengerRegistrationState extends State<PassengerRegistration> {
                         child: RichText(
                           text: TextSpan(
                             children: [
-                              TextSpan(text: L10n.tr.haveAccountText, style: TextStyle(
+                              TextSpan(text: AppLocalization.tr.haveAccountText, style: TextStyle(
                                 fontSize: 12.sp,
                                 fontWeight: FontWeight.w400,
                                 color: Color(0XFF4E4E4E),
                               )),
-                              TextSpan(text: L10n.tr.loginLink, style: TextStyle(
+                              TextSpan(text: AppLocalization.tr.loginLink, style: TextStyle(
                                   fontSize: 12.sp,
                                   fontWeight: FontWeight.w400,
                                   color: Colors.red,

@@ -37,7 +37,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          L10n.tr.changePasswordOption,
+          AppLocalization.tr.changePasswordOption,
           style: const TextStyle(
             color: SettingsColors.primaryText,
             fontSize: 18,
@@ -54,7 +54,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(L10n.tr.currentPasswordLabel),
+                  Text(AppLocalization.tr.currentPasswordLabel),
                   CustomTextField(
                     isObscureText: true,
                     isPassword: true,
@@ -64,12 +64,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       color: Color(0XFF8A8A8A),
                       size: 24.sp,
                     ),
-                    hintText: L10n.tr.enterOldPasswordHint,
+                    hintText: AppLocalization.tr.enterOldPasswordHint,
                     hintextSize: 14.sp,
                     hintextColor: Color(0XFF8A8A8A),
                   ),
                   SizedBox(height: 12.h),
-                  Text(L10n.tr.newPasswordLabel),
+                  Text(AppLocalization.tr.newPasswordLabel),
                   CustomTextField(
                     isObscureText: true,
                     isPassword: true,
@@ -79,12 +79,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       color: Color(0XFF8A8A8A),
                       size: 24.sp,
                     ),
-                    hintText: L10n.tr.enterNewPasswordHint,
+                    hintText: AppLocalization.tr.enterNewPasswordHint,
                     hintextSize: 14.sp,
                     hintextColor: Color(0XFF8A8A8A),
                   ),
                   SizedBox(height: 12.h),
-                  Text(L10n.tr.passwordLabel),
+                  Text(AppLocalization.tr.passwordLabel),
                   CustomTextField(
                     isObscureText: true,
                     isPassword: true,
@@ -94,7 +94,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       color: Color(0XFF8A8A8A),
                       size: 24.sp,
                     ),
-                    hintText: L10n.tr.reenterPasswordHint,
+                    hintText: AppLocalization.tr.reenterPasswordHint,
                     hintextSize: 14.sp,
                     hintextColor: Color(0XFF8A8A8A),
                   ),
@@ -113,7 +113,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
                       child: Text(
-                        L10n.tr.forgetPasswordTextButton,
+                        AppLocalization.tr.forgetPasswordTextButton,
                         style: const TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w400,
@@ -145,7 +145,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   ),
                 ),
                 child: Text(
-                  L10n.tr.resetPasswordConfirmButton,
+                  AppLocalization.tr.resetPasswordConfirmButton,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -180,7 +180,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               ),
               const SizedBox(height: 16),
               Text(
-                L10n.tr.resetPasswordAppBarText,
+                AppLocalization.tr.resetPasswordAppBarText,
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
@@ -189,7 +189,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                L10n.tr.reportSubmittedMessage,
+                AppLocalization.tr.reportSubmittedMessage,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 14,
@@ -214,7 +214,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     ),
                   ),
                   child: Text(
-                    L10n.tr.okButton,
+                    AppLocalization.tr.okButton,
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,

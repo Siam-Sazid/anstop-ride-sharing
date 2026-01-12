@@ -59,7 +59,7 @@ class SetLocationScreen extends StatelessWidget {
                               controller: controller.locationTEController,
                               prefixIcon: Icon(Icons.location_on, color: AppColors.primaryColor),
                               suffixIcon: Icon(CupertinoIcons.search_circle),
-                              hintText: L10n.tr.whereAreYouHeadedHint,
+                              hintText: AppLocalization.tr.whereAreYouHeadedHint,
                               borderColor: AppColors.primaryColor,
                               borderRadio: 20,
                             ),
@@ -72,7 +72,7 @@ class SetLocationScreen extends StatelessWidget {
                                   child: CustomButton(
 
                                       onPressed: (){},
-                                     title: Text(L10n.tr.setLocationButton,style: TextStyle(color: AppColors.white),),
+                                     title: Text(AppLocalization.tr.setLocationButton,style: TextStyle(color: AppColors.white),),
 
 
 
