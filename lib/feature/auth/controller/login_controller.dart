@@ -55,10 +55,42 @@ class LoginController extends GetxController {
 
       // Call signin API
       final response = await _authService.signIn(signInRequest);
-
+      print("response.statusCode");
+      print(response.statusCode);
       if (response.isSuccess) {
         // Parse the response data
         final signInResponse = SignInResponseModel.fromJson(response.responseData);
+
+        // Check if user needs email verification
+        if (signInResponse.data.needsVerification) {
+          // Navigate to email validation screen with pre-filled email
+          Get.toNamed(
+            AppRoutes.emailValidationScreen,
+            arguments: {'email': emailTEController.text.trim()},
+          );
+
+          Get.snackbar(
+            'Verification Required',
+            'Please verify your email to continue',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.orange,
+            colorText: Colors.white,
+          );
+          return;
+        }
+
+        // Validate tokens before proceeding
+        if (signInResponse.data.accessToken.isEmpty ||
+            signInResponse.data.refreshToken.isEmpty) {
+          Get.snackbar(
+            'Login Failed',
+            'Invalid response from server. Please try again.',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
+          return;
+        }
 
         // Save tokens and user data to shared preferences
         await _saveUserData(signInResponse.data);
@@ -72,16 +104,14 @@ class LoginController extends GetxController {
         //   colorText: Colors.white,
         // );
 
-        // Navigate based on role
+        // Handle navigation based on role
         if (signInResponse.data.role.contains('RIDER')) {
-          // Navigate to passenger home screen
-          Get.offAllNamed(AppRoutes.passengerHomeScreen);
+          Get.toNamed(AppRoutes.passengerHomeScreen);
         } else if (signInResponse.data.role.contains('DRIVER')) {
-          // Navigate to upload documents screen for drivers
-          Get.offAllNamed(AppRoutes.uploadDocumentsScreen);
+          // Check driver onboarding status
+          await _handleDriverNavigation(signInResponse.data.accessToken);
         } else {
-          // Default navigation
-          Get.offAllNamed(AppRoutes.passengerHomeScreen);
+          Get.toNamed(AppRoutes.passengerHomeScreen);
         }
       } else {
         // Show error message
@@ -118,8 +148,45 @@ class LoginController extends GetxController {
       await prefs.setString('refreshToken', data.refreshToken);
       await prefs.setStringList('userRole', data.role);
       await prefs.setBool('needsVerification', data.needsVerification);
+
+      // Debug logging
+      print('💾 Saved Access Token: ${data.accessToken}');
+      print('💾 Saved User Role: ${data.role}');
+
+      // Verify it was saved
+      final savedToken = prefs.getString('accessToken');
+      print('✅ Verified Saved Token: $savedToken');
     } catch (e) {
       print('Error saving user data: $e');
+    }
+  }
+
+  Future<void> _handleDriverNavigation(String accessToken) async {
+    try {
+      // Call onboarding status API
+      final onboardingResponse = await _authService.getDriverOnboardingStatus(
+        accessToken: accessToken,
+      );
+
+      if (onboardingResponse.isSuccess) {
+        // Check if driver is onboarded
+        final isOnboarded = onboardingResponse.responseData['data']?['isOnboarded'] ?? false;
+
+        if (isOnboarded) {
+          // Driver is fully onboarded, go to driver home screen
+          Get.toNamed(AppRoutes.driverHomeScreen);
+        } else {
+          // Driver needs to complete onboarding
+          Get.toNamed(AppRoutes.driverRegistrationScreen);
+        }
+      } else {
+        // If onboarding status check fails, assume not onboarded
+        Get.toNamed(AppRoutes.driverRegistrationScreen);
+      }
+    } catch (e) {
+      print('Error checking driver onboarding status: $e');
+      // On error, default to registration screen
+      Get.toNamed(AppRoutes.driverRegistrationScreen);
     }
   }
 

@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:ride_sharing/feature/auth/data/signup_request_model.dart';
 import 'package:ride_sharing/feature/auth/data/signin_request_model.dart';
 import 'package:ride_sharing/feature/auth/data/signin_response_model.dart';
@@ -48,6 +49,73 @@ class AuthService {
       final response = await _apiClient.postRequest(
         ApiUrls.verifyOtp,
         body: verifyOtpRequest.toJson(),
+      );
+      return response;
+    } catch (e) {
+      return ApiResponse(
+        isSuccess: false,
+        statusCode: -1,
+        errorMessage: e.toString(),
+      );
+    }
+  }
+
+  /// Upload files and get URLs
+  Future<ApiResponse> uploadFiles({
+    required String accessToken,
+    required List<File> files,
+  }) async {
+    try {
+      // For single file upload, use 'files' as the field name
+      // For multiple files, the backend should handle array
+      final filesMap = <String, File>{
+        'files': files[0], // Send first file with field name 'files'
+      };
+
+      final response = await _apiClient.postMultipartRequest(
+        ApiUrls.uploadFiles,
+        files: filesMap,
+        accessToken: accessToken,
+      );
+      return response;
+    } catch (e) {
+      return ApiResponse(
+        isSuccess: false,
+        statusCode: -1,
+        errorMessage: e.toString(),
+      );
+    }
+  }
+
+  /// Driver onboard - submit all driver documents and information
+  Future<ApiResponse> driverOnboard({
+    required String accessToken,
+    required Map<String, dynamic> jsonBody,
+  }) async {
+    try {
+      final response = await _apiClient.postRequest(
+        ApiUrls.driverOnboard,
+        body: jsonBody,
+        accessToken: accessToken,
+      );
+      return response;
+    } catch (e) {
+      return ApiResponse(
+        isSuccess: false,
+        statusCode: -1,
+        errorMessage: e.toString(),
+      );
+    }
+  }
+
+  /// Get driver onboarding status
+  Future<ApiResponse> getDriverOnboardingStatus({
+    required String accessToken,
+  }) async {
+    try {
+      final response = await _apiClient.getRequest(
+        ApiUrls.driverOnboardingStatus,
+        accessToken: accessToken,
       );
       return response;
     } catch (e) {

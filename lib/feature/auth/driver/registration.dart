@@ -6,6 +6,8 @@ import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:flutter/cupertino.dart';
 
+import '../../../routes/app_routes.dart';
+
 class DriverRegistration extends StatefulWidget {
   const DriverRegistration({super.key});
 
@@ -30,7 +32,7 @@ class _DriverRegistrationState extends State<DriverRegistration> {
   bool isChecked = false;
   PhoneNumber _phoneNumber = PhoneNumber(isoCode: 'US');
   DateTime? _selectedDate;
-  final List<String> _genders = ['Male', 'Female'];
+  final List<String> _genders = ['MALE', 'FEMALE'];
   String? _selectedGender;
 
   Future<void> _selectGender(BuildContext context) async {
@@ -113,42 +115,20 @@ class _DriverRegistrationState extends State<DriverRegistration> {
                 child: Form(
                   child: Column(
                     children: [
-                      CustomTextField(
-                        controller: _nameTEController,
-                        prefixIcon: Icon(
-                          Icons.person,
-                          color: Color(0XFF8A8A8A),
-                          size: 24.sp,
-                        ),
-                        hintText: AppLocalization.tr.nameHintText,
-                        hintextSize: 14.sp,
-                        hintextColor: Color(0XFF8A8A8A),
-                      ),
-                      SizedBox(height: 12.h),
-                      CustomTextField(
-                        controller: _emailTEController,
-                        prefixIcon: Icon(
-                          Icons.email_outlined,
-                          color: Color(0XFF8A8A8A),
-                          size: 24.sp,
-                        ),
-                        hintText: AppLocalization.tr.enterEmailHintText,
-                        hintextSize: 14.sp,
-                        hintextColor: Color(0XFF8A8A8A),
-                      ),
-                      SizedBox(height: 12.h),
-                      PhoneNumberInput(
-                        controller: _phoneNumberController,
-                        onInputChanged: (PhoneNumber number) {
-                          setState(() {
-                            _phoneNumber = number;
-                          });
-                        },
-                        onInputValidated: (bool value) {
-                          print(value ? 'Valid number' : 'Invalid number');
-                        },
-                        initialValue: _phoneNumber,
-                      ),
+
+
+                      // PhoneNumberInput(
+                      //   controller: _phoneNumberController,
+                      //   onInputChanged: (PhoneNumber number) {
+                      //     setState(() {
+                      //       _phoneNumber = number;
+                      //     });
+                      //   },
+                      //   onInputValidated: (bool value) {
+                      //     print(value ? 'Valid number' : 'Invalid number');
+                      //   },
+                      //   initialValue: _phoneNumber,
+                      // ),
                       SizedBox(height: 12.h),
                       GestureDetector(
                         onTap: () => _selectDate(context),
@@ -225,97 +205,111 @@ class _DriverRegistrationState extends State<DriverRegistration> {
                         hintextSize: 14.sp,
                         hintextColor: Color(0XFF8A8A8A),
                       ),
-                      SizedBox(height: 12.h),
-                      CustomTextField(
-                        isObscureText: true,
-                        isPassword: true,
-                        controller: _passwordTEController,
-                        prefixIcon: Icon(
-                          Icons.key,
-                          color: Color(0XFF8A8A8A),
-                          size: 24.sp,
-                        ),
-                        hintText: AppLocalization.tr.enterPasswordHintText,
-                        hintextSize: 14.sp,
-                        hintextColor: Color(0XFF8A8A8A),
-                      ),
-                      SizedBox(height: 12.h),
-                      CustomTextField(
-                        isObscureText: true,
-                        isPassword: true,
-                        controller: _confirmPasswordTEController,
-                        prefixIcon: Icon(
-                          Icons.key,
-                          color: Color(0XFF8A8A8A),
-                          size: 24.sp,
-                        ),
-                        hintText: AppLocalization.tr.enterPasswordHintText,
-                        hintextSize: 14.sp,
-                        hintextColor: Color(0XFF8A8A8A),
-                      ),
-                      SizedBox(height: 10.h),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Checkbox(
-                            checkColor: Colors.white,
-                            // fillColor: Color(0XFF323232),
-                            value: isChecked,
-                            onChanged: (bool? value) {
-                              setState(() {
-                                isChecked = value!;
-                              });
-                            },
-                          ),
-                          RichText(
-                            textAlign: TextAlign.center,
-                            maxLines: 1,
-                            text: TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: AppLocalization.tr.agreeWithText, style: TextStyle(
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.w400,
-                                  color: Color(0XFF4E4E4E),
-                                ),
-                                ),
-                                WidgetSpan(child: GestureDetector(
-                                  child: Text(AppLocalization.tr.termsOfServiceLink, style: TextStyle(
-                                      fontSize: 12.sp,
-                                      fontWeight: FontWeight.w400,
-                                      color: Colors.red,
-                                      decorationThickness: 2,
-                                      decoration: TextDecoration.underline,
-                                      decorationColor: Colors.red
-                                  )),
-                                  onTap: ()=> {
-                                    Get.to(() => TermsOfServices())
-                                  },
-                                )),
-                                TextSpan(text: AppLocalization.tr.andText, style: TextStyle(
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.w400,
-                                  color: Color(0XFF4E4E4E),
-                                )),
-                                TextSpan(
-                                    text: AppLocalization.tr.privacyPolicyLink, style: TextStyle(
-                                    fontSize: 12.sp,
-                                    fontWeight: FontWeight.w400,
-                                    color: Colors.red,
-                                    decorationThickness: 2,
-                                    decoration: TextDecoration.underline
-                                )),
-                              ],
-                            ),
-                          )
-                        ],
-                      )
-                      ,
-                      SizedBox(height: 17.5.sp),
-                      CustomButton(onPressed: () {
-                        Get.to(() => UploadYourDocuments());
 
-                      }, label: AppLocalization.tr.registerButton),
+                      // Row(
+                      //   crossAxisAlignment: CrossAxisAlignment.center,
+                      //   children: [
+                      //     Checkbox(
+                      //       checkColor: Colors.white,
+                      //       // fillColor: Color(0XFF323232),
+                      //       value: isChecked,
+                      //       onChanged: (bool? value) {
+                      //         setState(() {
+                      //           isChecked = value!;
+                      //         });
+                      //       },
+                      //     ),
+                      //     RichText(
+                      //       textAlign: TextAlign.center,
+                      //       maxLines: 1,
+                      //       text: TextSpan(
+                      //         children: [
+                      //           TextSpan(
+                      //             text: AppLocalization.tr.agreeWithText, style: TextStyle(
+                      //             fontSize: 12.sp,
+                      //             fontWeight: FontWeight.w400,
+                      //             color: Color(0XFF4E4E4E),
+                      //           ),
+                      //           ),
+                      //           WidgetSpan(child: GestureDetector(
+                      //             child: Text(AppLocalization.tr.termsOfServiceLink, style: TextStyle(
+                      //                 fontSize: 12.sp,
+                      //                 fontWeight: FontWeight.w400,
+                      //                 color: Colors.red,
+                      //                 decorationThickness: 2,
+                      //                 decoration: TextDecoration.underline,
+                      //                 decorationColor: Colors.red
+                      //             )),
+                      //             onTap: ()=> {
+                      //               Get.to(() => TermsOfServices())
+                      //             },
+                      //           )),
+                      //           TextSpan(text: AppLocalization.tr.andText, style: TextStyle(
+                      //             fontSize: 12.sp,
+                      //             fontWeight: FontWeight.w400,
+                      //             color: Color(0XFF4E4E4E),
+                      //           )),
+                      //           TextSpan(
+                      //               text: AppLocalization.tr.privacyPolicyLink, style: TextStyle(
+                      //               fontSize: 12.sp,
+                      //               fontWeight: FontWeight.w400,
+                      //               color: Colors.red,
+                      //               decorationThickness: 2,
+                      //               decoration: TextDecoration.underline
+                      //           )),
+                      //         ],
+                      //       ),
+                      //     )
+                      //   ],
+                      // )
+
+                      SizedBox(height: 17.5.sp),
+                      CustomButton(
+                        onPressed: () {
+                          // Validate required fields
+                          if (_birthdayController.text.isEmpty) {
+                            Get.snackbar(
+                              'Validation Error',
+                              'Please select your birthday',
+                              snackPosition: SnackPosition.BOTTOM,
+                              backgroundColor: Colors.red,
+                              colorText: Colors.white,
+                            );
+                            return;
+                          }
+                          if (_genderController.text.isEmpty) {
+                            Get.snackbar(
+                              'Validation Error',
+                              'Please select your gender',
+                              snackPosition: SnackPosition.BOTTOM,
+                              backgroundColor: Colors.red,
+                              colorText: Colors.white,
+                            );
+                            return;
+                          }
+                          if (_addressTEController.text.trim().isEmpty) {
+                            Get.snackbar(
+                              'Validation Error',
+                              'Please enter your address',
+                              snackPosition: SnackPosition.BOTTOM,
+                              backgroundColor: Colors.red,
+                              colorText: Colors.white,
+                            );
+                            return;
+                          }
+
+                          // Navigate with profile data
+                          Get.toNamed(
+                            AppRoutes.uploadDocumentsScreen,
+                            arguments: {
+                              'gender': _genderController.text.toUpperCase(),
+                              'address': _addressTEController.text.trim(),
+                              'dateOfBirth': _birthdayController.text.trim(),
+                            },
+                          );
+                        },
+                        label: "Next",
+                      ),
                       SizedBox(height: 5.h),
                       GestureDetector(
                         onTap: (){

@@ -86,6 +86,10 @@ class ApiClient {
           throw TimeoutException('Request timed out after ${_requestTimeout.inSeconds} seconds');
         },
       );
+
+      // Log status code immediately
+      _logger.i('📊 STATUS CODE => ${response.statusCode}');
+
       _logResponse(url, response.statusCode, response.headers, response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (response.body.isEmpty) {
@@ -173,6 +177,10 @@ class ApiClient {
       }
 
       _logRequest(url, headers, body);
+
+      _logger.i('🚀 Sending POST request... (timeout: ${_requestTimeout.inSeconds}s)');
+      final startTime = DateTime.now();
+
       final response = await post(
         Uri.parse(url),
         headers: headers,
@@ -180,9 +188,18 @@ class ApiClient {
       ).timeout(
         _requestTimeout,
         onTimeout: () {
+          final elapsed = DateTime.now().difference(startTime);
+          _logger.e('⏱️ Request timeout triggered after ${elapsed.inSeconds}s');
           throw TimeoutException('Request timed out after ${_requestTimeout.inSeconds} seconds');
         },
       );
+
+      final elapsed = DateTime.now().difference(startTime);
+      _logger.i('✅ Response received in ${elapsed.inMilliseconds}ms');
+
+      // Log status code immediately
+      _logger.i('📊 STATUS CODE => ${response.statusCode}');
+
       _logResponse(url, response.statusCode, response.headers, response.body);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -216,15 +233,34 @@ class ApiClient {
         }
       }
     } on TimeoutException catch (e) {
-      _logger.e('Timeout: ${e.message}');
+      _logger.e('⏱️ TimeoutException caught: ${e.message}');
       _showTimeoutDialog();
       return ApiResponse(
         isSuccess: false,
         statusCode: 408, // Request Timeout
         errorMessage: 'The server is not working. Please try again later.',
       );
+    } on SocketException catch (e) {
+      _logger.e('🔌 SocketException: ${e.message}');
+      _logger.e('   Address: ${e.address}');
+      _logger.e('   Port: ${e.port}');
+      return ApiResponse(
+        isSuccess: false,
+        statusCode: -1,
+        errorMessage: 'Network error: ${e.message}',
+      );
+    } on FormatException catch (e) {
+      _logger.e('📝 FormatException: ${e.message}');
+      _logger.e('   Source: ${e.source}');
+      return ApiResponse(
+        isSuccess: false,
+        statusCode: -1,
+        errorMessage: 'Format error: ${e.message}',
+      );
     } catch (e, stackTrace) {
-      _logger.e(stackTrace);
+      _logger.e('❌ Unexpected exception type: ${e.runtimeType}');
+      _logger.e('   Exception: $e');
+      _logger.e('   StackTrace: $stackTrace');
       return ApiResponse(
         isSuccess: false,
         statusCode: -1,
@@ -256,6 +292,9 @@ class ApiClient {
           throw TimeoutException('Request timed out after ${_requestTimeout.inSeconds} seconds');
         },
       );
+
+      // Log status code immediately
+      _logger.i('📊 STATUS CODE => ${response.statusCode}');
 
       _logResponse(url, response.statusCode, response.headers, response.body);
 
@@ -515,12 +554,18 @@ class ApiClient {
         Map<String, String>? fields,
         Map<String, File>? files,
         String? accessToken,
+        Map<String, dynamic>? jsonBody,
       }) async {
     try {
       final request = http.MultipartRequest('POST', Uri.parse(url));
 
       // Add headers
       request.headers['Authorization'] = accessToken != null ? 'Bearer $accessToken' : '';
+
+      // If jsonBody is provided, add it as a JSON string in the body field
+      if (jsonBody != null) {
+        request.fields['body'] = jsonEncode(jsonBody);
+      }
 
       // Add text fields
       if (fields != null) {

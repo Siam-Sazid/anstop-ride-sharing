@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/custom_assets/app_string.dart';
+import 'package:ride_sharing/feature/auth/view/registration.dart';
 import 'package:ride_sharing/feature/splash_screen/driver_auth_selection_screen.dart';
 import 'package:ride_sharing/feature/splash_screen/auth_selection_screen.dart';
 import 'package:ride_sharing/feature/splash_screen/controller/role_selection_controller.dart';
@@ -96,7 +97,7 @@ class RoleSelectionScreen extends StatelessWidget {
                       ElevatedButton(
                         onPressed: () {
                           _controller.selectRole('RIDER');
-                          Get.to(() => AuthSelectionScreen(role: 'RIDER'));
+                          Get.to(() => RegistrationScreen(role: 'RIDER'));
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryColor,
@@ -128,7 +129,7 @@ class RoleSelectionScreen extends StatelessWidget {
                       OutlinedButton(
                         onPressed: () {
                           _controller.selectRole('DRIVER');
-                          Get.to(() => AuthSelectionScreen(role: 'DRIVER'));
+                          Get.to(() => RegistrationScreen(role: 'DRIVER'));
                         },
                         style: OutlinedButton.styleFrom(
                           foregroundColor: AppColors.green300,

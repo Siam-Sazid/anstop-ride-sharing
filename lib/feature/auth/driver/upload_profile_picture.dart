@@ -1,21 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:ride_sharing/app/helpers/image_picker_helper.dart';
 import 'package:ride_sharing/custom_assets/app_string.dart';
+import 'package:ride_sharing/feature/auth/controller/upload_profile_picture_controller.dart';
 import 'package:ride_sharing/feature/auth/passenger/terms_of_services.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 
-
-
-class UploadProfilePictureScreen extends StatefulWidget {
+class UploadProfilePictureScreen extends GetView<UploadProfilePictureController> {
   const UploadProfilePictureScreen({super.key});
 
-  @override
-  State<UploadProfilePictureScreen> createState() => _UploadProfilePictureScreenState();
-}
-
-class _UploadProfilePictureScreenState extends State<UploadProfilePictureScreen> {
-  /// Controller are define here
-  final TextEditingController _nationalIdTEController = TextEditingController();
-  bool isChecked = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,39 +24,54 @@ class _UploadProfilePictureScreenState extends State<UploadProfilePictureScreen>
       ),
       bottomNavigationBar: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.sp, vertical: 16.sp),
-        child: CustomButton(onPressed: () {}, label: AppString.submitButton),
+        child: CustomButton(
+          onPressed: () {
+            Get.back();
+          },
+          label: AppString.submitButton,
+        ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding:  EdgeInsets.symmetric(horizontal: 24.sp ),
+            padding: EdgeInsets.symmetric(horizontal: 24.sp),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-
                 SizedBox(height: 20.h),
                 Text(
                   AppString.uploadPictureTitle,
                   style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 29.h),
-                ///
-                Padding(
-                  padding: EdgeInsets.only(left: 4.sp),
-                  child: Text(
-                    AppString.uploadProfilePictureLabel,
-                    textAlign: TextAlign.start,
-                    style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.normal),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 4.sp),
+                    child: Text(
+                      AppString.uploadProfilePictureLabel,
+                      textAlign: TextAlign.start,
+                      style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.normal),
+                    ),
                   ),
                 ),
-
                 SizedBox(height: 12.h),
-                CustomUploadItems(
-                  borderWidth: 1.0,
-                  borderColor: Colors.black,
-                  child: Container(
-                    color: Colors.white,
-
+                Obx(
+                  () => GestureDetector(
+                    onTap: () async {
+                      final image = await ImagePickerHelper.pickImageWithOptions(context);
+                      if (image != null) {
+                        await controller.uploadAndSelectImage(image);
+                      }
+                    },
+                    child: CustomUploadItems(
+                      borderWidth: 1.0,
+                      borderColor: Colors.black,
+                      uploadedImage: controller.profileImage.value,
+                      child: Container(
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
                 ),
                 SizedBox(height: 55.h),

@@ -1,21 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:ride_sharing/app/helpers/image_picker_helper.dart';
 import 'package:ride_sharing/custom_assets/app_string.dart';
+import 'package:ride_sharing/feature/auth/controller/car_information_controller.dart';
 import 'package:ride_sharing/feature/auth/passenger/terms_of_services.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 
-
-
-class CarInformationScreen extends StatefulWidget {
+class CarInformationScreen extends GetView<CarInformationController> {
   const CarInformationScreen({super.key});
 
-  @override
-  State<CarInformationScreen> createState() => _CarInformationScreenState();
-}
-
-class _CarInformationScreenState extends State<CarInformationScreen> {
-  /// Controller are define here
-  final TextEditingController _nationalIdTEController = TextEditingController();
-  bool isChecked = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,19 +25,15 @@ class _CarInformationScreenState extends State<CarInformationScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding:  EdgeInsets.symmetric(horizontal: 24.sp ),
+            padding: EdgeInsets.symmetric(horizontal: 24.sp),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-
-              //  SizedBox(height: 20.h),
                 Text(
                   AppString.carInformationTitle,
                   style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 29.h),
-                ///
-              //  SizedBox(height: 12.h),
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Padding(
@@ -58,10 +47,9 @@ class _CarInformationScreenState extends State<CarInformationScreen> {
                 ),
                 SizedBox(height: 2.h),
                 CustomTextField(
-                  controller: _nationalIdTEController,
-
+                  controller: controller.carBrandTEController,
                 ),
-                SizedBox(height: 5.sp,),
+                SizedBox(height: 5.sp),
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Padding(
@@ -75,8 +63,23 @@ class _CarInformationScreenState extends State<CarInformationScreen> {
                 ),
                 SizedBox(height: 2.h),
                 CustomTextField(
-                  controller: _nationalIdTEController,
-
+                  controller: controller.carModelTEController,
+                ),
+                SizedBox(height: 5.h),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 4.sp),
+                    child: Text(
+                      "Year of Manufacture",
+                      textAlign: TextAlign.start,
+                      style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.normal),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 2.h),
+                CustomTextField(
+                  controller: controller.carYearTEController,
                 ),
                 SizedBox(height: 5.h),
                 Align(
@@ -92,56 +95,128 @@ class _CarInformationScreenState extends State<CarInformationScreen> {
                 ),
                 SizedBox(height: 2.h),
                 CustomTextField(
-                  controller: _nationalIdTEController,
-
+                  controller: controller.licensePlateNumberTEController,
                 ),
                 SizedBox(height: 20.h),
-                Padding(
-                  padding: EdgeInsets.only(left: 4.sp),
-                  child: Text(
-                    AppString.uploadCarPictureFront,
-                    textAlign: TextAlign.start,
-                    style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.normal),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 4.sp),
+                    child: Text(
+                      "Upload License Plate Picture",
+                      textAlign: TextAlign.start,
+                      style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.normal),
+                    ),
                   ),
                 ),
                 SizedBox(height: 12.h),
-                CustomUploadItems(
-                  borderWidth: 1.0,
-                  borderColor: Colors.black,
-                  child: Container(
-                    color: Colors.white,
-
+                Obx(
+                  () => GestureDetector(
+                    onTap: () async {
+                      final image = await ImagePickerHelper.pickImageWithOptions(context);
+                      if (image != null) {
+                        await controller.uploadAndSelectLicensePlateImage(image);
+                      }
+                    },
+                    child: CustomUploadItems(
+                      borderWidth: 1.0,
+                      borderColor: Colors.black,
+                      uploadedImage: controller.licensePlateImage.value,
+                      child: Container(
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
                 ),
                 SizedBox(height: 20.h),
-                Padding(
-                  padding: EdgeInsets.only(left: 4.sp),
-                  child: Text(
-                    AppString.uploadCarPictureBack,
-                    textAlign: TextAlign.start,
-                    style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.normal),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 4.sp),
+                    child: Text(
+                      "Registration Certificate Number",
+                      textAlign: TextAlign.start,
+                      style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.normal),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 2.h),
+                CustomTextField(
+                  controller: controller.registrationCertNumberTEController,
+                ),
+                SizedBox(height: 20.h),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 4.sp),
+                    child: Text(
+                      AppString.uploadCarPictureFront,
+                      textAlign: TextAlign.start,
+                      style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.normal),
+                    ),
                   ),
                 ),
                 SizedBox(height: 12.h),
-                CustomUploadItems(
-                  borderWidth: 1.0,
-                  borderColor: Colors.black,
-                  child: Container(
-                    color: Colors.white,
-
+                Obx(
+                  () => GestureDetector(
+                    onTap: () async {
+                      final image = await ImagePickerHelper.pickImageWithOptions(context);
+                      if (image != null) {
+                        await controller.uploadAndSelectRegCertFrontImage(image);
+                      }
+                    },
+                    child: CustomUploadItems(
+                      borderWidth: 1.0,
+                      borderColor: Colors.black,
+                      uploadedImage: controller.regCertFrontImage.value,
+                      child: Container(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20.h),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 4.sp),
+                    child: Text(
+                      AppString.uploadCarPictureBack,
+                      textAlign: TextAlign.start,
+                      style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.normal),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 12.h),
+                Obx(
+                  () => GestureDetector(
+                    onTap: () async {
+                      final image = await ImagePickerHelper.pickImageWithOptions(context);
+                      if (image != null) {
+                        await controller.uploadAndSelectRegCertBackImage(image);
+                      }
+                    },
+                    child: CustomUploadItems(
+                      borderWidth: 1.0,
+                      borderColor: Colors.black,
+                      uploadedImage: controller.regCertBackImage.value,
+                      child: Container(
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
                 ),
                 SizedBox(height: 55.h),
-
-                // SizedBox(height: 250.sp),
-                // Spacer(),
                 Padding(
-                  padding:  EdgeInsets.symmetric(horizontal: 5.sp),
+                  padding: EdgeInsets.symmetric(horizontal: 5.sp),
                   child: CustomButton(
-
-                      onPressed: () {},
-                      label: AppString.submitButton),
+                    onPressed: () {
+                      Get.back();
+                    },
+                    label: AppString.submitButton,
+                  ),
                 ),
+                SizedBox(height: 20.h),
               ],
             ),
           ),

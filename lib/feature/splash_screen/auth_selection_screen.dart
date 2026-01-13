@@ -6,6 +6,8 @@ import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/feature/auth/view/log_in_screen.dart';
 import 'package:ride_sharing/feature/auth/view/registration.dart';
+
+import '../../routes/app_routes.dart';
 class AuthSelectionScreen extends StatelessWidget {
   final String? role;
 
@@ -69,7 +71,8 @@ class AuthSelectionScreen extends StatelessWidget {
               const SizedBox(height: 15),
               OutlinedButton(
                 onPressed: () {
-                  Get.to(() => RegistrationScreen(role: role ?? 'RIDER'));
+                //  Get.to(() => RegistrationScreen(role: role ?? 'RIDER'));
+                  Get.toNamed(AppRoutes.roleSelectionScreen);
                 },
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.primaryColor,

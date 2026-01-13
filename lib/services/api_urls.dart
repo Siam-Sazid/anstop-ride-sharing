@@ -8,6 +8,9 @@ class ApiUrls {
   static const String signUp = '$baseUrl/auth/sign-up';
   static const String signIn = '$baseUrl/auth/sign-in';
   static const String verifyOtp = '$baseUrl/auth/verify-otp';
+  static const String uploadFiles = '$baseUrl/users/upload-files';
+  static const String driverOnboard = '$baseUrl/drivers/onboard';
+  static const String driverOnboardingStatus = '$baseUrl/drivers/onboarding-status';
 
 
   //static const String imageBaseUrl = "http://217.15.170.117/";

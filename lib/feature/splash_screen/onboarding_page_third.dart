@@ -8,6 +8,7 @@ import 'package:ride_sharing/feature/auth/view/log_in_screen.dart';
 import 'package:ride_sharing/feature/splash_screen/auth_selection_screen.dart';
 import 'package:ride_sharing/feature/splash_screen/role_selection_screen.dart';
 
+import '../../routes/app_routes.dart';
 import '../../widgets/custom_fade_slide.dart';
 import '../../widgets/custom_sliding_container.dart';
 import '../../widgets/logo.dart';
@@ -111,7 +112,8 @@ class OnboardingPageThird extends StatelessWidget{
                 delay: 600,
                 child: ElevatedButton(
                   onPressed: () {
-                    Get.to(RoleSelectionScreen());
+                    Get.toNamed(AppRoutes.passengerAuthSelectionScreen);
+                 //   Get.to(RoleSelectionScreen());
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primaryColor,

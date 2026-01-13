@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -5,12 +6,14 @@ class CustomUploadItems extends StatelessWidget {
   final Widget child;
   final double borderWidth;
   final Color borderColor;
+  final File? uploadedImage;
 
   const CustomUploadItems({
     Key? key,
     required this.child,
     this.borderWidth = 2.0,
     this.borderColor = Colors.black,
+    this.uploadedImage,
   }) : super(key: key);
 
   @override
@@ -25,26 +28,37 @@ class CustomUploadItems extends StatelessWidget {
         height: 150.h,
         child: Stack(
           children: [
-            Positioned.fill(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.camera_alt,
-                    size: 40,
-                    color: borderColor,
+            if (uploadedImage != null)
+              Positioned.fill(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.file(
+                    uploadedImage!,
+                    fit: BoxFit.cover,
                   ),
-                  SizedBox(height: 5.sp),
-                  Text(
-                    'Upload',
-                    style: TextStyle(
+                ),
+              )
+            else
+              Positioned.fill(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.camera_alt,
+                      size: 40,
                       color: borderColor,
-                      fontSize: 16,
                     ),
-                  ),
-                ],
+                    SizedBox(height: 5.sp),
+                    Text(
+                      'Upload',
+                      style: TextStyle(
+                        color: borderColor,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
           ],
         ),
       ),
