@@ -1,13 +1,20 @@
 import 'package:get/get.dart';
+import 'package:ride_sharing/feature/passenger/my_ride/data/get_my_ride_response.dart';
+import 'package:ride_sharing/feature/passenger/my_ride/service/my_ride_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MyRideController extends GetxController {
   // ==================== State ====================
   final RxBool isLoading = false.obs;
-  final RxList<dynamic> rides = <dynamic>[].obs;
+  final RxList<MyRideModel> rides = <MyRideModel>[].obs;
   final RxInt selectedTab = 0.obs; // 0: All, 1: Completed, 2: Cancelled
   final RxBool hasMore = true.obs;
   final RxString errorMessage = ''.obs;
 
+  final MyRideService _service = MyRideService();
+
+  /// 0 = ON_GOING , 1 = COMPLETED
+  final RxBool isOngoing = true.obs;
   // ==================== Lifecycle ====================
   @override
   void onInit() {
@@ -20,19 +27,33 @@ class MyRideController extends GetxController {
     try {
       isLoading.value = true;
       errorMessage.value = '';
+      final prefs = await SharedPreferences.getInstance();
+      final accessToken = prefs.getString('accessToken');
+      final status = isOngoing.value ? 'ON_GOING' : 'COMPLETED';
 
-      // TODO: Implement actual API call to load rides
-      await Future.delayed(const Duration(seconds: 1));
+      final response = await _service.getMyRides(
+        status: status,
+        accessToken: accessToken!
+      );
 
-      // For now, just set empty list
-      rides.value = [];
-      hasMore.value = false;
-
+      if (response.isSuccess) {
+        final List list = response.responseData['data'] ?? [];
+        rides.assignAll(list.map((e) => MyRideModel.fromJson(e)).toList());
+      }
+      else {
+        errorMessage.value = response.errorMessage;
+      }
     } catch (e) {
       errorMessage.value = e.toString();
     } finally {
       isLoading.value = false;
     }
+  }
+
+  /// Called directly from UI toggle
+  void onToggleChanged(bool value) {
+    isOngoing.value = value;
+    loadRides();
   }
 
   Future<void> refreshRides() async {

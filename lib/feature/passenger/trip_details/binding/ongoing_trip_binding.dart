@@ -4,6 +4,7 @@ import '../controller/ongoing_trip_controller.dart';
 class OngoingTripBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<OngoingTripController>(() => OngoingTripController());
+    final rideId = Get.arguments as String? ?? '';
+    Get.lazyPut<OngoingTripController>(() => OngoingTripController(rideId: rideId));
   }
 }

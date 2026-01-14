@@ -12,7 +12,8 @@
       "Bash(dir C:UsersSiamride_sharing_applibl10n)",
       "Bash(bash:*)",
       "Bash(powershell:*)",
-      "Bash(git diff:*)"
+      "Bash(git diff:*)",
+      "Bash(dir \"C:\\\\Users\\\\Siam\\\\ride_sharing_app\\\\lib\\\\feature\\\\passenger\\\\trip_details\" /s /b)"
     ]
   }
 }

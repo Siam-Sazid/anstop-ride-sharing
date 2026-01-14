@@ -1,19 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/custom_assets/app_string.dart';
+import 'package:ride_sharing/feature/passenger/trip_details/controller/ongoing_trip_controller.dart';
 import 'package:ride_sharing/utils/cancel_driver_widget.dart';
 import 'package:ride_sharing/utils/support_note_widget.dart';
 import 'package:ride_sharing/utils/user_info_section.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 import 'package:ride_sharing/widgets/custom_vertical_line.dart';
+import 'package:intl/intl.dart';
 
 
 class OngoingTripDetails extends StatelessWidget {
-  const OngoingTripDetails({super.key});
+  final String rideId;
+
+  const OngoingTripDetails({super.key, required this.rideId});
 
   @override
   Widget build(BuildContext context) {
+    // Initialize controller with rideId
+    final controller = Get.put(OngoingTripController(rideId: rideId));
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.white,
@@ -26,12 +34,31 @@ class OngoingTripDetails extends StatelessWidget {
         centerTitle: true,
       ),
 
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal:  16.0,vertical: 8.sp),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (controller.trip.value == null) {
+          return Center(
+            child: Text(
+              controller.errorMessage.value.isNotEmpty
+                  ? controller.errorMessage.value
+                  : 'No trip details available',
+            ),
+          );
+        }
+
+        final trip = controller.trip.value!;
+        final formattedDate = DateFormat('dd MMM yyyy').format(trip.createdAt);
+        final formattedTime = DateFormat('hh:mm a').format(trip.createdAt);
+
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.sp),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
               ///Map image container
               Card(
                 elevation: 2,
@@ -60,16 +87,16 @@ class OngoingTripDetails extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            Text(AppString.passengerNameExample,style: TextStyle(fontSize: 18.sp,fontWeight: FontWeight.bold),),
+                            Text(trip.driverId.name, style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),),
                             Spacer(),
-                            Text(AppString.dateExample,style: TextStyle(fontSize: 18.sp,fontWeight: FontWeight.bold),),
+                            Text(formattedDate, style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),),
                           ],
                         ),
                         Row(
                           children: [
-                            Text(AppString.ongoingStatus,style: TextStyle(color: Colors.green),),
+                            Text(AppString.ongoingStatus, style: TextStyle(color: Colors.green),),
                             Spacer(),
-                            Text(AppString.timeExample) ,
+                            Text(formattedTime) ,
                           ],
                         ),
                       ],
@@ -93,7 +120,7 @@ class OngoingTripDetails extends StatelessWidget {
                           child: Image.asset(AppImage.greetings),
                         ),
                         SizedBox(width: 5.sp,),
-                        Text(AppString.pickupLocationExample),
+                        Expanded(child: Text(trip.pickup.name)),
 
                       ],),
                       CustomVerticalLine(height: 20.h, color: Colors.black),
@@ -102,7 +129,7 @@ class OngoingTripDetails extends StatelessWidget {
                           child: Icon(Icons.location_on,color: AppColors.primaryColor,),
                         ),
                         SizedBox(width: 5.sp,),
-                        Text(AppString.dropoffLocationExample),
+                        Expanded(child: Text(trip.destination.name)),
 
                       ],),
                       SizedBox(height: 8.sp,),
@@ -116,8 +143,8 @@ class OngoingTripDetails extends StatelessWidget {
                           ),
                           ),
                           SizedBox(width: 5.sp,),
-                          Text(AppString.distanceExample),
-          
+                          Text(trip.distance),
+
                         ],),
                    //   SizedBox(height: 8.h,),
           
@@ -142,7 +169,7 @@ class OngoingTripDetails extends StatelessWidget {
                       children: [
                         Text(AppString.rideValueLabel),
                         Spacer(),
-                        Text(AppString.fareExample2) ,
+                        Text('\$${trip.finalFare}') ,
                       ],
                     ),
                   ),
@@ -156,16 +183,16 @@ class OngoingTripDetails extends StatelessWidget {
                   child: Column(
                     children: [
                       UserInfoSection(
-                        imageUrl: 'https://picsum.photos/250?image=9',
-                        name: 'John Doe',
-                        rating: 3.54,
-                        trips: 3,
-                        profession: 'Professional',
-                        price: '\$24',
-                        distance: '28 km',
+                        imageUrl: trip.driverId.profilePicture ?? AppImage.defaultProfileImageUrl,
+                        name: trip.driverId.name,
+                        rating: 4.5,
+                        trips: 0,
+                        profession: 'Driver',
+                        price: '\$${trip.finalFare}',
+                        distance: trip.distance,
                       ),
                       SupportNoteWidget(),
-          
+
 
                     ],
                   ),
@@ -173,14 +200,15 @@ class OngoingTripDetails extends StatelessWidget {
               ),
               Card(
                 color: AppColors.white,
-                child: CancelDriverWidget(onCancelPressed: (){
-
+                child: CancelDriverWidget(onCancelPressed: () {
+                  controller.cancelTrip();
                 }),
               )
-            ],
-          ),
-        ),
-      ),
-    );
+                ],
+              ),
+            ),
+          );
+        }),
+      );
   }
 }

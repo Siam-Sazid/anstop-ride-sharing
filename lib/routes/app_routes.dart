@@ -276,12 +276,12 @@ abstract class AppRoutes {
     ),
     GetPage(
       name: passengerOngoingTripScreen,
-      page: () => OngoingTripDetails(),
+      page: () => OngoingTripDetails(rideId: Get.arguments?['rideId'] ?? ''),
       binding: OngoingTripBinding(),
     ),
     GetPage(
       name: passengerCompletedTripScreen,
-      page: () => CompletedTripDetails(),
+      page: () => CompletedTripDetails(rideId: Get.arguments?['rideId'] ?? ''),
       binding: CompletedTripBinding(),
     ),
     GetPage(

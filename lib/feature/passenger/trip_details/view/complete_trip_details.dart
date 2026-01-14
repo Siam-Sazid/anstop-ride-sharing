@@ -1,18 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/custom_assets/app_string.dart';
+import 'package:ride_sharing/feature/passenger/trip_details/controller/completed_trip_controller.dart';
 import 'package:ride_sharing/utils/user_info_section.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 import 'package:ride_sharing/widgets/custom_vertical_line.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../utils/custom_download_tile.dart';
 
 class CompletedTripDetails extends StatelessWidget {
-  const CompletedTripDetails({super.key});
+  final String rideId;
+
+  const CompletedTripDetails({super.key, required this.rideId});
 
   @override
   Widget build(BuildContext context) {
+    // Initialize controller with rideId
+    final controller = Get.put(CompletedTripController(rideId: rideId));
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.white,
@@ -25,153 +33,170 @@ class CompletedTripDetails extends StatelessWidget {
         centerTitle: true,
       ),
 
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ///Map image container
-            Card(
-              elevation: 2,
-              child: ClipRRect(
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-                borderRadius: BorderRadius.circular(12),
-                child: Image.network(
-                  "https://media.wired.com/photos/59269cd37034dc5f91bec0f1/191:100/w_1280,c_limit/GoogleMapTA.jpg",
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Center(child: Text(AppString.mapImageNotAvailable));
-                  },
-                ),
-              ),
+        if (controller.trip.value == null) {
+          return Center(
+            child: Text(
+              controller.errorMessage.value.isNotEmpty
+                  ? controller.errorMessage.value
+                  : 'No trip details available',
             ),
+          );
+        }
 
-            SizedBox(height: 20),
-            Card(
-              elevation: 2,
-              color: AppColors.white,
-              child: Container(
-                height: 85.h,
-                child: Padding(
-                  padding:  EdgeInsets.all(16.sp),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Text('Siam',style: TextStyle(fontSize: 18.sp,fontWeight: FontWeight.bold),),
-                          Spacer(),
-                          Text('26th December',style: TextStyle(fontSize: 18.sp,fontWeight: FontWeight.bold),),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Text(AppString.completedStatus,style: TextStyle(color: Colors.green),),
-                          Spacer(),
-                          Text('9:00 pm') ,
-                        ],
-                      ),
-                    ],
+        final trip = controller.trip.value!;
+        final formattedDate = DateFormat('dd MMM yyyy').format(trip.createdAt);
+        final formattedTime = DateFormat('hh:mm a').format(trip.createdAt);
+
+        return Padding(
+          padding: EdgeInsets.all(16.0),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ///Map image container
+                Card(
+                  elevation: 2,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.network(
+                      "https://media.wired.com/photos/59269cd37034dc5f91bec0f1/191:100/w_1280,c_limit/GoogleMapTA.jpg",
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Center(child: Text(AppString.mapImageNotAvailable));
+                      },
+                    ),
                   ),
                 ),
-              ),
-            ),
-            /// Add other trip detail widgets here...
-            Card(
-              color: AppColors.white,
-              elevation: 2,
-              child: Padding(
-                padding:  EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(AppString.yourTripLabel,style: TextStyle(fontSize: 18.sp,fontWeight: FontWeight.bold),),
-                    SizedBox(height: 8.sp,),
-                    Row(children: [
-                      Container(
-                        child: Image.asset(AppImage.greetings),
+
+                SizedBox(height: 2.h),
+                Card(
+                  elevation: 2,
+                  color: AppColors.white,
+                  child: Container(
+                    height: 85.h,
+                    child: Padding(
+                      padding: EdgeInsets.all(16.sp),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Text(trip.driverId.name, style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),),
+                              Spacer(),
+                              Text(formattedDate, style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Text(AppString.completedStatus, style: TextStyle(color: Colors.green),),
+                              Spacer(),
+                              Text(formattedTime),
+                            ],
+                          ),
+                        ],
                       ),
-                      SizedBox(width: 5.sp,),
-                      Text('Block b / Banasree, Dhaka'),
-
-                    ],),
-                    CustomVerticalLine(height: 20.h, color: Colors.black),
-                    Row(children: [
-                      Container(
-                        child: Icon(Icons.location_on,color: AppColors.primaryColor,),
-                      ),
-                      SizedBox(width: 5.sp,),
-                      Text('Green Road Dhaka'),
-
-                    ],),
-                    SizedBox(height: 8.sp,),
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    ),
+                  ),
+                ),
+                /// Add other trip detail widgets here...
+                Card(
+                  color: AppColors.white,
+                  elevation: 2,
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          AppString.distanceLabel,style: TextStyle(
-                            fontSize: 18.sp,color: Colors.black
-                        ),
-                        ),
-                        SizedBox(width: 5.sp,),
-                        Text('89 km'),
+                        Text(AppString.yourTripLabel, style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),),
+                        SizedBox(height: 8.sp,),
+                        Row(children: [
+                          Container(
+                            child: Image.asset(AppImage.greetings),
+                          ),
+                          SizedBox(width: 5.sp,),
+                          Expanded(child: Text(trip.pickup.name)),
+                        ],),
+                        CustomVerticalLine(height: 20.h, color: Colors.black),
+                        Row(children: [
+                          Container(
+                            child: Icon(Icons.location_on, color: AppColors.primaryColor,),
+                          ),
+                          SizedBox(width: 5.sp,),
+                          Expanded(child: Text(trip.destination.name)),
+                        ],),
+                        SizedBox(height: 8.sp,),
 
-                      ],),
-                    SizedBox(height: 8.h,),
-
-
-                    // SizedBox(height: 8.h,),
-
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(height: 8.h),
-
-            SizedBox(height: 8.h),
-            Card(
-              elevation: 2,
-              color: AppColors.white,
-              child: Container(
-                height: 50.h,
-                child: Padding(
-                  padding:  EdgeInsets.symmetric(horizontal:  16.sp),
-                  child: Row(
-                    children: [
-                      Text(AppString.rideValueLabel),
-                      Spacer(),
-                      Text('\$ 25.69') ,
-                    ],
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              AppString.distanceLabel, style: TextStyle(
+                                fontSize: 18.sp, color: Colors.black
+                            ),
+                            ),
+                            SizedBox(width: 5.sp,),
+                            Text(trip.distance),
+                          ],),
+                        SizedBox(height: 8.h,),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ),
-            SizedBox(height: 10.h),
-            Padding(
-              padding:  EdgeInsets.symmetric(horizontal:  8.sp),
-              child: Container(
-              //  height: 70.h,
-                color: AppColors.white,
-                child: UserInfoSection(
-                  imageUrl: 'https://picsum.photos/250?image=9',
-                  name: 'John Doe',
-                  rating: 3.54,
-                  trips: 3,
-                  profession: 'Professional',
-                  price: '\$24',
-                  distance: '28 km',
+                SizedBox(height: 2.h),
+                Card(
+                  elevation: 2,
+                  color: AppColors.white,
+                  child: Container(
+                    height: 36.h,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.sp),
+                      child: Row(
+                        children: [
+                          Text(AppString.rideValueLabel),
+                          Spacer(),
+                          Text('\$${trip.finalFare}'),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-              ),
+                SizedBox(height: 2.h),
+                Card(
+                  color: AppColors.white,
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        UserInfoSection(
+                          imageUrl: trip.driverId.profilePicture ?? AppImage.defaultProfileImageUrl,
+                          name: trip.driverId.name,
+                          rating: 4.5,
+                          trips: 0,
+                          profession: 'Driver',
+                          price: '\$${trip.finalFare}',
+                          distance: trip.distance,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10.h),
+                DownloadRideScriptTile(
+                  onTap: () {
+                    controller.downloadReceipt();
+                  },
+                  iconColor: AppColors.green300,
+                  iconSize: 20,
+                ),
+              ],
             ),
-            SizedBox(height: 10,),
-            DownloadRideScriptTile(
-              onTap: () {  },
-              iconColor: AppColors.green300,
-              iconSize: 20,
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      }),
     );
   }
 }

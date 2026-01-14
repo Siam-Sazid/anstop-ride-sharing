@@ -4,12 +4,15 @@ import 'package:ride_sharing/app/utils/app_colors.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shimmer/shimmer.dart';
 
 class MyRideCardWidget extends StatelessWidget {
   final String date;
   final String time;
   final String pickup;
   final String dropoff;
+  final String imageUrl;
   final VoidCallback onViewDetails;
 
   const MyRideCardWidget({
@@ -18,7 +21,9 @@ class MyRideCardWidget extends StatelessWidget {
     required this.time,
     required this.pickup,
     required this.dropoff,
+    required this.imageUrl,
     required this.onViewDetails,
+
   }) : super(key: key);
 
   @override
@@ -29,7 +34,6 @@ class MyRideCardWidget extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r)),
       child: Stack(
         children: [
-
           Padding(
             padding: EdgeInsets.all(16),
             child: Column(
@@ -94,7 +98,6 @@ class MyRideCardWidget extends StatelessWidget {
             ),
           ),
 
-
           Positioned(
             right: 16.w,
             top: 5.h,
@@ -111,11 +114,29 @@ class MyRideCardWidget extends StatelessWidget {
               ),
               child: Center(
                 child: ClipOval(
-                  child: Image.network(
-                    'https://picsum.photos/100',
+                  child: CachedNetworkImage(
+                    imageUrl: imageUrl,
                     width: 45.w,
                     height: 45.h,
                     fit: BoxFit.cover,
+                    placeholder: (context, url) => Shimmer.fromColors(
+                      baseColor: Colors.grey.shade300,
+                      highlightColor: Colors.grey.shade100,
+                      child: Container(
+                        width: 45.w,
+                        height: 45.h,
+                        decoration: BoxDecoration(
+                          color: Colors.grey,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ),
+
+                    errorWidget: (context, url, error) => Icon(
+                      Icons.person,
+                      size: 30.sp,
+                      color: AppColors.togglebuttonColor,
+                    ),
                   ),
                 ),
               ),
