@@ -346,8 +346,8 @@ abstract class AppRoutes {
     GetPage(
       name: chatScreen,
       page: () => ChatScreen(
-        userName: Get.arguments?['userName'] ?? '',
-        userStatus: Get.arguments?['userStatus'] ?? '',
+       // userName: Get.arguments?['userName'] ?? '',
+       // userStatus: Get.arguments?['userStatus'] ?? '',
       ),
       binding: ChatBinding(),
     ),

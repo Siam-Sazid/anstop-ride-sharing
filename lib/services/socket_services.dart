@@ -1,122 +1,128 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
-import '../services/api_urls.dart';
+import 'package:get/get.dart';
+import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-import '../app/helpers/prefs_helper.dart';
-import '../app/utils/app_constants.dart';
+import '../services/api_urls.dart';
 
-class SocketServices {
-  // Singleton instance
-  static final SocketServices _socketApi = SocketServices._internal();
-  static String? token;
+class SocketIoService extends GetxService {
+  final Logger _logger = Logger();
+  IO.Socket? _socket;
+  final RxBool isConnected = false.obs;
 
-  IO.Socket? socket;
-  bool _isManualDisconnect = false; // <-- added flag
+  static SocketIoService get to => Get.find<SocketIoService>();
 
-  factory SocketServices() {
-    return _socketApi;
+  Future<SocketIoService> init() async {
+    return this;
   }
 
-  SocketServices._internal();
-
-  /// Initialize socket connection
-  Future<void> init() async {
-    if (socket != null) {
-      if (socket!.connected) {
-        debugPrint("⚠️ Socket already connected, skipping init");
-        return;
-      } /*else {
-        print("⚠️ Socket instance exists but not connected, reconnecting...");
-        socket!.connect();
-        return;
-      }*/
+  Future<void> connect() async {
+    if (_socket != null && _socket!.connected) {
+      _logger.i('Socket already connected');
+      return;
     }
 
-    _isManualDisconnect = false;
-    token = await PrefsHelper.getString(AppConstants.bearerToken) ?? "";
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('accessToken') ?? '';
 
-    debugPrint("-------------------------------------------------------------\n🔌 Socket init called \n🪪 token = $token");
+    if (token.isEmpty) {
+      _logger.e('No access token found for socket connection');
+      return;
+    }
 
-    socket = IO.io(
-      ApiUrls.socketUrl,
-      IO.OptionBuilder()
-          .setTransports(['websocket'])
-          .setExtraHeaders({"authorization": "Bearer $token"})
-          .enableReconnection()
-          .build(),
-    );
+    _socket = IO.io(ApiUrls.socketUrl, <String, dynamic>{
+      'transports': ['websocket'],
+      'autoConnect': true,
+      'forceNew': true,
+      'auth': {'token': token},
+    });
 
-    _setupSocketListeners(token.toString());
-    //socket!.connect();
+    _socket!.onConnect((_) {
+      _logger.i('Socket connected');
+      isConnected.value = true;
+    });
+
+    _socket!.onDisconnect((_) {
+      _logger.w('Socket disconnected');
+      isConnected.value = false;
+    });
+
+    _socket!.onConnectError((data) {
+      _logger.e('Socket connection error: $data');
+      isConnected.value = false;
+      _retryConnection();
+    });
+
+    _socket!.onError((data) {
+      _logger.e('Socket error: $data');
+    });
+
+    _socket!.onAny((event, data) {
+      _logger.i('Socket event: $event, data: $data');
+    });
   }
 
-  /// Setup listeners for socket events
-  void _setupSocketListeners(String token) {
-    socket?.clearListeners(); // <-- important: clear old listeners
-
-    socket?.onConnect((_) {
-      debugPrint('✅ Socket connected: ${socket?.connected}');
-    });
-
-    socket?.onConnectError((err) {
-      debugPrint('❌ Socket connect error: $err');
-    });
-
-    socket?.onDisconnect((_) {
-      debugPrint('⚠️ Socket disconnected');
-      if (!_isManualDisconnect) {
-        debugPrint('🔄 Attempting to reconnect...');
-        Future.delayed(const Duration(seconds: 2), () {
-          if (socket != null && !socket!.connected) {
-            socket!.connect();
-          }
-        });
-      } else {
-        debugPrint('🛑 Manual disconnect: no auto-reconnect');
+  void _retryConnection() {
+    Future.delayed(const Duration(seconds: 5), () {
+      if (_socket != null && !_socket!.connected) {
+        _logger.i('Retrying socket connection...');
+        _socket!.connect();
       }
     });
-
-    socket?.onReconnect((_) {
-      debugPrint('🔄 Socket reconnected! token: $token');
-    });
-
-    socket?.onError((error) {
-      debugPrint('🚫 Socket error: $error');
-    });
   }
 
-  /// Emit with acknowledgment
-  Future<dynamic> emitWithAck(String event, dynamic body) async {
-    final completer = Completer<dynamic>();
-
-    if (socket == null || !socket!.connected) {
-      debugPrint("⚠️ emitWithAck failed: socket not connected or initialized");
-      completer.completeError("Socket not initialized or connected");
-      return completer.future;
-    }
-
-    socket!.emitWithAck(event, body, ack: (data) {
-      debugPrint("📨 Ack received for $event: $data");
-      completer.complete(data ?? 1);
-    });
-
-    return completer.future;
-  }
-
-  /// Emit without acknowledgment
-  void emit(String event, dynamic body) {
-    if (socket != null && socket!.connected) {
-      socket!.emit(event, body);
-      debugPrint('📤 Emit: $event\n➡️ Data: $body');
-    } else {
-      debugPrint("⚠️ Emit failed: socket not connected");
-    }
-  }
-
-  /// Disconnect socket
   void disconnect() {
-    _isManualDisconnect = true; // <-- mark as manual
-    socket?.disconnect();
-    debugPrint('🔌 Socket manually disconnected');
+    _socket?.disconnect();
+    isConnected.value = false;
+  }
+
+  void on(String event, Function(dynamic) handler) {
+    _socket?.on(event, handler);
+  }
+
+  void emit(String event, [dynamic data]) {
+    _socket?.emit(event, data);
+  }
+
+  void off(String event) {
+    _socket?.off(event);
+  }
+
+  // Send a new message
+  void sendMessage({
+    required String conversationId,
+    String? text,
+    String? attachments,
+  }) {
+    if (text == null && attachments == null) {
+      _logger.e('At least one of text or attachments is required');
+      return;
+    }
+
+    final payload = <String, dynamic>{
+      'conversationId': conversationId,
+    };
+
+    if (text != null && text.isNotEmpty) {
+      payload['text'] = text;
+    }
+
+    if (attachments != null && attachments.isNotEmpty) {
+      payload['attachments'] = attachments;
+    }
+
+    _logger.i('Sending message: $payload');
+    emit('send-new-message', payload);
+  }
+
+  // Listen for new messages
+  void onNewMessage(Function(dynamic) handler) {
+    on('new-message', handler);
+  }
+
+  // Stop listening for new messages
+  void offNewMessage() {
+    off('new-message');
   }
 }
+

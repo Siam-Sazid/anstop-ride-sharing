@@ -1,65 +1,167 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:ride_sharing/l10n/l10n_helper.dart';
 import 'package:ride_sharing/feature/messages/message_utils/chat_bubble.dart';
-import 'package:ride_sharing/feature/messages/models/message_models.dart';
 import 'package:ride_sharing/feature/messages/view/block_dialog.dart';
 import 'package:ride_sharing/feature/messages/view/media_grid_screen.dart';
 import 'package:ride_sharing/feature/messages/view/report_screen.dart';
 import '../../../app/utils/app_colors.dart';
-import '../../../l10n/l10n_helper.dart';
+import '../controller/chat_controller.dart';
 
 
-class ChatScreen extends StatefulWidget {
-  final String userName;
-  final String userStatus;
-
-  const ChatScreen({
-    Key? key,
-    required this.userName,
-    required this.userStatus,
-  }) : super(key: key);
+class ChatScreen extends GetView<ChatController> {
+  const ChatScreen({Key? key}) : super(key: key);
 
   @override
-  State<ChatScreen> createState() => _ChatScreenState();
-}
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios,
+            color: MessagingColors.primaryText,
+            size: 20,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Row(
+          children: [
+            CircleAvatar(
+              radius: 18,
+              backgroundColor: MessagingColors.primaryGreen,
+              child: Text(
+                controller.userName.isNotEmpty
+                    ? controller.userName[0].toUpperCase()
+                    : 'U',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  controller.userName,
+                  style: const TextStyle(
+                    color: MessagingColors.primaryText,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Obx(() => Text(
+                  controller.isConnected.value
+                      ? 'Online'
+                      : controller.userStatus,
+                  style: TextStyle(
+                    color: controller.isConnected.value
+                        ? MessagingColors.primaryGreen
+                        : MessagingColors.secondaryText,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                  ),
+                )),
+              ],
+            ),
+          ],
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(
+              Icons.more_vert,
+              color: MessagingColors.primaryText,
+            ),
+            onPressed: () => _showOptionsMenu(context),
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: Obx(() {
+              if (controller.isLoading.value && controller.messages.isEmpty) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-class _ChatScreenState extends State<ChatScreen> {
-  final TextEditingController _messageController = TextEditingController();
-  final List<ChatMessage> messages = [
-    ChatMessage(
-      text: 'Hi, I\'m looking to get my MacBook pad cleaned. Do you offer that service?',
-      isSent: false,
-      time: '9:32 AM',
-    ),
-    ChatMessage(
-      text: 'Yes, we do! Can you tell me the size and condition of your pool?',
-      isSent: false,
-      time: '9:33 AM',
-    ),
-    ChatMessage(
-      text: 'It\'s medium-sized, I think that. Haven\'t cleaned it in 3 months, so there\'s algae and leaves.',
-      isSent: false,
-      time: '9:34 AM',
-    ),
-    ChatMessage(
-      text: 'Got it. We recommend a thorough cleaning. What would you like to do it quickly?',
-      isSent: false,
-      time: '9:35 AM',
-    ),
-    ChatMessage(
-      text: 'Is Saturday morning feasible?',
-      isSent: true,
-      time: '9:36 AM',
-    ),
-    ChatMessage(
-      text: 'Let me check... Yes, we have a local at 10 AM. Does that work?',
-      isSent: false,
-      time: '9:37 AM',
-    ),
-  ];
+              if (controller.errorMessage.isNotEmpty &&
+                  controller.messages.isEmpty) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        controller.errorMessage.value,
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: controller.refreshMessages,
+                        child: const Text('Retry'),
+                      ),
+                    ],
+                  ),
+                );
+              }
 
-  void _showOptionsMenu() {
+              if (controller.messages.isEmpty) {
+                return const Center(
+                  child: Text(
+                    'No messages yet.\nStart a conversation!',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: MessagingColors.secondaryText,
+                      fontSize: 16,
+                    ),
+                  ),
+                );
+              }
+
+              return RefreshIndicator(
+                onRefresh: controller.refreshMessages,
+                child: ListView.builder(
+                  controller: controller.scrollController,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  itemCount: controller.messages.length,
+                  itemBuilder: (context, index) {
+                    final message = controller.messages[index];
+                    // Check if we should show sender info
+                    // Show sender info if it's a received message and different sender from previous
+                    bool showSenderInfo = !message.isSent;
+                    if (!message.isSent && index > 0) {
+                      final prevMessage = controller.messages[index - 1];
+                      // Hide sender info if same sender as previous message
+                      if (prevMessage.senderId == message.senderId) {
+                        showSenderInfo = false;
+                      }
+                    }
+                    return ChatBubble(
+                      message: message.text,
+                      isSent: message.isSent,
+                      time: message.formattedTime,
+                      senderName: message.senderName,
+                      senderProfilePicture: message.senderProfilePicture,
+                      showSenderInfo: showSenderInfo,
+                    );
+                  },
+                ),
+              );
+            }),
+          ),
+          _buildMessageInput(),
+        ],
+      ),
+    );
+  }
+
+  void _showOptionsMenu(BuildContext context) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -86,7 +188,7 @@ class _ChatScreenState extends State<ChatScreen> {
             const SizedBox(height: 20),
             _buildMenuOption(
               AppLocalization.tr.viewMediaOption,
-                  () {
+              () {
                 Navigator.pop(context);
                 Navigator.push(
                   context,
@@ -98,7 +200,7 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
             _buildMenuOption(
               AppLocalization.tr.reportOption,
-                  () {
+              () {
                 Navigator.pop(context);
                 Navigator.push(
                   context,
@@ -110,9 +212,9 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
             _buildMenuOption(
               AppLocalization.tr.blockOption,
-                  () {
+              () {
                 Navigator.pop(context);
-                _showBlockDialog();
+                _showBlockDialog(context);
               },
             ),
             const SizedBox(height: 20),
@@ -122,12 +224,12 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  void _showBlockDialog() {
+  void _showBlockDialog(BuildContext context) {
     showDialog(
       context: context,
       barrierColor: Colors.black.withOpacity(0.6),
       builder: (context) => BlockDialog(
-        userName: widget.userName,
+        userName: controller.userName,
         onBlock: () {
           Navigator.pop(context);
           Navigator.pop(context);
@@ -157,91 +259,6 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            color: MessagingColors.primaryText,
-            size: 20,
-          ),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Row(
-          children: [
-            CircleAvatar(
-              radius: 18,
-              backgroundColor: MessagingColors.primaryGreen,
-              child: Text(
-                widget.userName[0].toUpperCase(),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.userName,
-                  style: const TextStyle(
-                    color: MessagingColors.primaryText,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                Text(
-                  widget.userStatus,
-                  style: const TextStyle(
-                    color: MessagingColors.secondaryText,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(
-              Icons.more_vert,
-              color: MessagingColors.primaryText,
-            ),
-            onPressed: _showOptionsMenu,
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              itemCount: messages.length,
-              itemBuilder: (context, index) {
-                return ChatBubble(
-                  message: messages[index].text,
-                  isSent: messages[index].isSent,
-                  time: messages[index].time,
-                );
-              },
-            ),
-          ),
-          _buildMessageInput(),
-        ],
-      ),
-    );
-  }
-
   Widget _buildMessageInput() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -264,7 +281,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 borderRadius: BorderRadius.circular(25),
               ),
               child: TextField(
-                controller: _messageController,
+                controller: controller.messageTEController,
                 decoration: InputDecoration(
                   hintText: AppLocalization.tr.typeMessageHint,
                   hintStyle: const TextStyle(
@@ -273,6 +290,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                   border: InputBorder.none,
                 ),
+                onSubmitted: (_) => controller.sendMessage(),
               ),
             ),
           ),
@@ -282,23 +300,17 @@ class _ChatScreenState extends State<ChatScreen> {
               Icons.attach_file,
               color: MessagingColors.secondaryText,
             ),
-            onPressed: () {},
+            onPressed: controller.sendMedia,
           ),
           IconButton(
             icon: const Icon(
               Icons.send,
               color: MessagingColors.primaryGreen,
             ),
-            onPressed: () {},
+            onPressed: controller.sendMessage,
           ),
         ],
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _messageController.dispose();
-    super.dispose();
   }
 }

@@ -79,7 +79,7 @@ class DriverCustomDrawer extends StatelessWidget {
                       text: AppLocalization.tr.myTripsMenuItem,
                       onTap: () {
                       //  Get.to(MyTripPage());
-                        Get.toNamed(AppRoutes.driverMyTripScreen);
+                        Get.toNamed(AppRoutes.passengerMyRideScreen);
                         },
                     ),
 

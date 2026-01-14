@@ -191,7 +191,11 @@ class OngoingTripDetails extends StatelessWidget {
                         price: '\$${trip.finalFare}',
                         distance: trip.distance,
                       ),
-                      SupportNoteWidget(),
+                      SupportNoteWidget(
+                        conversationId: rideId,
+                        userName: trip.driverId.name,
+                        userStatus: 'Driver',
+                      ),
 
 
                     ],

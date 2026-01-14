@@ -6,12 +6,18 @@ class ChatBubble extends StatelessWidget {
   final String message;
   final bool isSent;
   final String time;
+  final String? senderName;
+  final String? senderProfilePicture;
+  final bool showSenderInfo;
 
   const ChatBubble({
     Key? key,
     required this.message,
     required this.isSent,
     required this.time,
+    this.senderName,
+    this.senderProfilePicture,
+    this.showSenderInfo = true,
   }) : super(key: key);
 
   @override
@@ -20,15 +26,35 @@ class ChatBubble extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Row(
         mainAxisAlignment:
-        isSent ? MainAxisAlignment.end : MainAxisAlignment.start,
+            isSent ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          if (!isSent) const SizedBox(width: 40),
+          // Profile picture for received messages
+          if (!isSent && showSenderInfo) ...[
+            _buildAvatar(),
+            const SizedBox(width: 8),
+          ] else if (!isSent) ...[
+            const SizedBox(width: 40),
+          ],
           Flexible(
             child: Column(
               crossAxisAlignment:
-              isSent ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                  isSent ? CrossAxisAlignment.end : CrossAxisAlignment.start,
               children: [
+                // Sender name for received messages
+                if (!isSent && showSenderInfo && senderName != null) ...[
+                  Padding(
+                    padding: const EdgeInsets.only(left: 4, bottom: 4),
+                    child: Text(
+                      senderName!,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: MessagingColors.primaryText,
+                      ),
+                    ),
+                  ),
+                ],
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
@@ -74,6 +100,39 @@ class ChatBubble extends StatelessWidget {
           ),
           if (isSent) const SizedBox(width: 40),
         ],
+      ),
+    );
+  }
+
+  Widget _buildAvatar() {
+    if (senderProfilePicture != null && senderProfilePicture!.isNotEmpty) {
+      return CircleAvatar(
+        radius: 16,
+        backgroundImage: NetworkImage(senderProfilePicture!),
+        backgroundColor: MessagingColors.primaryGreen,
+        onBackgroundImageError: (_, __) {},
+        child: senderProfilePicture == null
+            ? Text(
+                (senderName ?? 'U')[0].toUpperCase(),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              )
+            : null,
+      );
+    }
+    return CircleAvatar(
+      radius: 16,
+      backgroundColor: MessagingColors.primaryGreen,
+      child: Text(
+        (senderName ?? 'U')[0].toUpperCase(),
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }

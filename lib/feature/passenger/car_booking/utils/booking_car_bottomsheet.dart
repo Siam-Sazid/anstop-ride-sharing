@@ -57,7 +57,7 @@ class _BookingCarsBottomSheetState extends State<BookingCarsBottomSheet> {
             price: '\$24',
             distance: '28 km',
           ),
-          SupportNoteWidget(),
+         // SupportNoteWidget(),
           Padding(
             padding:  EdgeInsets.all(8.0),
             child: Text('Your Trip',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15.sp),),

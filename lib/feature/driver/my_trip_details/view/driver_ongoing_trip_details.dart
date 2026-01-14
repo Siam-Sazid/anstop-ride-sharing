@@ -163,7 +163,7 @@ class DriverOngoingTripDetails extends StatelessWidget {
                         price: '\$24',
                         distance: '28 km',
                       ),
-                      SupportNoteWidget(),
+                    //  SupportNoteWidget(),
           
 
                     ],

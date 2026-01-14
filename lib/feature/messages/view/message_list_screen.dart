@@ -103,8 +103,8 @@ class _MessagesListScreenState extends State<MessagesListScreen> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => ChatScreen(
-                          userName: messages[index].name,
-                          userStatus: 'Online',
+                         // userName: messages[index].name,
+                        //  userStatus: 'Online',
                         ),
                       ),
                     );

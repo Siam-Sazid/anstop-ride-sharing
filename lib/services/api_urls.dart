@@ -18,11 +18,14 @@ class ApiUrls {
 
 
   //static const String socketUrl = "http://217.15.170.117";
-  static const String socketUrl = "https://mihad4000.merinasib.shop";
+  static const String socketUrl = "https://abu-bakar7500.merinasib.shop";
 
   static const String myRides = '$baseUrl/rides/my-rides';
 
   static String getRideDetails(String rideId) => '$baseUrl/rides/$rideId';
+
+  // Messages
+  static String getMessages(String conversationId) => '$baseUrl/messages/$conversationId';
 
 
 

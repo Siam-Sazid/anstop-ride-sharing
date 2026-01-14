@@ -29,7 +29,7 @@ class MyRideController extends GetxController {
       errorMessage.value = '';
       final prefs = await SharedPreferences.getInstance();
       final accessToken = prefs.getString('accessToken');
-      final status = isOngoing.value ? 'ON_GOING' : 'COMPLETED';
+      final status = isOngoing.value ? 'ACCEPTED' : 'COMPLETED';
 
       final response = await _service.getMyRides(
         status: status,
