@@ -10,7 +10,6 @@ import 'package:ride_sharing/feature/notification/view/notification_screen.dart'
 import 'package:ride_sharing/feature/passenger/homepage/view/home_page.dart';
 import 'package:ride_sharing/feature/passenger/my_ride/view/my_ride.dart';
 import 'package:ride_sharing/feature/settings/view/settings_screen.dart';
-import 'package:ride_sharing/feature/support_page/support_page.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 
 import '../../feature/auth/view/log_in_screen.dart';
@@ -100,7 +99,14 @@ class DriverCustomDrawer extends StatelessWidget {
                       imagePath: AppImage.support,
                       text: AppLocalization.tr.supportMenuItem,
                       onTap: () {
-                        Get.to(SupportPage());
+                        Get.toNamed(AppRoutes.supportListScreen);
+                      },
+                    ),
+                    _drawerItem(
+                      imagePath: AppImage.settings,
+                      text: AppLocalization.tr.settingsMenuItem,
+                      onTap: () {
+                        Get.to(SettingsScreen());
 
                       },
                     ),

@@ -15,6 +15,7 @@ class OtpVerificationController extends GetxController {
   final RxInt timer = 60.obs;
   final RxBool canResend = false.obs;
   final RxString userEmail = ''.obs;
+  final RxBool isPasswordReset = false.obs;
   Timer? _countdownTimer;
 
   // ==================== Services ====================
@@ -24,10 +25,16 @@ class OtpVerificationController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Get email from arguments if available
-    final email = Get.arguments?['email'];
-    if (email != null) {
-      userEmail.value = email;
+    // Get arguments
+    final args = Get.arguments;
+    if (args != null && args is Map) {
+      // Get email from arguments
+      final email = args['email'];
+      if (email != null) {
+        userEmail.value = email;
+      }
+      // Check if this is for password reset
+      isPasswordReset.value = args['isPasswordReset'] ?? false;
     }
     startTimer();
   }
@@ -96,28 +103,42 @@ class OtpVerificationController extends GetxController {
       isLoading.value = true;
       errorMessage.value = '';
 
-      // Create verify OTP request model
+      // Create verify OTP request model with appropriate type
       final verifyOtpRequest = VerifyOtpRequestModel(
         otp: otpController.text.trim(),
         email: userEmail.value,
-        type: OtpType.emailVerification,
+        type: isPasswordReset.value
+            ? OtpType.passwordReset
+            : OtpType.emailVerification,
       );
 
       // Call verify OTP API
       final response = await _authService.verifyOtp(verifyOtpRequest);
 
       if (response.isSuccess) {
-        // Show success message
-        Get.snackbar(
-          'Success',
-          'Email verified successfully!',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
-
-        // Navigate to login screen
-        Get.offAllNamed(AppRoutes.loginScreen);
+        if (isPasswordReset.value) {
+          // Password reset flow - navigate to passenger home screen
+          Get.snackbar(
+            'Success',
+            'Password reset successful!',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+          );
+          // Navigate to passenger home screen
+          Get.offAllNamed(AppRoutes.passengerHomeScreen);
+        } else {
+          // Email verification flow - navigate to login screen
+          Get.snackbar(
+            'Success',
+            'Email verified successfully!',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+          );
+          // Navigate to login screen
+          Get.offAllNamed(AppRoutes.loginScreen);
+        }
       } else {
         // Show error message
         errorMessage.value = response.errorMessage;

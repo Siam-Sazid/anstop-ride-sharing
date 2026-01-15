@@ -129,14 +129,22 @@ class ChatScreen extends GetView<ChatController> {
                 child: ListView.builder(
                   controller: controller.scrollController,
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  itemCount: controller.messages.length,
+                  // Add 1 for the loading/end indicator at the top
+                  itemCount: controller.messages.length + 1,
                   itemBuilder: (context, index) {
-                    final message = controller.messages[index];
+                    // First item is the loading indicator or "no more messages"
+                    if (index == 0) {
+                      return _buildPaginationIndicator();
+                    }
+
+                    // Adjust index for actual messages
+                    final messageIndex = index - 1;
+                    final message = controller.messages[messageIndex];
                     // Check if we should show sender info
                     // Show sender info if it's a received message and different sender from previous
                     bool showSenderInfo = !message.isSent;
-                    if (!message.isSent && index > 0) {
-                      final prevMessage = controller.messages[index - 1];
+                    if (!message.isSent && messageIndex > 0) {
+                      final prevMessage = controller.messages[messageIndex - 1];
                       // Hide sender info if same sender as previous message
                       if (prevMessage.senderId == message.senderId) {
                         showSenderInfo = false;
@@ -312,5 +320,49 @@ class ChatScreen extends GetView<ChatController> {
         ],
       ),
     );
+  }
+
+  Widget _buildPaginationIndicator() {
+    return Obx(() {
+      if (controller.isLoadingMore.value) {
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          alignment: Alignment.center,
+          child: const SizedBox(
+            width: 24,
+            height: 24,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: MessagingColors.primaryGreen,
+            ),
+          ),
+        );
+      }
+
+      if (!controller.hasMoreMessages.value && controller.messages.isNotEmpty) {
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          alignment: Alignment.center,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: MessagingColors.backgroundColor,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Text(
+              'Beginning of conversation',
+              style: TextStyle(
+                color: MessagingColors.secondaryText,
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
+        );
+      }
+
+      // Empty container when there are more messages to load but not currently loading
+      return const SizedBox(height: 8);
+    });
   }
 }

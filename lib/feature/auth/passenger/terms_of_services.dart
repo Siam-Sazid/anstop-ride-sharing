@@ -28,10 +28,7 @@ class _TermsOfServicesState extends State<TermsOfServices> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(AppLocalization.tr.ourTermsOfServices,style: TextStyle(
-              fontSize: 16.sp,
-              color: Color(0XFF4E4E4E),
-            ),),
+
             SizedBox(height: 8.h,),
             SingleChildScrollView(
               child: Container(

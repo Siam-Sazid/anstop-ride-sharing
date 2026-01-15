@@ -1,24 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:ride_sharing/l10n/l10n_helper.dart';
 import '../../../app/utils/app_colors.dart';
 import '../../../widgets/custom_text_field.dart';
+import '../controller/change_password_controller.dart';
 
-
-class ChangePasswordScreen extends StatefulWidget {
+class ChangePasswordScreen extends GetView<ChangePasswordController> {
   const ChangePasswordScreen({Key? key}) : super(key: key);
-
-  @override
-  State<ChangePasswordScreen> createState() => _ChangePasswordScreenState();
-}
-
-class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
-  final TextEditingController _currentPasswordController =
-      TextEditingController();
-  final TextEditingController _newPasswordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -46,122 +36,143 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         ),
         centerTitle: true,
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(AppLocalization.tr.currentPasswordLabel),
-                  CustomTextField(
-                    isObscureText: true,
-                    isPassword: true,
-                    controller: _currentPasswordController,
-                    prefixIcon: Icon(
-                      Icons.key,
-                      color: Color(0XFF8A8A8A),
-                      size: 24.sp,
-                    ),
-                    hintText: AppLocalization.tr.enterOldPasswordHint,
-                    hintextSize: 14.sp,
-                    hintextColor: Color(0XFF8A8A8A),
-                  ),
-                  SizedBox(height: 12.h),
-                  Text(AppLocalization.tr.newPasswordLabel),
-                  CustomTextField(
-                    isObscureText: true,
-                    isPassword: true,
-                    controller: _newPasswordController,
-                    prefixIcon: Icon(
-                      Icons.key,
-                      color: Color(0XFF8A8A8A),
-                      size: 24.sp,
-                    ),
-                    hintText: AppLocalization.tr.enterNewPasswordHint,
-                    hintextSize: 14.sp,
-                    hintextColor: Color(0XFF8A8A8A),
-                  ),
-                  SizedBox(height: 12.h),
-                  Text(AppLocalization.tr.passwordLabel),
-                  CustomTextField(
-                    isObscureText: true,
-                    isPassword: true,
-                    controller: _confirmPasswordController,
-                    prefixIcon: Icon(
-                      Icons.key,
-                      color: Color(0XFF8A8A8A),
-                      size: 24.sp,
-                    ),
-                    hintText: AppLocalization.tr.reenterPasswordHint,
-                    hintextSize: 14.sp,
-                    hintextColor: Color(0XFF8A8A8A),
-                  ),
-
-                  const SizedBox(height: 12),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () {
-                        // Handle forgot password
-                      },
-                      style: TextButton.styleFrom(
-                        foregroundColor: SettingsColors.primaryText,
-                        padding: EdgeInsets.zero,
-                        minimumSize: const Size(0, 0),
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      body: Form(
+        key: controller.formKey,
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(AppLocalization.tr.currentPasswordLabel),
+                    CustomTextField(
+                      isObscureText: true,
+                      isPassword: true,
+                      controller: controller.currentPasswordTEController,
+                      validator: (value) => controller.validateCurrentPassword(value as String?),
+                      prefixIcon: Icon(
+                        Icons.key,
+                        color: Color(0XFF8A8A8A),
+                        size: 24.sp,
                       ),
-                      child: Text(
-                        AppLocalization.tr.forgetPasswordTextButton,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w400,
-                          decoration: TextDecoration.underline,
+                      hintText: AppLocalization.tr.enterOldPasswordHint,
+                      hintextSize: 14.sp,
+                      hintextColor: Color(0XFF8A8A8A),
+                    ),
+                    SizedBox(height: 12.h),
+                    Text(AppLocalization.tr.newPasswordLabel),
+                    CustomTextField(
+                      isObscureText: true,
+                      isPassword: true,
+                      controller: controller.newPasswordTEController,
+                      validator: (value) => controller.validateNewPassword(value as String?),
+                      prefixIcon: Icon(
+                        Icons.key,
+                        color: Color(0XFF8A8A8A),
+                        size: 24.sp,
+                      ),
+                      hintText: AppLocalization.tr.enterNewPasswordHint,
+                      hintextSize: 14.sp,
+                      hintextColor: Color(0XFF8A8A8A),
+                    ),
+                    SizedBox(height: 12.h),
+                    Text(AppLocalization.tr.passwordLabel),
+                    CustomTextField(
+                      isObscureText: true,
+                      isPassword: true,
+                      controller: controller.confirmPasswordTEController,
+                      validator: (value) => controller.validateConfirmPassword(value as String?),
+                      prefixIcon: Icon(
+                        Icons.key,
+                        color: Color(0XFF8A8A8A),
+                        size: 24.sp,
+                      ),
+                      hintText: AppLocalization.tr.reenterPasswordHint,
+                      hintextSize: 14.sp,
+                      hintextColor: Color(0XFF8A8A8A),
+                    ),
+
+                    const SizedBox(height: 12),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () {
+                          // Handle forgot password
+                        },
+                        style: TextButton.styleFrom(
+                          foregroundColor: SettingsColors.primaryText,
+                          padding: EdgeInsets.zero,
+                          minimumSize: const Size(0, 0),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        child: Text(
+                          AppLocalization.tr.forgetPasswordTextButton,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w400,
+                            decoration: TextDecoration.underline,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  // Handle password update
-                  _showSuccessDialog();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: SettingsColors.primaryGreen,
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                ),
-                child: Text(
-                  AppLocalization.tr.resetPasswordConfirmButton,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  ],
                 ),
               ),
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: SizedBox(
+                width: double.infinity,
+                child: Obx(() => ElevatedButton(
+                  onPressed: controller.isLoading.value
+                      ? null
+                      : () async {
+                          final success = await controller.changePassword();
+                          if (success && context.mounted) {
+                            _showSuccessDialog(context);
+                          }
+                        },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: SettingsColors.primaryGreen,
+                    foregroundColor: Colors.white,
+                    disabledBackgroundColor: SettingsColors.primaryGreen.withOpacity(0.6),
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                  ),
+                  child: controller.isLoading.value
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : Text(
+                          AppLocalization.tr.resetPasswordConfirmButton,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                )),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  void _showSuccessDialog() {
+  void _showSuccessDialog(BuildContext context) {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (context) => Dialog(
         backgroundColor: Colors.transparent,
         child: Container(
@@ -188,21 +199,23 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 ),
               ),
               const SizedBox(height: 8),
-              Text(
-                AppLocalization.tr.reportSubmittedMessage,
+              Obx(() => Text(
+                controller.successMessage.value.isNotEmpty
+                    ? controller.successMessage.value
+                    : AppLocalization.tr.reportSubmittedMessage,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 14,
                   color: SettingsColors.secondaryText,
                 ),
-              ),
+              )),
               const SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pop(context);
-                    Navigator.pop(context);
+                    Navigator.pop(context); // Close dialog
+                    Navigator.pop(context); // Go back to settings screen
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: SettingsColors.primaryGreen,
@@ -227,13 +240,5 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _currentPasswordController.dispose();
-    _newPasswordController.dispose();
-    _confirmPasswordController.dispose();
-    super.dispose();
   }
 }

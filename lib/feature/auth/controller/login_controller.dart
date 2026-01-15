@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ride_sharing/feature/auth/data/signin_request_model.dart';
@@ -149,15 +151,54 @@ class LoginController extends GetxController {
       await prefs.setStringList('userRole', data.role);
       await prefs.setBool('needsVerification', data.needsVerification);
 
+      // Try to get userId from data first, or decode from JWT token
+      String? userId = data.userId;
+      if (userId == null || userId.isEmpty) {
+        userId = _extractUserIdFromToken(data.accessToken);
+      }
+
+      // Save user info for messaging and other features
+      if (userId != null && userId.isNotEmpty) {
+        await prefs.setString('userId', userId);
+      }
+      if (data.name != null && data.name!.isNotEmpty) {
+        await prefs.setString('name', data.name!);
+      }
+      if (data.profilePicture != null && data.profilePicture!.isNotEmpty) {
+        await prefs.setString('profilePicture', data.profilePicture!);
+      }
+
       // Debug logging
       print('💾 Saved Access Token: ${data.accessToken}');
       print('💾 Saved User Role: ${data.role}');
+      print('💾 Saved User ID: $userId');
+      print('💾 Saved User Name: ${data.name}');
 
       // Verify it was saved
       final savedToken = prefs.getString('accessToken');
       print('✅ Verified Saved Token: $savedToken');
     } catch (e) {
       print('Error saving user data: $e');
+    }
+  }
+
+  /// Decode JWT token to extract user ID
+  String? _extractUserIdFromToken(String token) {
+    try {
+      final parts = token.split('.');
+      if (parts.length != 3) return null;
+
+      // Decode the payload (second part)
+      final payload = parts[1];
+      // Add padding if needed for base64 decoding
+      final normalized = base64Url.normalize(payload);
+      final decoded = utf8.decode(base64Url.decode(normalized));
+      final Map<String, dynamic> data = jsonDecode(decoded);
+
+      return data['_id'] as String?;
+    } catch (e) {
+      print('Error decoding JWT: $e');
+      return null;
     }
   }
 
@@ -220,7 +261,10 @@ class LoginController extends GetxController {
 
   // ==================== Navigation ====================
   void navigateToForgotPassword() {
-    // Get.toNamed(AppRoutes.emailValidationScreen);
+    Get.toNamed(
+      AppRoutes.emailValidationScreen,
+      arguments: {'isPasswordReset': true},
+    );
   }
 
   void navigateToSignUp(bool isDriver) {

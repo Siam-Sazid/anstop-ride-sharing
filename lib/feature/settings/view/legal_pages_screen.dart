@@ -1,0 +1,77 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import '../controller/legal_pages_controller.dart';
+
+class LegalPagesScreen extends GetView<LegalPagesController> {
+  const LegalPagesScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Obx(() => Text(controller.title)),
+        backgroundColor: Colors.white,
+        forceMaterialTransparency: true,
+      ),
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        if (controller.errorMessage.value.isNotEmpty &&
+            controller.legalDocument.value == null) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  controller.errorMessage.value,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: Colors.red,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 16.h),
+                ElevatedButton(
+                  onPressed: () => controller.fetchLegalDocument(),
+                  child: const Text('Retry'),
+                ),
+              ],
+            ),
+          );
+        }
+
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24.w),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 8.h),
+                Container(
+                  padding: const EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    color: const Color(0XFF4E4E4E).withOpacity(0.01),
+                    borderRadius: BorderRadius.circular(15.r),
+                    border: Border.all(
+                      color: const Color(0XFF4E4E4E).withOpacity(0.2),
+                    ),
+                  ),
+                  child: Text(
+                    controller.description,
+                    style: const TextStyle(),
+                  ),
+                ),
+                SizedBox(height: 33.h),
+              ],
+            ),
+          ),
+        );
+      }),
+    );
+  }
+}

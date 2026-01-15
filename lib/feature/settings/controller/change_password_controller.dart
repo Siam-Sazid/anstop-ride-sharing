@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../data/change_password_request_model.dart';
+import '../data/change_password_response_model.dart';
+import '../service/settings_service.dart';
 
 class ChangePasswordController extends GetxController {
   // ==================== Text Controllers ====================
@@ -7,20 +10,19 @@ class ChangePasswordController extends GetxController {
   final TextEditingController newPasswordTEController = TextEditingController();
   final TextEditingController confirmPasswordTEController = TextEditingController();
 
+  // ==================== Services ====================
+  final SettingsService _settingsService = SettingsService();
+
   // ==================== State ====================
   final RxBool isLoading = false.obs;
   final RxBool obscureCurrentPassword = true.obs;
   final RxBool obscureNewPassword = true.obs;
   final RxBool obscureConfirmPassword = true.obs;
   final RxString errorMessage = ''.obs;
+  final RxString successMessage = ''.obs;
   final formKey = GlobalKey<FormState>();
 
   // ==================== Lifecycle ====================
-  @override
-  void onInit() {
-    super.onInit();
-  }
-
   @override
   void onClose() {
     currentPasswordTEController.dispose();
@@ -42,29 +44,55 @@ class ChangePasswordController extends GetxController {
     obscureConfirmPassword.value = !obscureConfirmPassword.value;
   }
 
-  Future<void> changePassword() async {
+  Future<bool> changePassword() async {
     if (!validatePasswords()) {
-      return;
+      return false;
     }
 
     try {
       isLoading.value = true;
       errorMessage.value = '';
+      successMessage.value = '';
 
-      // TODO: Implement actual change password API call
-      await Future.delayed(const Duration(seconds: 2));
-
-      Get.snackbar(
-        'Success',
-        'Password changed successfully',
-        snackPosition: SnackPosition.BOTTOM,
+      final request = ChangePasswordRequestModel(
+        currentPassword: currentPasswordTEController.text.trim(),
+        newPassword: newPasswordTEController.text.trim(),
+        confirmPassword: confirmPasswordTEController.text.trim(),
       );
 
-      // Go back
-      // Get.back();
+      final response = await _settingsService.changePassword(request);
 
+      if (response.isSuccess) {
+        final changePasswordResponse = ChangePasswordResponseModel.fromJson(
+          response.responseData,
+        );
+        successMessage.value = changePasswordResponse.message.isNotEmpty
+            ? changePasswordResponse.message
+            : 'Password changed successfully';
+        return true;
+      } else {
+        errorMessage.value = response.errorMessage.isNotEmpty
+            ? response.errorMessage
+            : 'Failed to change password';
+        Get.snackbar(
+          'Error',
+          errorMessage.value,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+        return false;
+      }
     } catch (e) {
       errorMessage.value = e.toString();
+      Get.snackbar(
+        'Error',
+        errorMessage.value,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return false;
     } finally {
       isLoading.value = false;
     }

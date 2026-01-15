@@ -1,0 +1,76 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../data/support_message_model.dart';
+import '../service/support_service.dart';
+
+class SupportListController extends GetxController {
+  // ==================== State ====================
+  final RxBool isLoading = false.obs;
+  final RxString errorMessage = ''.obs;
+  final RxList<SupportMessageModel> supportMessages = <SupportMessageModel>[].obs;
+
+  // Pagination
+  final RxInt currentPage = 1.obs;
+  final RxInt totalPages = 1.obs;
+  final RxInt totalResults = 0.obs;
+
+  // ==================== Services ====================
+  final SupportService _supportService = SupportService();
+
+  // ==================== Lifecycle ====================
+  @override
+  void onInit() {
+    super.onInit();
+    fetchSupportMessages();
+  }
+
+  // ==================== Business Logic ====================
+  Future<void> fetchSupportMessages() async {
+    try {
+      isLoading.value = true;
+      errorMessage.value = '';
+
+      final response = await _supportService.getMySupportMessages();
+
+      if (response.isSuccess) {
+        final supportResponse = SupportListResponse.fromJson(response.responseData);
+        if (supportResponse.success) {
+          supportMessages.value = supportResponse.results;
+          currentPage.value = supportResponse.page;
+          totalPages.value = supportResponse.totalPages;
+          totalResults.value = supportResponse.totalResults;
+        } else {
+          errorMessage.value = supportResponse.message.isNotEmpty
+              ? supportResponse.message
+              : 'Failed to load support messages';
+        }
+      } else {
+        errorMessage.value = response.errorMessage.isNotEmpty
+            ? response.errorMessage
+            : 'Failed to load support messages';
+        Get.snackbar(
+          'Error',
+          errorMessage.value,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      errorMessage.value = e.toString();
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> refreshMessages() async {
+    await fetchSupportMessages();
+  }
+}

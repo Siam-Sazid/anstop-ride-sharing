@@ -8,6 +8,7 @@ class ApiUrls {
   static const String signUp = '$baseUrl/auth/sign-up';
   static const String signIn = '$baseUrl/auth/sign-in';
   static const String verifyOtp = '$baseUrl/auth/verify-otp';
+  static const String forgotPassword = '$baseUrl/auth/forgot-password';
   static const String uploadFiles = '$baseUrl/users/upload-files';
   static const String driverOnboard = '$baseUrl/drivers/onboard';
   static const String driverOnboardingStatus = '$baseUrl/drivers/onboarding-status';
@@ -25,7 +26,18 @@ class ApiUrls {
   static String getRideDetails(String rideId) => '$baseUrl/rides/$rideId';
 
   // Messages
-  static String getMessages(String conversationId) => '$baseUrl/messages/$conversationId';
+  static String getMessages(String conversationId, {int page = 1, int limit = 50}) =>
+      '$baseUrl/messages/$conversationId?page=$page&limit=$limit';
+
+  // Settings
+  static const String changePassword = '$baseUrl/auth/change-password';
+
+  // Legal Documents
+  static String getLegalDocument(String type) => '$baseUrl/legal-documents?type=$type';
+
+  // Support
+  static const String mySupportMessages = '$baseUrl/supports/my-messages';
+  static const String createSupport = '$baseUrl/supports';
 
 
 

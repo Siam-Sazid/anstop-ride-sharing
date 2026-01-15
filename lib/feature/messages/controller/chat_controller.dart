@@ -22,6 +22,14 @@ class ChatController extends GetxController {
   final RxString errorMessage = ''.obs;
   final RxBool isConnected = false.obs;
 
+  // ==================== Pagination State ====================
+  final RxInt currentPage = 1.obs;
+  final RxInt totalPages = 1.obs;
+  final RxInt totalResults = 0.obs;
+  final RxBool isLoadingMore = false.obs;
+  final RxBool hasMoreMessages = true.obs;
+  static const int _pageLimit = 20;
+
   // ==================== Parameters ====================
   String conversationId = '';
   String currentUserId = '';
@@ -37,6 +45,17 @@ class ChatController extends GetxController {
     _loadArguments();
     _initializeSocket();
     _loadCurrentUserInfo();
+    _setupScrollListener();
+  }
+
+  void _setupScrollListener() {
+    scrollController.addListener(() {
+      // Load more when user scrolls near the top (for older messages)
+      if (scrollController.position.pixels <=
+          scrollController.position.minScrollExtent + 100) {
+        loadMoreMessages();
+      }
+    });
   }
 
   @override
@@ -44,6 +63,7 @@ class ChatController extends GetxController {
     messageTEController.dispose();
     scrollController.dispose();
     _socketService.offNewMessage();
+    _messageListenerRegistered = false;
     super.onClose();
   }
 
@@ -67,24 +87,42 @@ class ChatController extends GetxController {
     }
   }
 
-  void _initializeSocket() {
+  Future<void> _initializeSocket() async {
     try {
       _socketService = Get.find<SocketIoService>();
-      _socketService.connect();
 
       // Listen for connection status
       ever(_socketService.isConnected, (connected) {
         isConnected.value = connected;
+        // Register message listener when socket connects
+        if (connected) {
+          _registerMessageListener();
+        }
       });
 
-      // Listen for new messages
-      _socketService.onNewMessage((data) {
-        _logger.i('New message received: $data');
-        _handleNewMessage(data);
-      });
+      // Connect to socket (async - will trigger isConnected when done)
+      await _socketService.connect();
+
+      // Also register immediately if already connected
+      if (_socketService.isConnected.value) {
+        _registerMessageListener();
+      }
     } catch (e) {
       _logger.e('Error initializing socket: $e');
     }
+  }
+
+  bool _messageListenerRegistered = false;
+
+  void _registerMessageListener() {
+    if (_messageListenerRegistered) return;
+    _messageListenerRegistered = true;
+
+    _logger.i('Registering new-message listener');
+    _socketService.onNewMessage((data) {
+      _logger.i('New message received: $data');
+      _handleNewMessage(data);
+    });
   }
 
   void _handleNewMessage(dynamic data) {
@@ -92,41 +130,52 @@ class ChatController extends GetxController {
       // Check if message is for this conversation
       final msgConversationId = data['conversationId'] ?? '';
       if (msgConversationId == conversationId) {
-        // Parse sender - could be string ID or object
+        // Parse sender - could be string ID, object, or not present
         String senderId = '';
-        String senderName = 'Unknown';
+        String senderName = userName; // Default to other user's name
         String? senderProfilePicture;
 
         if (data['sender'] is Map) {
           senderId = data['sender']['_id'] ?? '';
-          senderName = data['sender']['name'] ?? 'Unknown';
+          senderName = data['sender']['name'] ?? userName;
           senderProfilePicture = data['sender']['profilePicture'];
         } else if (data['sender'] is String) {
           senderId = data['sender'];
-          // Use userName from arguments if this is from the other user
           senderName = senderId == currentUserId ? currentUserName : userName;
         }
+        // If sender is not present, assume it's from the other user (default values above)
 
         // Don't add if it's our own message (we already added it optimistically)
-        if (senderId == currentUserId) {
+        // Only skip if senderId is non-empty and matches currentUserId
+        if (senderId.isNotEmpty && currentUserId.isNotEmpty && senderId == currentUserId) {
+          return;
+        }
+
+        // Check for duplicate message by text and recent timestamp to avoid duplicates
+        final messageText = data['text'] ?? '';
+        final isDuplicate = messages.any((msg) =>
+            msg.text == messageText &&
+            DateTime.now().difference(msg.createdAt).inSeconds < 5);
+        if (isDuplicate) {
+          _logger.i('Duplicate message detected, skipping');
           return;
         }
 
         final newMessage = ChatMessage(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          id: data['_id'] ?? DateTime.now().millisecondsSinceEpoch.toString(),
           sender: MessageSender(
             id: senderId,
             name: senderName,
             profilePicture: senderProfilePicture,
           ),
           conversationId: msgConversationId,
-          text: data['text'] ?? '',
+          text: messageText,
           attachments: data['attachments'] != null && data['attachments'].toString().isNotEmpty
               ? [data['attachments'].toString()]
               : [],
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
-          isSent: false,
+          isSent: senderId.isNotEmpty && senderId == currentUserId,
         );
 
         messages.add(newMessage);
@@ -146,15 +195,32 @@ class ChatController extends GetxController {
     try {
       isLoading.value = true;
       errorMessage.value = '';
+      // Reset pagination state for fresh load
+      currentPage.value = 1;
+      hasMoreMessages.value = true;
 
-      final response = await _messageService.getMessages(conversationId);
+      final response = await _messageService.getMessages(
+        conversationId,
+        page: 1,
+        limit: _pageLimit,
+      );
 
       if (response.isSuccess) {
         final messagesResponse = MessagesResponse.fromJson(
           response.responseData,
           currentUserId,
         );
-        messages.value = messagesResponse.data.results;
+        // Sort messages by createdAt ascending (oldest first for proper display)
+        final sortedMessages = messagesResponse.data.results.toList()
+          ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
+        messages.value = sortedMessages;
+
+        // Update pagination state
+        currentPage.value = messagesResponse.data.page;
+        totalPages.value = messagesResponse.data.totalPages;
+        totalResults.value = messagesResponse.data.totalResults;
+        hasMoreMessages.value = currentPage.value < totalPages.value;
+
         _scrollToBottom();
       } else {
         errorMessage.value = response.errorMessage;
@@ -171,6 +237,66 @@ class ChatController extends GetxController {
       _logger.e('Error loading messages: $e');
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  /// Load more (older) messages when scrolling up
+  Future<void> loadMoreMessages() async {
+    // Prevent multiple simultaneous loads
+    if (isLoadingMore.value || !hasMoreMessages.value || isLoading.value) {
+      return;
+    }
+
+    try {
+      isLoadingMore.value = true;
+      final nextPage = currentPage.value + 1;
+
+      _logger.i('Loading more messages - page: $nextPage');
+
+      final response = await _messageService.getMessages(
+        conversationId,
+        page: nextPage,
+        limit: _pageLimit,
+      );
+
+      if (response.isSuccess) {
+        final messagesResponse = MessagesResponse.fromJson(
+          response.responseData,
+          currentUserId,
+        );
+
+        if (messagesResponse.data.results.isNotEmpty) {
+          // Sort new messages by createdAt ascending
+          final newMessages = messagesResponse.data.results.toList()
+            ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
+
+          // Preserve scroll position by calculating the offset
+          final previousScrollOffset = scrollController.offset;
+          final previousMaxScroll = scrollController.position.maxScrollExtent;
+
+          // Prepend older messages to the beginning
+          messages.insertAll(0, newMessages);
+
+          // Update pagination state
+          currentPage.value = messagesResponse.data.page;
+          hasMoreMessages.value = currentPage.value < messagesResponse.data.totalPages;
+
+          // Restore scroll position after adding new messages
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (scrollController.hasClients) {
+              final newMaxScroll = scrollController.position.maxScrollExtent;
+              final scrollDelta = newMaxScroll - previousMaxScroll;
+              scrollController.jumpTo(previousScrollOffset + scrollDelta);
+            }
+          });
+        } else {
+          hasMoreMessages.value = false;
+        }
+      }
+    } catch (e) {
+      _logger.e('Error loading more messages: $e');
+    } finally {
+      isLoadingMore.value = false;
     }
   }
 

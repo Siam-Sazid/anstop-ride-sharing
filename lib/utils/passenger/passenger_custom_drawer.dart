@@ -9,7 +9,6 @@ import 'package:ride_sharing/feature/driver/homepage/view/driver_homescreen.dart
 import 'package:ride_sharing/feature/passenger/my_ride/view/my_ride.dart';
 import 'package:ride_sharing/feature/passenger/wallet/view/passenger_wallet_page.dart';
 import 'package:ride_sharing/feature/settings/view/settings_screen.dart';
-import 'package:ride_sharing/feature/support_page/support_page.dart';
 import 'package:ride_sharing/routes/app_routes.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 import 'package:ride_sharing/feature/auth/service/auth_service.dart';
@@ -87,14 +86,15 @@ class PassengerCustomDrawer extends StatelessWidget {
                         Get.toNamed(AppRoutes.passengerWalletScreen);
 
                       },
-                    ), _drawerItem(
+                    ),
+                    _drawerItem(
                       imagePath: AppImage.support,
                       text: AppLocalization.tr.supportMenuItem,
                       onTap: () {
-                        Get.to(SupportPage());
-
+                        Get.toNamed(AppRoutes.supportListScreen);
                       },
-                    ), _drawerItem(
+                    ),
+                    _drawerItem(
                       imagePath: AppImage.settings,
                       text: AppLocalization.tr.settingsMenuItem,
                       onTap: () {

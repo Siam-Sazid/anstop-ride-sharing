@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:ride_sharing/feature/settings/controller/change_password_controller.dart';
+import 'package:ride_sharing/feature/settings/controller/legal_pages_controller.dart';
+import 'package:ride_sharing/feature/settings/data/legal_document_model.dart';
 import 'package:ride_sharing/l10n/l10n_helper.dart';
-import 'package:ride_sharing/feature/auth/passenger/terms_of_services.dart';
 import 'package:ride_sharing/feature/settings/utils/settings_menu_item.dart';
 import 'package:ride_sharing/feature/settings/view/change_password_screen.dart';
+import 'package:ride_sharing/feature/settings/view/legal_pages_screen.dart';
 import 'package:ride_sharing/utils/driver/driver_custom_drawer.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 import '../../../app/utils/app_colors.dart';
@@ -13,9 +16,10 @@ import 'delete_account_dialog.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
+    ChangePasswordController changePasswordController = Get.put(ChangePasswordController());
+
     return Scaffold(
       backgroundColor: SettingsColors.backgroundColor,
       appBar: AppBar(
@@ -87,18 +91,43 @@ class SettingsScreen extends StatelessWidget {
                   SettingsMenuItem(
                     icon: Icons.info_outline,
                     title: AppLocalization.tr.aboutUsOption,
-                    onTap: () {},
+                    onTap: () {
+                      Get.delete<LegalPagesController>();
+                      Get.to(
+                        () => const LegalPagesScreen(),
+                        binding: BindingsBuilder(() {
+                          Get.put(LegalPagesController());
+                        }),
+                        arguments: {'type': LegalDocumentType.aboutUs},
+                      );
+                    },
                   ),
                   SettingsMenuItem(
                     icon: Icons.shield_outlined,
                     title: AppLocalization.tr.privacyPolicyOption,
-                    onTap: () {},
+                    onTap: () {
+                      Get.delete<LegalPagesController>();
+                      Get.to(
+                        () => const LegalPagesScreen(),
+                        binding: BindingsBuilder(() {
+                          Get.put(LegalPagesController());
+                        }),
+                        arguments: {'type': LegalDocumentType.privacyPolicy},
+                      );
+                    },
                   ),
                   SettingsMenuItem(
                     icon: Icons.description_outlined,
                     title: AppLocalization.tr.termsOfServiceOption,
                     onTap: () {
-                      Get.to(() => TermsOfServices());
+                      Get.delete<LegalPagesController>();
+                      Get.to(
+                        () => const LegalPagesScreen(),
+                        binding: BindingsBuilder(() {
+                          Get.put(LegalPagesController());
+                        }),
+                        arguments: {'type': LegalDocumentType.termsAndConditions},
+                      );
                     },
                   ),
                   SettingsMenuItem(

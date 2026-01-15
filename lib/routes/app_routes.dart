@@ -68,6 +68,12 @@ import 'package:ride_sharing/feature/settings/view/change_language_screen.dart';
 import 'package:ride_sharing/feature/settings/view/change_password_screen.dart';
 import 'package:ride_sharing/feature/settings/view/settings_screen.dart';
 
+// Support imports
+import 'package:ride_sharing/feature/support_page/binding/support_list_binding.dart';
+import 'package:ride_sharing/feature/support_page/binding/create_support_binding.dart';
+import 'package:ride_sharing/feature/support_page/view/support_list_screen.dart';
+import 'package:ride_sharing/feature/support_page/view/create_support_screen.dart';
+
 // Passenger imports
 import 'package:ride_sharing/feature/passenger/car_booking/passenger/binding/cancel_taxi_binding.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/passenger/binding/pick_up_location_binding.dart';
@@ -149,6 +155,8 @@ abstract class AppRoutes {
   static const String settingsScreen = '/settingsScreen';
   static const String changePasswordScreen = '/changePasswordScreen';
   static const String changeLanguageScreen = '/changeLanguageScreen';
+  static const String supportListScreen = '/supportListScreen';
+  static const String createSupportScreen = '/createSupportScreen';
 
   /// =========== Routes ===========
   static final routes = [
@@ -370,6 +378,18 @@ abstract class AppRoutes {
       name: changeLanguageScreen,
       page: () => ChangeLanguageScreen(),
       binding: ChangeLanguageBinding(),
+    ),
+
+    /// Support Routes
+    GetPage(
+      name: supportListScreen,
+      page: () => const SupportListScreen(),
+      binding: SupportListBinding(),
+    ),
+    GetPage(
+      name: createSupportScreen,
+      page: () => const CreateSupportScreen(),
+      binding: CreateSupportBinding(),
     ),
   ];
 }

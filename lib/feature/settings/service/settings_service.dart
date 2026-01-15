@@ -1,0 +1,68 @@
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../../services/api_client.dart';
+import '../../../services/api_urls.dart';
+import '../data/change_password_request_model.dart';
+import '../data/legal_document_model.dart';
+
+class SettingsService {
+  final ApiClient _apiClient = ApiClient();
+
+  /// Change password API call
+  Future<ApiResponse> changePassword(ChangePasswordRequestModel request) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final accessToken = prefs.getString('accessToken');
+
+      if (accessToken == null || accessToken.isEmpty) {
+        return ApiResponse(
+          isSuccess: false,
+          statusCode: 401,
+          errorMessage: 'Access token not found. Please login again.',
+        );
+      }
+
+      final response = await _apiClient.postRequest(
+        ApiUrls.changePassword,
+        body: request.toJson(),
+        accessToken: accessToken,
+      );
+
+      return response;
+    } catch (e) {
+      return ApiResponse(
+        isSuccess: false,
+        statusCode: -1,
+        errorMessage: e.toString(),
+      );
+    }
+  }
+
+  /// Get legal document by type (PRIVACY_POLICY, TERMS_AND_CONDITIONS, ABOUT_US)
+  Future<ApiResponse> getLegalDocument(LegalDocumentType type) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final accessToken = prefs.getString('accessToken');
+
+      if (accessToken == null || accessToken.isEmpty) {
+        return ApiResponse(
+          isSuccess: false,
+          statusCode: 401,
+          errorMessage: 'Access token not found. Please login again.',
+        );
+      }
+
+      final response = await _apiClient.getRequest(
+        ApiUrls.getLegalDocument(type.value),
+        accessToken: accessToken,
+      );
+
+      return response;
+    } catch (e) {
+      return ApiResponse(
+        isSuccess: false,
+        statusCode: -1,
+        errorMessage: e.toString(),
+      );
+    }
+  }
+}

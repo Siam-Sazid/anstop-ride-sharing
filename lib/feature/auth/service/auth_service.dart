@@ -3,6 +3,7 @@ import 'package:ride_sharing/feature/auth/data/signup_request_model.dart';
 import 'package:ride_sharing/feature/auth/data/signin_request_model.dart';
 import 'package:ride_sharing/feature/auth/data/signin_response_model.dart';
 import 'package:ride_sharing/feature/auth/data/verify_otp_request_model.dart';
+import 'package:ride_sharing/feature/auth/data/forgot_password_request_model.dart';
 import 'package:ride_sharing/services/api_client.dart';
 import 'package:ride_sharing/services/api_urls.dart';
 
@@ -49,6 +50,23 @@ class AuthService {
       final response = await _apiClient.postRequest(
         ApiUrls.verifyOtp,
         body: verifyOtpRequest.toJson(),
+      );
+      return response;
+    } catch (e) {
+      return ApiResponse(
+        isSuccess: false,
+        statusCode: -1,
+        errorMessage: e.toString(),
+      );
+    }
+  }
+
+  /// Forgot password - sends OTP to email for password reset
+  Future<ApiResponse> forgotPassword(ForgotPasswordRequestModel request) async {
+    try {
+      final response = await _apiClient.postRequest(
+        ApiUrls.forgotPassword,
+        body: request.toJson(),
       );
       return response;
     } catch (e) {

@@ -5,8 +5,12 @@ import '../../../services/api_urls.dart';
 class MessageService {
   final ApiClient _apiClient = ApiClient();
 
-  /// Get messages by conversation ID (rideId)
-  Future<ApiResponse> getMessages(String conversationId) async {
+  /// Get messages by conversation ID (rideId) with pagination support
+  Future<ApiResponse> getMessages(
+    String conversationId, {
+    int page = 1,
+    int limit = 20,
+  }) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final accessToken = prefs.getString('accessToken');
@@ -20,7 +24,7 @@ class MessageService {
       }
 
       final response = await _apiClient.getRequest(
-        ApiUrls.getMessages(conversationId),
+        ApiUrls.getMessages(conversationId, page: page, limit: limit),
         accessToken: accessToken,
       );
 
