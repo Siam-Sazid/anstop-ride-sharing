@@ -34,7 +34,7 @@ class PassengerWalletController extends GetxController {
       // TODO: Implement actual API call to load wallet data
       await Future.delayed(const Duration(seconds: 1));
 
-      // For now, set dummy data
+
       balance.value = 0.0;
       transactions.value = [];
 

@@ -48,7 +48,9 @@ import 'package:ride_sharing/feature/driver/my_trip_details/binding/driver_ongoi
 import 'package:ride_sharing/feature/driver/my_trip_details/view/driver_completed_trip_details.dart';
 import 'package:ride_sharing/feature/driver/my_trip_details/view/driver_ongoing_trip_details.dart';
 import 'package:ride_sharing/feature/driver/profile/binding/driver_profile_binding.dart';
+import 'package:ride_sharing/feature/driver/profile/binding/edit_driver_profile_binding.dart';
 import 'package:ride_sharing/feature/driver/profile/view/driver_profile_view.dart';
+import 'package:ride_sharing/feature/driver/profile/view/edit_driver_profile_view.dart';
 import 'package:ride_sharing/feature/driver/trip_flow/binding/driver_trip_flow_binding.dart';
 import 'package:ride_sharing/feature/driver/trip_flow/view/driver_trip_flow.dart';
 import 'package:ride_sharing/feature/driver/wallet/binding/driver_wallet_binding.dart';
@@ -73,6 +75,10 @@ import 'package:ride_sharing/feature/support_page/binding/support_list_binding.d
 import 'package:ride_sharing/feature/support_page/binding/create_support_binding.dart';
 import 'package:ride_sharing/feature/support_page/view/support_list_screen.dart';
 import 'package:ride_sharing/feature/support_page/view/create_support_screen.dart';
+import 'package:ride_sharing/feature/wallet/binding/add_money_binding.dart';
+
+// Wallet imports
+import 'package:ride_sharing/feature/wallet/view/add_money_screen.dart';
 
 // Passenger imports
 import 'package:ride_sharing/feature/passenger/car_booking/passenger/binding/cancel_taxi_binding.dart';
@@ -141,6 +147,7 @@ abstract class AppRoutes {
   /// =========== Driver Home & Trips ===========
   static const String driverHomeScreen = '/driverHomeScreen';
   static const String driverProfileScreen = '/driverProfileScreen';
+  static const String editDriverProfileScreen = '/editDriverProfileScreen';
   static const String driverMyTripScreen = '/driverMyTripScreen';
   static const String driverOngoingTripScreen = '/driverOngoingTripScreen';
   static const String driverCompletedTripScreen = '/driverCompletedTripScreen';
@@ -157,6 +164,7 @@ abstract class AppRoutes {
   static const String changeLanguageScreen = '/changeLanguageScreen';
   static const String supportListScreen = '/supportListScreen';
   static const String createSupportScreen = '/createSupportScreen';
+  static const String addMoneyScreen = '/addMoneyScreen';
 
   /// =========== Routes ===========
   static final routes = [
@@ -300,7 +308,7 @@ abstract class AppRoutes {
     GetPage(
       name: passengerWalletScreen,
       page: () => PassengerWalletPage(),
-      binding: PassengerWalletBinding(),
+      binding: WalletBinding(),
     ),
 
     /// Driver Routes
@@ -313,6 +321,11 @@ abstract class AppRoutes {
       name: driverProfileScreen,
       page: () => DriverProfileView(),
       binding: DriverProfileBinding(),
+    ),
+    GetPage(
+      name: editDriverProfileScreen,
+      page: () => const EditDriverProfileView(),
+      binding: EditDriverProfileBinding(),
     ),
     GetPage(
       name: driverMyTripScreen,
@@ -342,7 +355,7 @@ abstract class AppRoutes {
     GetPage(
       name: driverWalletScreen,
       page: () => DriverWalletPage(),
-      binding: DriverWalletBinding(),
+      binding: WalletBinding(),
     ),
 
     /// Shared Feature Routes
@@ -390,6 +403,13 @@ abstract class AppRoutes {
       name: createSupportScreen,
       page: () => const CreateSupportScreen(),
       binding: CreateSupportBinding(),
+    ),
+
+    /// Wallet Routes
+    GetPage(
+      name: addMoneyScreen,
+      page: () => const AddMoneyScreen(),
+      binding: WalletBinding(),
     ),
   ];
 }

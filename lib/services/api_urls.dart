@@ -39,6 +39,18 @@ class ApiUrls {
   static const String mySupportMessages = '$baseUrl/supports/my-messages';
   static const String createSupport = '$baseUrl/supports';
 
+  // Profile
+  static const String myProfile = '$baseUrl/users/my-profile';
+  static const String updateProfile = '$baseUrl/users/profile';
+
+  // Transactions
+  static const String createTransactions = '$baseUrl/transactions';
+  static const String getTransactions = '$baseUrl/transactions';
+  static const String getBalance = '$baseUrl/users/balance';
+
+  // Withdrawal
+  static const String withdrawalRequests = '$baseUrl/withdrawal-requests';
+
 
 
 

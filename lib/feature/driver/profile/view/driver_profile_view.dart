@@ -1,291 +1,186 @@
-﻿import 'package:ride_sharing/feature/auth/driver/upload_your_documents_screen.dart';
-import 'package:ride_sharing/feature/auth/passenger/terms_of_services.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ride_sharing/utils/driver/driver_custom_drawer.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
-import 'package:intl_phone_number_input/intl_phone_number_input.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:ride_sharing/widgets/custom_app_bar_title.dart';
+import 'package:ride_sharing/feature/driver/profile/controller/driver_profile_controller.dart';
+import 'package:ride_sharing/routes/app_routes.dart';
+import 'package:shimmer/shimmer.dart';
 
-class DriverProfileView extends StatefulWidget {
+class DriverProfileView extends StatelessWidget {
   const DriverProfileView({super.key});
 
   @override
-  State<DriverProfileView> createState() => _DriverProfileViewState();
-}
-
-class _DriverProfileViewState extends State<DriverProfileView> {
-  /// Controller are define here
-  final TextEditingController _nameTEController = TextEditingController();
-  final TextEditingController _passwordTEController = TextEditingController();
-  final TextEditingController _confirmPasswordTEController = TextEditingController();
-  final TextEditingController _emailTEController = TextEditingController();
-  final TextEditingController _addressTEController = TextEditingController();
-  final TextEditingController _phoneNumberController = TextEditingController();
-  final TextEditingController _birthdayController = TextEditingController();
-  final TextEditingController _genderController = TextEditingController();
-
-
-
-
-  bool isChecked = false;
-  PhoneNumber _phoneNumber = PhoneNumber(isoCode: 'US');
-  DateTime? _selectedDate;
-  final List<String> _genders = ['Male', 'Female'];
-  String? _selectedGender;
-
-  Future<void> _selectGender(BuildContext context) async {
-    final RenderBox renderBox = context.findRenderObject() as RenderBox;
-    final Offset position = renderBox.localToGlobal(Offset.zero);
-    final double textFieldWidth = renderBox.size.width;
-    final double textFieldHeight = renderBox.size.height;
-    final double middleY = position.dy + (textFieldHeight / 2);
-    final String? selected = await showMenu<String>(
-      context: context,
-      position: RelativeRect.fromLTRB(
-        position.dx + textFieldWidth - 24,
-        middleY + 30,
-        position.dx + textFieldWidth - 24,
-        0,),
-      items: _genders.map((gender) {
-        return PopupMenuItem<String>(
-          value: gender,
-          child: Text(gender),
-        );
-      }).toList(),
-    );
-
-    if (selected != null) {
-      setState(() {
-        _selectedGender = selected;
-        _genderController.text = _selectedGender!;
-      });
-    }
-  }
-
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate ?? DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-    );
-
-    if (picked != null && picked != _selectedDate) {
-      setState(() {
-        _selectedDate = picked;
-        _birthdayController.text = '${_selectedDate?.toLocal()}'.split(' ')[0];
-      });
-    }
-  }
-
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: MessagingColors.profileBackgroundColor,
-      key: _scaffoldKey,
-      appBar: CustomAppBarTitle(scaffoldKey: _scaffoldKey,title: AppLocalization.tr.profileTitle,),
-      drawer: DriverCustomDrawer(),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(height: 46.h),
-              Stack(
-                alignment: Alignment.bottomLeft, // Positions child at bottom-left
-                children: [
-                  ClipOval(
-                    child: SizedBox(
-                      width: 100.h,
-                      height: 100.h,
-                      child: Image.network(
-                        'https://img.freepik.com/premium-photo/happy-man-ai-generated-portrait-user-profile_1119669-1.jpg?w=2000',
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 8,  // Adjust spacing from bottom
-                    right: 0,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.grey[300]!, width: 2),
-                      ),
-                      padding: const EdgeInsets.all(4),
-                      child: Icon(
-                        Icons.edit,
-                        color: Colors.green[800],
-                        size: 20,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 29.h),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24),
-                child: Form(
+    final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
+    return GetBuilder<DriverProfileController>(
+      init: DriverProfileController(),
+      builder: (controller) {
+        return Scaffold(
+          backgroundColor: MessagingColors.profileBackgroundColor,
+          key: scaffoldKey,
+          appBar: CustomAppBarTitle(
+            scaffoldKey: scaffoldKey,
+            title: AppLocalization.tr.profileTitle,
+          ),
+          drawer: DriverCustomDrawer(),
+          body: SafeArea(
+            child: Obx(() {
+              if (controller.isLoading.value) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (controller.errorMessage.value.isNotEmpty) {
+                return Center(
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      CustomTextField(
-                        controller: _nameTEController,
-                        prefixIcon: Icon(
-                          Icons.person,
-                          color: Color(0XFF8A8A8A),
-                          size: 24.sp,
-                        ),
-                        hintText: AppLocalization.tr.nameLabel,
-                        hintextSize: 14.sp,
-                        hintextColor: Color(0XFF8A8A8A),
+                      Text(
+                        controller.errorMessage.value,
+                        style: TextStyle(color: Colors.red, fontSize: 14.sp),
                       ),
-                      SizedBox(height: 12.h),
-                      CustomTextField(
-                        controller: _emailTEController,
-                        prefixIcon: Icon(
-                          Icons.email_outlined,
-                          color: Color(0XFF8A8A8A),
-                          size: 24.sp,
-                        ),
-                        hintText: AppLocalization.tr.emailLabel,
-                        hintextSize: 14.sp,
-                        hintextColor: Color(0XFF8A8A8A),
-                      ),
-                      SizedBox(height: 12.h),
-                      PhoneNumberInput(
-                        controller: _phoneNumberController,
-                        onInputChanged: (PhoneNumber number) {
-                          setState(() {
-                            _phoneNumber = number;
-                          });
-                        },
-                        onInputValidated: (bool value) {
-                          print(value ? 'Valid number' : 'Invalid number');
-                        },
-                        initialValue: _phoneNumber,
-                      ),
-                      SizedBox(height: 12.h),
-                      GestureDetector(
-                        onTap: () => _selectDate(context),
-                        child: AbsorbPointer(
-                          child: CustomTextField(
-                            controller: _birthdayController,
-                            prefixIcon: Icon(
-                              Icons.calendar_today,
-                              color: Color(0XFF8A8A8A),
-                              size: 24.sp,
-                            ),
-                            hintText: AppLocalization.tr.selectBirthdayHint,
-                            hintextSize: 14.sp,
-                            hintextColor: Color(0XFF8A8A8A),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 12.h),
-                      GestureDetector(
-                        onTap: () async {
-                          // Show dropdown when text field is tapped
-                          _selectGender(context);
-                        },
-                        child: AbsorbPointer(
-                          child: TextField(
-                            controller: _genderController,
-                            decoration: InputDecoration(
-                              prefixIcon: Icon(
-                                Icons.person,
-                                color: Color(0XFF8A8A8A),
-                                size: 24,
-                              ),
-                              suffixIcon: Icon(
-                                Icons.arrow_drop_down,
-                                color: Color(0XFF8A8A8A),
-                                size: 24,
-                              ),
-                              hintText: AppLocalization.tr.genderHintText,
-                              hintStyle: TextStyle(
-                                fontSize: 14,
-                                color: Color(0XFF8A8A8A),
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Color(0XFF8A8A8A),
-                                  width: 1,
-                                ),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Color(0XFF8A8A8A),
-                                  width: 2,
-                                ),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      SizedBox(height: 12.h),
-                      CustomTextField(
-                        controller: _addressTEController,
-                        prefixIcon: Icon(
-                          Icons.location_on_outlined,
-                          color: Color(0XFF8A8A8A),
-                          size: 24.sp,
-                        ),
-                        hintText: AppLocalization.tr.addressHintText,
-                        hintextSize: 14.sp,
-                        hintextColor: Color(0XFF8A8A8A),
-                      ),
-                      SizedBox(height: 12.h),
-                      CustomTextField(
-                        isObscureText: true,
-                        isPassword: true,
-                        controller: _passwordTEController,
-                        prefixIcon: Icon(
-                          Icons.key,
-                          color: Color(0XFF8A8A8A),
-                          size: 24.sp,
-                        ),
-                        hintText: AppLocalization.tr.enterPasswordHintText,
-                        hintextSize: 14.sp,
-                        hintextColor: Color(0XFF8A8A8A),
-                      ),
-                      SizedBox(height: 12.h),
-                      CustomTextField(
-                        isObscureText: true,
-                        isPassword: true,
-                        controller: _confirmPasswordTEController,
-                        prefixIcon: Icon(
-                          Icons.key,
-                          color: Color(0XFF8A8A8A),
-                          size: 24.sp,
-                        ),
-                        hintText: AppLocalization.tr.enterPasswordHintText,
-                        hintextSize: 14.sp,
-                        hintextColor: Color(0XFF8A8A8A),
-                      ),
-
-                      SizedBox(height: 17.5.sp),
-                      CustomButton(onPressed: () {
-                        Get.offAll(() => UploadYourDocuments());
-
-                      }, label: 'Save Changes'),
                       SizedBox(height: 16.h),
-
+                      ElevatedButton(
+                        onPressed: () => controller.loadProfile(),
+                        child: const Text('Retry'),
+                      ),
                     ],
                   ),
+                );
+              }
+
+              final profile = controller.profileData.value;
+
+              return SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(height: 46.h),
+                    // Profile Picture
+                    ClipOval(
+
+                      child:
+                      profile?.profilePicture != null &&
+                          profile!.profilePicture!.isNotEmpty
+                          ?
+                      CachedNetworkImage(
+                        imageUrl: profile.profilePicture!,
+                        width: 100.w,
+                        height: 100.h,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Shimmer.fromColors(
+                          baseColor: Colors.grey.shade300,
+                          highlightColor: Colors.grey.shade100,
+                          child: Container(
+                            width: 100.w,
+                            height: 100.h,
+                            decoration: BoxDecoration(
+                              color: Colors.grey,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                        ),
+
+                        errorWidget: (context, url, error) => Icon(
+                          Icons.person,
+                          size: 30.sp,
+                          color: AppColors.togglebuttonColor,
+                        ),
+                      )
+                      : Container(
+                        color: Colors.grey[300],
+                        child: Icon(
+                          Icons.person,
+                          size: 50.sp,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 29.h),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: Column(
+                        children: [
+                          // Name Field
+                          _buildProfileField(
+                            icon: Icons.person,
+                            label: AppLocalization.tr.nameLabel,
+                            value: profile?.name ?? '',
+                          ),
+                          SizedBox(height: 12.h),
+                          // Email Field
+                          _buildProfileField(
+                            icon: Icons.email_outlined,
+                            label: AppLocalization.tr.emailLabel,
+                            value: profile?.email ?? '',
+                          ),
+                          SizedBox(height: 12.h),
+                          // Address Field
+                          _buildProfileField(
+                            icon: Icons.location_on_outlined,
+                            label: AppLocalization.tr.addressHintText,
+                            value: profile?.address ?? '',
+                          ),
+                          SizedBox(height: 24.h),
+                          // Edit Profile Button
+                          CustomButton(
+                            onPressed: () async {
+                              final result = await Get.toNamed(
+                                AppRoutes.editDriverProfileScreen,
+                                arguments: profile,
+                              );
+                              // Refresh profile if changes were saved
+                              if (result == true) {
+                                controller.loadProfile();
+                              }
+                            },
+                            label: 'Edit Profile',
+                          ),
+                          SizedBox(height: 16.h),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
+              );
+            }),
           ),
-        ),
+        );
+      },
+    );
+  }
+
+  Widget _buildProfileField({
+    required IconData icon,
+    required String label,
+    required String value,
+  }) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 16.h),
+      decoration: BoxDecoration(
+        border: Border.all(color: const Color(0XFF8A8A8A)),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            color: const Color(0XFF8A8A8A),
+            size: 24.sp,
+          ),
+          SizedBox(width: 12.w),
+          Expanded(
+            child: Text(
+              value.isNotEmpty ? value : label,
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: value.isNotEmpty
+                    ? Colors.black87
+                    : const Color(0XFF8A8A8A),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
