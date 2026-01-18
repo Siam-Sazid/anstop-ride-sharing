@@ -1567,6 +1567,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your Location'**
   String get yourLocationMarker;
+
+  /// No description provided for @confirmHomeAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Home Address'**
+  String get confirmHomeAddress;
+
+  /// No description provided for @confirmWorkAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Work Address'**
+  String get confirmWorkAddress;
+
+  /// No description provided for @confirmBookmark.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Bookmark'**
+  String get confirmBookmark;
 }
 
 class _AppLocalizationsDelegate

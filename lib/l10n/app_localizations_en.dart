@@ -764,4 +764,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get yourLocationMarker => 'Your Location';
+
+  @override
+  String get confirmHomeAddress => 'Confirm Home Address';
+
+  @override
+  String get confirmWorkAddress => 'Confirm Work Address';
+
+  @override
+  String get confirmBookmark => 'Confirm Bookmark';
 }

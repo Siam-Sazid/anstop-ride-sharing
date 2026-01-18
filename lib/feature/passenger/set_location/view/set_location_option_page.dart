@@ -61,32 +61,40 @@ class SetLocationOptionPage extends StatelessWidget {
                   icon: Icons.pin_drop_rounded,
                   title: AppLocalization.tr.setOnMapOption,
                   onTap: () {
-                    Get.toNamed(AppRoutes.setLocationScreen);
-                    print('Home tapped');
+                    Get.toNamed(
+                      AppRoutes.setLocationScreen,
+                      arguments: {'addressType': 'SET_ON_MAP'},
+                    );
                   },
                 ),
                 SetLocationOptionCard(
                   icon: Icons.home,
                   title: AppLocalization.tr.homeOption,
                   onTap: () {
-                    Get.toNamed(AppRoutes.setLocationScreen);
-                    print('Home tapped');
+                    Get.toNamed(
+                      AppRoutes.setLocationScreen,
+                      arguments: {'addressType': 'HOME'},
+                    );
                   },
                 ),
                 SetLocationOptionCard(
                   icon: Icons.work,
                   title: AppLocalization.tr.workOption,
                   onTap: () {
-                    Get.toNamed(AppRoutes.setLocationScreen);
-                    print('Work tapped');
+                    Get.toNamed(
+                      AppRoutes.setLocationScreen,
+                      arguments: {'addressType': 'WORK'},
+                    );
                   },
                 ),
                 SetLocationOptionCard(
                   icon: Icons.bookmark,
                   title: AppLocalization.tr.bookmarksOption,
                   onTap: () {
-                    Get.toNamed(AppRoutes.setLocationScreen);
-                    print('Bookmarks tapped');
+                    Get.toNamed(
+                      AppRoutes.setLocationScreen,
+                      arguments: {'addressType': 'BOOKMARK'},
+                    );
                   },
                 ),
               ],

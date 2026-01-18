@@ -279,5 +279,9 @@
   "deleteButton": "Delete",
 
   "googleApiKey": "AIzaSyCOAYoZktEbWIRX4mbS9D9ypHXdyYWFpSo",
-  "yourLocationMarker": "Your Location"
+  "yourLocationMarker": "Your Location",
+
+  "confirmHomeAddress": "Confirm Home Address",
+  "confirmWorkAddress": "Confirm Work Address",
+  "confirmBookmark": "Confirm Bookmark"
 }

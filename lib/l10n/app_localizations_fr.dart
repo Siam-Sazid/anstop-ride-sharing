@@ -770,4 +770,13 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get yourLocationMarker => 'Votre emplacement';
+
+  @override
+  String get confirmHomeAddress => 'Confirmer l\'adresse du domicile';
+
+  @override
+  String get confirmWorkAddress => 'Confirmer l\'adresse du travail';
+
+  @override
+  String get confirmBookmark => 'Confirmer le favori';
 }
