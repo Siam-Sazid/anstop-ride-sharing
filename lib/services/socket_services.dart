@@ -30,6 +30,10 @@ class SocketIoService extends GetxService {
       return;
     }
 
+    _logger.i('Creating socket connection to ${ApiUrls.socketUrl}');
+
+    final completer = Completer<void>();
+
     _socket = IO.io(ApiUrls.socketUrl, <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': true,
@@ -38,8 +42,11 @@ class SocketIoService extends GetxService {
     });
 
     _socket!.onConnect((_) {
-      _logger.i('Socket connected');
+      _logger.i('Socket connected successfully!');
       isConnected.value = true;
+      if (!completer.isCompleted) {
+        completer.complete();
+      }
     });
 
     _socket!.onDisconnect((_) {
@@ -50,6 +57,9 @@ class SocketIoService extends GetxService {
     _socket!.onConnectError((data) {
       _logger.e('Socket connection error: $data');
       isConnected.value = false;
+      if (!completer.isCompleted) {
+        completer.complete();
+      }
       _retryConnection();
     });
 
@@ -58,8 +68,16 @@ class SocketIoService extends GetxService {
     });
 
     _socket!.onAny((event, data) {
-      _logger.i('Socket event: $event, data: $data');
+      _logger.i('Socket event received: $event, data: $data');
     });
+
+    // Wait for connection with timeout
+    try {
+      await completer.future.timeout(const Duration(seconds: 10));
+      _logger.i('Socket connection completed, isConnected: ${isConnected.value}');
+    } catch (e) {
+      _logger.e('Socket connection timeout: $e');
+    }
   }
 
   void _retryConnection() {
@@ -77,16 +95,67 @@ class SocketIoService extends GetxService {
   }
 
   void on(String event, Function(dynamic) handler) {
-    _socket?.on(event, handler);
+    if (_socket == null) {
+      _logger.e('Cannot register listener for $event - socket is null!');
+      return;
+    }
+    _logger.i('Registering listener for event: $event, socket connected: ${_socket!.connected}');
+    _socket!.on(event, handler);
   }
 
   void emit(String event, [dynamic data]) {
-    _socket?.emit(event, data);
+    if (_socket == null) {
+      _logger.e('Cannot emit $event - socket is null!');
+      return;
+    }
+    _socket!.emit(event, data);
   }
 
   void off(String event) {
+    _logger.i('Removing listener for event: $event');
     _socket?.off(event);
   }
+
+  // Listen for nearest drivers
+  void onNearestDrivers(Function(dynamic) handler) {
+    if (_socket == null) {
+      _logger.e('Cannot register nearest-drivers listener - socket is null!');
+      return;
+    }
+    _logger.i('Registering nearest-drivers listener, socket connected: ${_socket!.connected}');
+    _socket!.on('nearest-drivers', (data) {
+      _logger.i('nearest-drivers event received in service: $data');
+      handler(data);
+    });
+  }
+
+  // Stop listening for nearest drivers
+  void offNearestDrivers() {
+    _logger.i('Removing nearest-drivers listener');
+    _socket?.off('nearest-drivers');
+  }
+
+  // Listen for ride request (for drivers)
+  void onRideRequest(Function(dynamic) handler) {
+    if (_socket == null) {
+      _logger.e('Cannot register ride-request listener - socket is null!');
+      return;
+    }
+    _logger.i('Registering ride-request listener, socket connected: ${_socket!.connected}');
+    _socket!.on('ride-request', (data) {
+      _logger.i('ride-request event received in service: $data');
+      handler(data);
+    });
+  }
+
+  // Stop listening for ride request
+  void offRideRequest() {
+    _logger.i('Removing ride-request listener');
+    _socket?.off('ride-request');
+  }
+
+  // Check if socket is ready
+  bool get isSocketReady => _socket != null && _socket!.connected;
 
   // Send a new message
   void sendMessage({

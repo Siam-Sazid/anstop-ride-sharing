@@ -51,12 +51,7 @@ class ApiUrls {
   // Withdrawal
   static const String withdrawalRequests = '$baseUrl/withdrawal-requests';
 
-
-
-
-
-
-
-
-
+  // Ride Requests
+  static String calculateFare(double distance) => '$baseUrl/rides/calculate-fare?distance=$distance';
+  static const String createRideRequest = '$baseUrl/ride-requests/create-ride-request';
 }

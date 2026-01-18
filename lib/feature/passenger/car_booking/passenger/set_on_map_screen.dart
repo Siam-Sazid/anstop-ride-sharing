@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
+import 'package:ride_sharing/feature/passenger/car_booking/passenger/controller/pick_up_location_controller.dart';
 import 'package:ride_sharing/l10n/l10n_helper.dart';
 import 'package:ride_sharing/feature/auth/view/email_validation_screen.dart';
 import 'package:ride_sharing/feature/passenger/set_location/view/set_location_option_page.dart';
@@ -10,7 +11,7 @@ import '../../../../routes/app_routes.dart';
 class SetOnMapScreen extends StatelessWidget {
   SetOnMapScreen({super.key});
   final TextEditingController locationTEController = TextEditingController();
-
+  PickUpLocationController _pickUpLocationController = Get.put(PickUpLocationController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,6 +34,9 @@ class SetOnMapScreen extends StatelessWidget {
               children: [
                 SizedBox(height: 66.h),
                 CustomTextField(
+                  onTap: (){
+                    Get.toNamed(AppRoutes.pickUpLocationScreen);
+                  },
                   controller: locationTEController,
                   prefixIcon: Icon(Icons.location_on, color: AppColors.primaryColor),
                   suffixIcon: Icon(CupertinoIcons.search_circle),

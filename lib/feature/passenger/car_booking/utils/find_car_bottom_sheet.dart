@@ -1,15 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:logger/logger.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/l10n/l10n_helper.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/utils/accept_car_bottom_sheet.dart';
-import 'package:ride_sharing/feature/passenger/car_booking/utils/payment_method_dropdown.dart';
+import 'package:ride_sharing/feature/passenger/car_booking/utils/ride_needs_dropdown.dart';
+import 'package:ride_sharing/feature/passenger/car_booking/passenger/controller/pick_up_location_controller.dart';
+import 'package:ride_sharing/services/socket_services.dart';
 
 import '../../../../app/utils/app_colors.dart';
 import '../../../../widgets/custom_button.dart';
 import '../../../../widgets/custom_text_field.dart';
+
 class FindCarBottomSheet extends StatefulWidget {
+  final String pickUpAddress;
+  final String destinationAddress;
+  final double distance;
+  final double fare;
+
+  const FindCarBottomSheet({
+    Key? key,
+    required this.pickUpAddress,
+    required this.destinationAddress,
+    required this.distance,
+    required this.fare,
+  }) : super(key: key);
+
   @override
   _FindCarBottomSheetState createState() => _FindCarBottomSheetState();
 }
@@ -17,8 +34,118 @@ class FindCarBottomSheet extends StatefulWidget {
 class _FindCarBottomSheetState extends State<FindCarBottomSheet> {
   final TextEditingController locationTEController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
+  final Logger _logger = Logger();
 
   int childrenCount = 0;
+  String _selectedPaymentMethod = 'CASH';
+  List<String> _selectedRideNeeds = [];
+  bool _isLoading = false;
+  List<dynamic>? _nearbyDriversData;
+
+  final Map<String, String> _paymentMethodMapping = {
+    'Wallet': 'WALLET',
+    'By Cards': 'CARD',
+    'By Cash': 'CASH',
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    // Pre-fill the fare in the text field
+    locationTEController.text = widget.fare.toStringAsFixed(0);
+    // Connect socket early and set up listener
+    _initSocketAndListener();
+  }
+
+  Future<void> _initSocketAndListener() async {
+    final socketService = SocketIoService.to;
+    if (!socketService.isConnected.value) {
+      _logger.i('Connecting socket in FindCarBottomSheet...');
+      await socketService.connect();
+    }
+    _logger.i('Socket connection status: ${socketService.isConnected.value}');
+
+    // Set up listener BEFORE making API call
+    _logger.i('Setting up nearest-drivers listener in FindCarBottomSheet');
+    socketService.onNearestDrivers((data) {
+      _logger.i('Received nearest-drivers in FindCarBottomSheet: $data');
+      if (data != null) {
+        _nearbyDriversData = data is List ? data : (data['data'] as List?);
+        _logger.i('Stored ${_nearbyDriversData?.length} drivers');
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    // Don't remove listener here if AcceptCarBottomSheet needs it
+    super.dispose();
+  }
+
+  Future<void> _onFindCarPressed() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final controller = Get.find<PickUpLocationController>();
+      final socketService = SocketIoService.to;
+
+      // Ensure socket is connected
+      if (!socketService.isConnected.value) {
+        _logger.i('Socket not connected, connecting before API call...');
+        await socketService.connect();
+      }
+
+      // Clear any previous data
+      _nearbyDriversData = null;
+
+      double preferedFare = double.tryParse(locationTEController.text) ?? widget.fare;
+
+      _logger.i('Creating ride request...');
+
+      final success = await controller.createRideRequest(
+        preferedFare: preferedFare,
+        note: descriptionController.text,
+        rideNeeds: _selectedRideNeeds,
+        paymentMethod: _selectedPaymentMethod,
+      );
+
+      // Wait a moment for socket event to arrive
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      if (success) {
+        _logger.i('Ride request successful, nearby drivers data: $_nearbyDriversData');
+        Navigator.pop(context);
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          builder: (BuildContext context) {
+            return AcceptCarBottomSheet(
+              pickUpAddress: widget.pickUpAddress,
+              destinationAddress: widget.destinationAddress,
+              initialDriversData: _nearbyDriversData,
+            );
+          },
+        );
+      }
+    } catch (e) {
+      _logger.e('Error creating ride request: $e');
+      setState(() {
+        _isLoading = false;
+      });
+      Get.snackbar(
+        'Error',
+        'Failed to create ride request: $e',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -26,179 +153,288 @@ class _FindCarBottomSheetState extends State<FindCarBottomSheet> {
       width: double.infinity,
       color: AppColors.white,
       padding: EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-
-        children: [
-         SizedBox(
-           height: 268.h,
-           width: 345.w,
-           child: Card(
-             color: AppColors.white,
-             elevation: 5,
-             child: Padding(
-               padding:  EdgeInsets.all(16.0),
-               child: Column(
-                 crossAxisAlignment: CrossAxisAlignment.start,
-                 children: [
-                   Text(AppLocalization.tr.yourTripLabel,style: TextStyle(fontSize: 18.sp,fontWeight: FontWeight.bold),),
-                   SizedBox(height: 8.sp,),
-                   Row(children: [
-                     Container(
-                       child: Image.asset(AppImage.greetings),
-                     ),
-                     SizedBox(width: 5.sp,),
-                     Text(AppLocalization.tr.pickupLocationExample),
-
-                   ],),
-                   SizedBox(height: 8.sp,),
-                   Row(children: [
-                     Container(
-                       child: Icon(Icons.location_on,color: AppColors.primaryColor,),
-                     ),
-                     SizedBox(width: 5.sp,),
-                     Text(AppLocalization.tr.dropoffLocationExample),
-
-                   ],),
-                   SizedBox(height: 8.sp,),
-                   Row(
-                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                     children: [
-                     Text(
-                      AppLocalization.tr.distanceLabel,style: TextStyle(
-                       fontSize: 18.sp,color: Colors.black
-                     ),
-                     ),
-                     SizedBox(width: 5.sp,),
-                     Text(AppLocalization.tr.distanceExample),
-
-                   ],),
-                SizedBox(height: 8.h,),
-
-                   Text(
-                     'Enter Ride Price',style: TextStyle(
-                       fontSize: 18.sp,color: AppColors.appGreyColor
-                   ),
-                   ),
-                  // SizedBox(height: 8.h,),
-                   CustomTextField(
-                     onTap: () {
-                    //   Get.to(SetOnMapScreen());
-                     },
-
-                   //  prefixIcon: Icon(Icons.location_on, color: AppColors.primaryColor),
-                   //  suffixIcon: Icon(CupertinoIcons.search_circle),
-                   //  hintText: 'Where are you headed?',
-                     borderColor: AppColors.grayShade100,
-                     borderRadio: 10,
-                     controller: locationTEController,
-                   ),
-                 ],
-               ),
-             ),
-           ),
-         ),
-
-          SizedBox(height: 16.sp),
-          Text(
-            'Payment Method',
-            style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 8.sp),
-
-          PaymentMethodDropdown(),
-          SizedBox(height: 10.sp),
-          Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: AppColors.grayShade100),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.sp),
-              child: Row(
-                children: [
-                  Text(
-                    'Children',
-                    style: TextStyle(fontSize: 18.sp, color: AppColors.primaryColor),
-                  ),
-                  Spacer(),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: 345.w,
+              child: Card(
+                color: AppColors.white,
+                elevation: 5,
+                child: Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            childrenCount++;
-                          });
-                        },
-                        child: Icon(
-                          Icons.keyboard_arrow_up_outlined,
-                          color: AppColors.primaryColor,
-                          size: 20.sp,
+                      Text(
+                        AppLocalization.tr.yourTripLabel,
+                        style: TextStyle(
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            if (childrenCount > 0) childrenCount--;
-                          });
-                        },
-                        child: Icon(
-                          Icons.keyboard_arrow_down,
-                          color: AppColors.primaryColor,
-                          size: 20.sp,
+                      SizedBox(height: 8.sp),
+                      // Pickup Address
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            child: Image.asset(AppImage.greetings),
+                          ),
+                          SizedBox(width: 5.sp),
+                          Expanded(
+                            child: Text(
+                              widget.pickUpAddress.isNotEmpty
+                                  ? widget.pickUpAddress
+                                  : AppLocalization.tr.pickupLocationExample,
+                              style: TextStyle(fontSize: 14.sp),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 8.sp),
+                      // Destination Address
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            child: Icon(
+                              Icons.location_on,
+                              color: AppColors.primaryColor,
+                            ),
+                          ),
+                          SizedBox(width: 5.sp),
+                          Expanded(
+                            child: Text(
+                              widget.destinationAddress.isNotEmpty
+                                  ? widget.destinationAddress
+                                  : AppLocalization.tr.dropoffLocationExample,
+                              style: TextStyle(fontSize: 14.sp),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 8.sp),
+                      // Distance
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            AppLocalization.tr.distanceLabel,
+                            style: TextStyle(
+                              fontSize: 18.sp,
+                              color: Colors.black,
+                            ),
+                          ),
+                          SizedBox(width: 5.sp),
+                          Text(
+                            '${widget.distance.toStringAsFixed(1)} km',
+                            style: TextStyle(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.primaryColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 8.h),
+                      Text(
+                        'Enter Ride Price',
+                        style: TextStyle(
+                          fontSize: 18.sp,
+                          color: AppColors.appGreyColor,
                         ),
+                      ),
+                      CustomTextField(
+                        onTap: () {},
+                        borderColor: AppColors.grayShade100,
+                        borderRadio: 10,
+                        controller: locationTEController,
+                        keyboardType: TextInputType.number,
                       ),
                     ],
                   ),
-                  SizedBox(width: 8.w),
-                  Text(
-                    '$childrenCount',
-                    style: TextStyle(fontSize: 15.sp, color: AppColors.primaryColor),
-                  ),
-                ],
+                ),
               ),
             ),
-          ),
-          SizedBox(height: 8.sp),
-          Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: AppColors.grayShade100),
-              borderRadius: BorderRadius.circular(10),
+            SizedBox(height: 16.sp),
+            Text(
+              'Payment Method',
+              style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
             ),
-            child: TextField(
-              controller: descriptionController,
-              maxLines: 5,
-              decoration: InputDecoration(
-                hintText: AppLocalization.tr.noteToDriverHint,
-                contentPadding: EdgeInsets.symmetric(horizontal: 10.sp, vertical: 12.sp),
-                border: InputBorder.none,
+            SizedBox(height: 8.sp),
+            // Payment Method Dropdown
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: AppColors.grayShade100),
+                borderRadius: BorderRadius.circular(10.r),
               ),
-            ),
-          ),
-          SizedBox(height: 20.sp,),
-          CustomButton(
-            height: 50,
-            onPressed: () {
-              Navigator.pop(context);
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                builder: (BuildContext context) {
-                  return AcceptCarBottomSheet();
+              child: DropdownButton<String>(
+                value: _paymentMethodMapping.entries
+                    .firstWhere((e) => e.value == _selectedPaymentMethod)
+                    .key,
+                isExpanded: true,
+                icon: Icon(Icons.arrow_drop_down, color: AppColors.primaryColor),
+                iconSize: 30,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectedPaymentMethod = _paymentMethodMapping[newValue] ?? 'CASH';
+                  });
                 },
-              );
-            },
-            title: Text(
-              'Find Car',
-             // L10n.tr.,
-              style: TextStyle(color: AppColors.white),
+                underline: Container(),
+                dropdownColor: AppColors.white,
+                items: <String>['Wallet', 'By Cards', 'By Cash']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8.sp),
+                      child: Row(
+                        children: [
+                          Image.asset(
+                            _getImageForPaymentMethod(value),
+                            width: 24,
+                            height: 24,
+                            fit: BoxFit.contain,
+                          ),
+                          SizedBox(width: 10),
+                          Text(value),
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
             ),
-          ),
-        ],
+            SizedBox(height: 10.sp),
+            // Ride Needs Dropdown
+            Text(
+              'Added Important Things',
+              style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8.sp),
+            RideNeedsDropdown(
+              onSelectionChanged: (selectedItems) {
+                setState(() {
+                  _selectedRideNeeds = selectedItems;
+                });
+              },
+            ),
+            SizedBox(height: 10.sp),
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: AppColors.grayShade100),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10.sp),
+                child: Row(
+                  children: [
+                    Text(
+                      'Children',
+                      style: TextStyle(
+                        fontSize: 18.sp,
+                        color: AppColors.primaryColor,
+                      ),
+                    ),
+                    Spacer(),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              childrenCount++;
+                            });
+                          },
+                          child: Icon(
+                            Icons.keyboard_arrow_up_outlined,
+                            color: AppColors.primaryColor,
+                            size: 20.sp,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              if (childrenCount > 0) childrenCount--;
+                            });
+                          },
+                          child: Icon(
+                            Icons.keyboard_arrow_down,
+                            color: AppColors.primaryColor,
+                            size: 20.sp,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(width: 8.w),
+                    Text(
+                      '$childrenCount',
+                      style: TextStyle(
+                        fontSize: 15.sp,
+                        color: AppColors.primaryColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 8.sp),
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: AppColors.grayShade100),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: TextField(
+                controller: descriptionController,
+                maxLines: 5,
+                decoration: InputDecoration(
+                  hintText: AppLocalization.tr.noteToDriverHint,
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 10.sp, vertical: 12.sp),
+                  border: InputBorder.none,
+                ),
+              ),
+            ),
+            SizedBox(height: 20.sp),
+            CustomButton(
+              height: 50,
+              onPressed: _isLoading ? null : _onFindCarPressed,
+              title: _isLoading
+                  ? SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        color: AppColors.white,
+                        strokeWidth: 2,
+                      ),
+                    )
+                  : Text(
+                      'Find Car',
+                      style: TextStyle(color: AppColors.white),
+                    ),
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  String _getImageForPaymentMethod(String paymentMethod) {
+    switch (paymentMethod) {
+      case 'Wallet':
+        return AppImage.wallet;
+      case 'By Cards':
+        return AppImage.cards;
+      case 'By Cash':
+        return AppImage.cash;
+      default:
+        return AppImage.wallet;
+    }
   }
 }

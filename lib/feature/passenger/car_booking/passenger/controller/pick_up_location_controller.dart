@@ -1,17 +1,38 @@
+import 'dart:math';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/material.dart';
 import 'package:ride_sharing/l10n/l10n_helper.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ride_sharing/feature/passenger/car_booking/service/ride_request_service.dart';
 
 import '../../../../../l10n/app_localizations.dart';
 
 class PickUpLocationController extends GetxController {
   final TextEditingController locationTEController = TextEditingController();
+
+  // Pickup location controllers
+  final TextEditingController pickUpAddressController = TextEditingController();
+  final TextEditingController pickUpLatitudeController = TextEditingController();
+  final TextEditingController pickUpLongitudeController = TextEditingController();
+
+  // Destination location controllers
+  final TextEditingController destinationAddressController = TextEditingController();
+  final TextEditingController destinationLatitudeController = TextEditingController();
+  final TextEditingController destinationLongitudeController = TextEditingController();
+
   GoogleMapController? mapController;
   Position? currentPosition;
   bool isLoading = true;
+  bool isCalculatingFare = false;
   Set<Marker> markers = {};
+
+  // Fare and distance
+  double calculatedDistance = 0.0;
+  double calculatedFare = 0.0;
+
+  final RideRequestService _rideRequestService = RideRequestService();
 
   // Default location (Dhaka, Bangladesh)
   static const CameraPosition defaultLocation = CameraPosition(
@@ -93,9 +114,198 @@ class PickUpLocationController extends GetxController {
     }
   }
 
+  // Calculate distance between two coordinates using Haversine formula
+  double calculateDistanceInKm(
+    double lat1, double lon1,
+    double lat2, double lon2,
+  ) {
+    const double earthRadius = 6371; // Earth's radius in kilometers
+
+    double dLat = _degreesToRadians(lat2 - lat1);
+    double dLon = _degreesToRadians(lon2 - lon1);
+
+    double a = sin(dLat / 2) * sin(dLat / 2) +
+        cos(_degreesToRadians(lat1)) *
+            cos(_degreesToRadians(lat2)) *
+            sin(dLon / 2) *
+            sin(dLon / 2);
+
+    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+    double distance = earthRadius * c;
+
+    return double.parse(distance.toStringAsFixed(1));
+  }
+
+  double _degreesToRadians(double degrees) {
+    return degrees * pi / 180;
+  }
+
+  // Check if both locations are set
+  bool areLocationsSet() {
+    return pickUpLatitudeController.text.isNotEmpty &&
+        pickUpLongitudeController.text.isNotEmpty &&
+        destinationLatitudeController.text.isNotEmpty &&
+        destinationLongitudeController.text.isNotEmpty;
+  }
+
+  // Calculate fare from API
+  Future<bool> calculateFare() async {
+    if (!areLocationsSet()) {
+      Get.snackbar(
+        'Error',
+        'Please select both pickup and destination locations',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return false;
+    }
+
+    isCalculatingFare = true;
+    update();
+
+    try {
+      // Calculate distance
+      double pickUpLat = double.parse(pickUpLatitudeController.text);
+      double pickUpLng = double.parse(pickUpLongitudeController.text);
+      double destLat = double.parse(destinationLatitudeController.text);
+      double destLng = double.parse(destinationLongitudeController.text);
+
+      calculatedDistance = calculateDistanceInKm(pickUpLat, pickUpLng, destLat, destLng);
+
+      // Get fare from API
+      final prefs = await SharedPreferences.getInstance();
+      final accessToken = prefs.getString('accessToken') ?? '';
+
+      final response = await _rideRequestService.calculateFare(
+        distance: calculatedDistance,
+        accessToken: accessToken,
+      );
+
+      if (response.isSuccess && response.responseData != null) {
+        calculatedFare = (response.responseData['data']['fare'] as num).toDouble();
+        isCalculatingFare = false;
+        update();
+        return true;
+      } else {
+        Get.snackbar(
+          'Error',
+          response.errorMessage.isNotEmpty ? response.errorMessage : 'Failed to calculate fare',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+        isCalculatingFare = false;
+        update();
+        return false;
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to calculate fare: $e',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      isCalculatingFare = false;
+      update();
+      return false;
+    }
+  }
+
+  // Create ride request
+  Future<bool> createRideRequest({
+    required double preferedFare,
+    required String note,
+    required List<String> rideNeeds,
+    required String paymentMethod,
+  }) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final accessToken = prefs.getString('accessToken') ?? '';
+
+      final body = {
+        'pickUp': {
+          'name': pickUpAddressController.text,
+          'latitude': double.parse(pickUpLatitudeController.text),
+          'longitude': double.parse(pickUpLongitudeController.text),
+        },
+        'destination': {
+          'name': destinationAddressController.text,
+          'latitude': double.parse(destinationLatitudeController.text),
+          'longitude': double.parse(destinationLongitudeController.text),
+        },
+        'distance': calculatedDistance.toString(),
+        'baseFare': calculatedFare,
+        'preferedFare': preferedFare,
+        'note': note,
+        'rideNeeds': rideNeeds,
+        'paymentMethod': paymentMethod,
+      };
+
+      final response = await _rideRequestService.createRideRequest(
+        body: body,
+        accessToken: accessToken,
+      );
+
+      if (response.isSuccess) {
+        return true;
+      } else {
+        Get.snackbar(
+          'Error',
+          response.errorMessage.isNotEmpty ? response.errorMessage : 'Failed to create ride request',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+        return false;
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to create ride request: $e',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return false;
+    }
+  }
+
+  // Update markers on map
+  void updateMapMarkers() {
+    markers.clear();
+
+    if (pickUpLatitudeController.text.isNotEmpty && pickUpLongitudeController.text.isNotEmpty) {
+      markers.add(
+        Marker(
+          markerId: MarkerId('pickup_location'),
+          position: LatLng(
+            double.parse(pickUpLatitudeController.text),
+            double.parse(pickUpLongitudeController.text),
+          ),
+          infoWindow: InfoWindow(title: 'Pickup: ${pickUpAddressController.text}'),
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+        ),
+      );
+    }
+
+    if (destinationLatitudeController.text.isNotEmpty && destinationLongitudeController.text.isNotEmpty) {
+      markers.add(
+        Marker(
+          markerId: MarkerId('destination_location'),
+          position: LatLng(
+            double.parse(destinationLatitudeController.text),
+            double.parse(destinationLongitudeController.text),
+          ),
+          infoWindow: InfoWindow(title: 'Destination: ${destinationAddressController.text}'),
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+        ),
+      );
+    }
+
+    update();
+  }
+
   @override
   void onClose() {
     mapController?.dispose();
+    pickUpAddressController.dispose();
+    pickUpLatitudeController.dispose();
+    pickUpLongitudeController.dispose();
+    destinationAddressController.dispose();
+    destinationLatitudeController.dispose();
+    destinationLongitudeController.dispose();
     super.onClose();
   }
 }

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:ride_sharing/feature/passenger/car_booking/passenger/controller/pick_up_location_controller.dart';
 
 class SetOnMapController extends GetxController {
   // ==================== Text Controllers ====================
   final TextEditingController searchController = TextEditingController();
+  PickUpLocationController _pickUpLocationController = Get.put(PickUpLocationController());
 
   // ==================== State ====================
   final RxBool isLoading = false.obs;
