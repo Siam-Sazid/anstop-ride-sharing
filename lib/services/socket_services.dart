@@ -193,5 +193,115 @@ class SocketIoService extends GetxService {
   void offNewMessage() {
     off('new-message');
   }
+
+  // Emit new bid (for drivers)
+  Future<void> emitNewBid({
+    required String rideId,
+    required String amount,
+  }) async {
+    // Ensure socket is connected before emitting
+    if (!isSocketReady) {
+      _logger.i('Socket not ready, connecting before emitting new-bid...');
+      await connect();
+      // Wait a bit for connection to establish
+      await Future.delayed(const Duration(milliseconds: 500));
+    }
+
+    if (!isSocketReady) {
+      _logger.e('Cannot emit new-bid - socket is not ready after connect attempt');
+      return;
+    }
+
+    final payload = {
+      'rideId': rideId,
+      'amount': amount,
+    };
+
+    _logger.i('Emitting new-bid event: $payload');
+    emit('new-bid', payload);
+  }
+
+  // Listen for new bid (for passengers)
+  void onNewBid(Function(dynamic) handler) {
+    if (_socket == null) {
+      _logger.e('Cannot register new-bid listener - socket is null!');
+      return;
+    }
+    _logger.i('Registering new-bid listener, socket connected: ${_socket!.connected}');
+    _socket!.on('new-bid', (data) {
+      _logger.i('new-bid event received in service: $data');
+      handler(data);
+    });
+  }
+
+  // Stop listening for new bid
+  void offNewBid() {
+    _logger.i('Removing new-bid listener');
+    _socket?.off('new-bid');
+  }
+
+  // Emit accept bid (for passengers)
+  Future<void> emitAcceptBid({
+    required String rideId,
+    required String driverId,
+  }) async {
+    // Ensure socket is connected before emitting
+    if (!isSocketReady) {
+      _logger.i('Socket not ready, connecting before emitting accept-bid...');
+      await connect();
+      // Wait a bit for connection to establish
+      await Future.delayed(const Duration(milliseconds: 500));
+    }
+
+    if (!isSocketReady) {
+      _logger.e('Cannot emit accept-bid - socket is not ready after connect attempt');
+      return;
+    }
+
+    final payload = {
+      'rideId': rideId,
+      'driverId': driverId,
+    };
+
+    _logger.i('Emitting accept-bid event: $payload');
+    emit('accept-bid', payload);
+  }
+
+  // Listen for ride accepted (for drivers)
+  void onRideAccepted(Function(dynamic) handler) {
+    if (_socket == null) {
+      _logger.e('Cannot register ride-accepted listener - socket is null!');
+      return;
+    }
+    _logger.i('Registering ride-accepted listener, socket connected: ${_socket!.connected}');
+    _socket!.on('ride-accepted', (data) {
+      _logger.i('ride-accepted event received in service: $data');
+      handler(data);
+    });
+  }
+
+  // Stop listening for ride accepted
+  void offRideAccepted() {
+    _logger.i('Removing ride-accepted listener');
+    _socket?.off('ride-accepted');
+  }
+
+  // Emit pickup rider (for drivers)
+  Future<void> emitPickupRider() async {
+    // Ensure socket is connected before emitting
+    if (!isSocketReady) {
+      _logger.i('Socket not ready, connecting before emitting pickup-rider...');
+      await connect();
+      await Future.delayed(const Duration(milliseconds: 500));
+    }
+
+    if (!isSocketReady) {
+      _logger.e('Cannot emit pickup-rider - socket is not ready after connect attempt');
+      return;
+    }
+
+    _logger.i('Emitting pickup-rider event with empty body');
+    emit('pickup-rider', {});
+  }
 }
 

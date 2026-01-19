@@ -22,6 +22,8 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
   bool _isOnline = false;
   late AnimationController _animationController;
   late Animation<double> _rippleAnimation;
+  late DriverHomeScreenController _homeController;
+  bool _isBottomSheetOpen = false;
 
   @override
   void initState() {
@@ -35,9 +37,15 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
       CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
     );
 
-    // Show DriverTripFlow automatically after 3 seconds
-    Future.delayed(const Duration(seconds: 3), () {
-      if (mounted) {
+    // Initialize controller and set up ride request listener
+    _homeController = Get.find<DriverHomeScreenController>();
+    _setupRideRequestObserver();
+  }
+
+  void _setupRideRequestObserver() {
+    // Listen for new ride requests
+    ever(_homeController.hasNewRideRequest, (bool hasRequest) {
+      if (hasRequest && mounted && !_isBottomSheetOpen) {
         setState(() {
           _isOnline = true;
         });
@@ -45,15 +53,49 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
         _showDriverTripFlow();
       }
     });
+
+    // Listen for ride accepted (after driver submits bid and passenger accepts)
+    ever(_homeController.isRideAccepted, (bool isAccepted) {
+      if (isAccepted && mounted && !_isBottomSheetOpen) {
+        _showDriverTripFlowWithAcceptedState();
+      }
+    });
   }
 
-  void _showDriverTripFlow() {
+  void _showDriverTripFlowWithAcceptedState() {
+    if (_isBottomSheetOpen) return;
+
+    _isBottomSheetOpen = true;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      isDismissible: false,
+      enableDrag: false,
+      builder: (context) => const DriverTripFlow(initialState: TripState.tripTaken),
+    ).whenComplete(() {
+      _isBottomSheetOpen = false;
+      _homeController.clearRideAccepted();
+    });
+  }
+
+  void _showDriverTripFlow() {
+    // Only show if there's a valid ride request and bottom sheet is not already open
+    if (_isBottomSheetOpen) return;
+    if (_homeController.currentRideRequest.value == null) return;
+
+    _isBottomSheetOpen = true;
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      isDismissible: false,
+      enableDrag: false,
       builder: (context) => const DriverTripFlow(),
-    );
+    ).whenComplete(() {
+      _isBottomSheetOpen = false;
+      _homeController.clearRideRequest();
+    });
   }
 
   @override
@@ -73,8 +115,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
               _isOnline = value;
               if (_isOnline) {
                 _animationController.forward();
-                // Show DriverTripFlow whenever toggle is turned on
-                _showDriverTripFlow();
+                // Bottom sheet will only show when ride-request socket event is received
               } else {
                 _animationController.stop();
               }
@@ -193,8 +234,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                       _isOnline = true;
                                       _animationController.forward();
                                     });
-                                    // Show DriverTripFlow when Go Online is clicked
-                                    _showDriverTripFlow();
+                                    // Bottom sheet will only show when ride-request socket event is received
                                   },
                                   child: Text(
                                     'Go\nOnline',

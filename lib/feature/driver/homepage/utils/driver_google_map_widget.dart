@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:get/get.dart';
@@ -9,30 +8,33 @@ class DriverGoogleMapWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final DriverHomeScreenController controller = Get.find(); // Get the controller
-
-    return GoogleMap(
-      initialCameraPosition: DriverHomeScreenController.defaultLocation,
-      myLocationEnabled: true,
-      myLocationButtonEnabled: false,
-      mapType: MapType.normal,
-      zoomControlsEnabled: false,
-      markers: controller.markers,  // Using the markers from the controller
-      onMapCreated: (GoogleMapController googleMapController) {
-        controller.mapController = googleMapController;
-        if (controller.currentPosition != null) {
-          googleMapController.animateCamera(
-            CameraUpdate.newCameraPosition(
-              CameraPosition(
-                target: LatLng(
-                  controller.currentPosition!.latitude,
-                  controller.currentPosition!.longitude,
+    return GetBuilder<DriverHomeScreenController>(
+      builder: (controller) {
+        return Obx(() => GoogleMap(
+          initialCameraPosition: DriverHomeScreenController.defaultLocation,
+          myLocationEnabled: true,
+          myLocationButtonEnabled: false,
+          mapType: MapType.normal,
+          zoomControlsEnabled: false,
+          markers: controller.markers,
+          polylines: controller.polylines.value, // Add polylines for navigation
+          onMapCreated: (GoogleMapController googleMapController) {
+            controller.mapController = googleMapController;
+            if (controller.currentPosition != null) {
+              googleMapController.animateCamera(
+                CameraUpdate.newCameraPosition(
+                  CameraPosition(
+                    target: LatLng(
+                      controller.currentPosition!.latitude,
+                      controller.currentPosition!.longitude,
+                    ),
+                    zoom: 15.0,
+                  ),
                 ),
-                zoom: 15.0,
-              ),
-            ),
-          );
-        }
+              );
+            }
+          },
+        ));
       },
     );
   }

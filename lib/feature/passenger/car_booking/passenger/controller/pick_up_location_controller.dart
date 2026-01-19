@@ -221,8 +221,10 @@ class PickUpLocationController extends GetxController {
       final body = {
         'pickUp': {
           'name': pickUpAddressController.text,
-          'latitude': double.parse(pickUpLatitudeController.text),
-          'longitude': double.parse(pickUpLongitudeController.text),
+           'latitude': 0,
+           'longitude': 0
+         // 'latitude': double.parse(pickUpLatitudeController.text),
+         // 'longitude': double.parse(pickUpLongitudeController.text),
         },
         'destination': {
           'name': destinationAddressController.text,

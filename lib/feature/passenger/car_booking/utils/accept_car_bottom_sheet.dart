@@ -17,6 +17,7 @@ class NearbyDriver {
   final String locationName;
   final double distance;
   final List<double> coordinates;
+  String? bidAmount; // Dynamic bid amount from driver
 
   NearbyDriver({
     required this.id,
@@ -25,6 +26,7 @@ class NearbyDriver {
     required this.locationName,
     required this.distance,
     required this.coordinates,
+    this.bidAmount,
   });
 
   factory NearbyDriver.fromJson(Map<String, dynamic> json) {
@@ -38,6 +40,27 @@ class NearbyDriver {
       locationName: json['locationName'] ?? '',
       distance: (json['distance'] as num?)?.toDouble() ?? 0.0,
       coordinates: coords.map((e) => (e as num).toDouble()).toList(),
+    );
+  }
+}
+
+// Model for bid data from socket
+class BidData {
+  final String rideId;
+  final String amount;
+  final String driverId;
+
+  BidData({
+    required this.rideId,
+    required this.amount,
+    required this.driverId,
+  });
+
+  factory BidData.fromJson(Map<String, dynamic> json) {
+    return BidData(
+      rideId: json['rideId'] ?? '',
+      amount: json['amount']?.toString() ?? '0',
+      driverId: json['driverId'] ?? '',
     );
   }
 }
@@ -60,6 +83,8 @@ class AcceptCarBottomSheet extends StatefulWidget {
 
 class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
   List<NearbyDriver> nearbyDrivers = [];
+  Map<String, String> driverBids = {}; // Map of driverId -> bidAmount
+  Map<String, String> driverRideIds = {}; // Map of driverId -> rideId
   bool isLoading = true;
   final Logger _logger = Logger();
 
@@ -68,6 +93,7 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
     super.initState();
     _initDriversData();
     _initSocketAndListen();
+    _initNewBidListener();
   }
 
   void _initDriversData() {
@@ -129,10 +155,51 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
     });
   }
 
+  Future<void> _initNewBidListener() async {
+    final socketService = SocketIoService.to;
+
+    // Ensure socket is connected before setting up listener
+    if (!socketService.isConnected.value) {
+      _logger.i('Socket not connected for new-bid, connecting...');
+      await socketService.connect();
+      await Future.delayed(const Duration(milliseconds: 500));
+    }
+
+    _logger.i('Setting up listener for new-bid event');
+
+    // Listen for new bids from drivers
+    socketService.onNewBid((data) {
+      _logger.i('Received new-bid event in AcceptCarBottomSheet: $data');
+
+      if (data != null && data is Map<String, dynamic>) {
+        final bidData = BidData.fromJson(data);
+        _logger.i('Parsed bid - driverId: ${bidData.driverId}, amount: ${bidData.amount}');
+
+        if (mounted) {
+          setState(() {
+            // Store the bid amount and rideId for this driver
+            driverBids[bidData.driverId] = bidData.amount;
+            driverRideIds[bidData.driverId] = bidData.rideId;
+
+            // Also update the driver in the list if exists
+            for (int i = 0; i < nearbyDrivers.length; i++) {
+              if (nearbyDrivers[i].id == bidData.driverId) {
+                nearbyDrivers[i].bidAmount = bidData.amount;
+                break;
+              }
+            }
+          });
+          _logger.i('Updated bid for driver ${bidData.driverId}: \$${bidData.amount}, rideId: ${bidData.rideId}');
+        }
+      }
+    });
+  }
+
   @override
   void dispose() {
-    _logger.i('Disposing AcceptCarBottomSheet, removing socket listener');
+    _logger.i('Disposing AcceptCarBottomSheet, removing socket listeners');
     SocketIoService.to.offNearestDrivers();
+    SocketIoService.to.offNewBid();
     super.dispose();
   }
 
@@ -347,11 +414,18 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    '\$20',
+                    // Display dynamic bid amount or default '--'
+                    driverBids[driver.id] != null
+                        ? '\$${driverBids[driver.id]}'
+                        : driver.bidAmount != null
+                            ? '\$${driver.bidAmount}'
+                            : '--',
                     style: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.darkColor,
+                      color: driverBids[driver.id] != null || driver.bidAmount != null
+                          ? AppColors.primaryColor
+                          : AppColors.darkColor,
                     ),
                   ),
                   Text(
@@ -374,7 +448,23 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
             height: 40.h,
             child: CustomButton(
               height: 40,
-              onPressed: () {
+              onPressed: () async {
+                // Check if this driver has submitted a bid
+                final rideId = driverRideIds[driver.id];
+                if (rideId != null && rideId.isNotEmpty) {
+                  _logger.i('Accepting bid - rideId: $rideId, driverId: ${driver.id}');
+
+                  // Emit accept-bid socket event
+                  await SocketIoService.to.emitAcceptBid(
+                    rideId: rideId,
+                    driverId: driver.id,
+                  );
+
+                  _logger.i('Accept-bid emitted successfully');
+                } else {
+                  _logger.w('No bid found for driver ${driver.id}, cannot accept');
+                }
+
                 Navigator.pop(context);
                 showModalBottomSheet(
                   context: context,

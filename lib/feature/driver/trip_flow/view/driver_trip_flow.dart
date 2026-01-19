@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:logger/logger.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
+import 'package:ride_sharing/feature/driver/homepage/controller/driver_home_controller.dart';
+import 'package:ride_sharing/feature/driver/trip_flow/model/ride_request_model.dart';
+import 'package:ride_sharing/services/socket_services.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 import 'package:ride_sharing/widgets/custom_horizontal_line.dart';
 import 'package:ride_sharing/widgets/custom_vertical_line.dart';
@@ -15,6 +19,7 @@ import 'package:ride_sharing/widgets/custom_vertical_line.dart';
 // Trip model
 class TripRequest {
   final String id;
+  final String riderId;
   final String passengerName;
   final String passengerImage;
   final double rating;
@@ -25,9 +30,11 @@ class TripRequest {
   final double distance;
   final String vehicleType;
   final String note;
+  final List<String> rideNeeds;
 
   TripRequest({
     required this.id,
+    required this.riderId,
     required this.passengerName,
     required this.passengerImage,
     required this.rating,
@@ -38,7 +45,27 @@ class TripRequest {
     required this.distance,
     required this.vehicleType,
     required this.note,
+    this.rideNeeds = const [],
   });
+
+  // Factory constructor to create TripRequest from RideRequestModel
+  factory TripRequest.fromRideRequest(RideRequestModel rideRequest) {
+    return TripRequest(
+      id: rideRequest.rideId,
+      riderId: rideRequest.riderId,
+      passengerName: 'Rider', // Will be fetched from API if needed
+      passengerImage: 'assets/images/passenger1.jpg',
+      rating: 4.5,
+      pickupTime: 'Now',
+      pickupLocation: rideRequest.pickUp.name,
+      dropoffLocation: rideRequest.destination.name,
+      fare: rideRequest.preferedFare,
+      distance: double.tryParse(rideRequest.distance) ?? 0.0,
+      vehicleType: 'Standard',
+      note: rideRequest.note,
+      rideNeeds: rideRequest.rideNeeds,
+    );
+  }
 }
 
 // Trip states enum
@@ -53,22 +80,68 @@ enum TripState {
 
 // Driver trip controller
 class DriverTripController extends GetxController {
-  final Rx<TripState> currentState = TripState.pendingRequests.obs;
+  final TripState? initialState;
+
+  DriverTripController({this.initialState});
+
+  late final Rx<TripState> currentState;
   final RxList<TripRequest> pendingTrips = <TripRequest>[].obs;
   final Rx<TripRequest?> selectedTrip = Rx<TripRequest?>(null);
   final RxDouble bidAmount = 0.0.obs;
   final TextEditingController bidController = TextEditingController();
+  final Rx<RideRequestModel?> currentRideRequest = Rx<RideRequestModel?>(null);
+
+  // Ride accepted data
+  final RxString acceptedRideId = ''.obs;
+  final RxString acceptedRiderId = ''.obs;
+  final RxBool isRideAccepted = false.obs;
 
   @override
   void onInit() {
     super.onInit();
-    _loadMockData();
+    // Initialize state - use initialState if provided, otherwise pendingRequests
+    currentState = (initialState ?? TripState.pendingRequests).obs;
+    _loadRideRequestData();
+  }
+
+  @override
+  void onClose() {
+    bidController.dispose();
+    super.onClose();
+  }
+
+  void _loadRideRequestData() {
+    try {
+      final homeController = Get.find<DriverHomeScreenController>();
+      final rideRequest = homeController.currentRideRequest.value;
+
+      if (rideRequest != null) {
+        currentRideRequest.value = rideRequest;
+        final tripRequest = TripRequest.fromRideRequest(rideRequest);
+        pendingTrips.value = [tripRequest];
+
+        // If initialState is tripTaken (ride accepted), set selectedTrip and keep tripTaken state
+        if (initialState == TripState.tripTaken) {
+          selectedTrip.value = tripRequest;
+          _logger.i('Set selectedTrip for tripTaken state');
+          // Don't change currentState - keep it as tripTaken
+        } else {
+          // Keep the pendingRequests state to show the same UI as mock data
+          currentState.value = TripState.pendingRequests;
+        }
+      }
+      // Don't load mock data - if no ride request, the list will be empty
+    } catch (e) {
+      // If controller not found, don't show anything
+      _logger.e('Error loading ride request data: $e');
+    }
   }
 
   void _loadMockData() {
     pendingTrips.value = [
       TripRequest(
         id: '1',
+        riderId: '',
         passengerName: 'Jane Cooper',
         passengerImage: 'assets/images/passenger1.jpg',
         rating: 4.9,
@@ -80,7 +153,6 @@ class DriverTripController extends GetxController {
         vehicleType: 'Comfortable Sedans',
         note: 'Please call when you arrive at gate',
       ),
-      // Add more mock trips...
     ];
   }
 
@@ -93,18 +165,74 @@ class DriverTripController extends GetxController {
     currentState.value = TripState.bidding;
   }
 
-  void submitBid() {
-    if (bidAmount.value > 0) {
-      // Simulate trip being taken by another driver sometimes
-      if (DateTime.now().millisecond % 2 == 0) {
-        currentState.value = TripState.tripTaken;
-      } else {
-        currentState.value = TripState.tripAccepted;
-      }
+  final Logger _logger = Logger();
+
+  Future<void> submitBid() async {
+    if (bidAmount.value > 0 && currentRideRequest.value != null) {
+      final rideId = currentRideRequest.value!.rideId;
+      final amount = bidAmount.value.toStringAsFixed(0);
+
+      _logger.i('Submitting bid - rideId: $rideId, amount: $amount');
+
+      // Emit the new-bid socket event
+      await SocketIoService.to.emitNewBid(
+        rideId: rideId,
+        amount: amount,
+      );
+
+      _logger.i('Bid submitted successfully');
+
+      // Show success feedback
+      Get.snackbar(
+        'Bid Submitted',
+        'Your bid of \$$amount has been sent',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green.withOpacity(0.8),
+        colorText: Colors.white,
+        duration: const Duration(seconds: 2),
+      );
+
+      // Close the bottom sheet after submitting
+      Get.back();
+    } else {
+      Get.snackbar(
+        'Invalid Bid',
+        'Please enter a valid bid amount',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.withOpacity(0.8),
+        colorText: Colors.white,
+      );
     }
   }
 
   void acceptTrip() {
+    currentState.value = TripState.tripAccepted;
+  }
+
+  void goToMapWithPickupRoute() {
+    _logger.i('Going to map with pickup route');
+
+    // Get pickup location from ride request
+    if (currentRideRequest.value != null) {
+      final pickupLocation = currentRideRequest.value!.pickUp;
+      _logger.i('Pickup location: ${pickupLocation.name}, coordinates: ${pickupLocation.coordinates}');
+
+      // Notify DriverHomeScreenController to show polyline
+      try {
+        final homeController = Get.find<DriverHomeScreenController>();
+        homeController.showRouteToPickup(
+          pickupLat: 23.73439856033021,
+         pickupLng: 90.40467599770942,
+         // pickupLat: pickupLocation.latitude,
+        //  pickupLng: pickupLocation.longitude,
+          pickupName: pickupLocation.name,
+        );
+      } catch (e) {
+        _logger.e('Error getting DriverHomeScreenController: $e');
+      }
+    }
+
+    // Change state to tripAccepted to show the TripAcceptedBottomSheet
     currentState.value = TripState.tripAccepted;
   }
 
@@ -130,25 +258,39 @@ class DriverTripController extends GetxController {
     selectedTrip.value = null;
   }
 
-  void confirmPickup() {
+  Future<void> confirmPickup() async {
+    _logger.i('Confirming pickup - emitting pickup-rider socket event');
+
+    // Emit pickup-rider socket event with empty body
+    await SocketIoService.to.emitPickupRider();
+
+    _logger.i('pickup-rider event emitted successfully');
+
+    // Stop navigation since we've arrived at pickup
+    try {
+      final homeController = Get.find<DriverHomeScreenController>();
+      homeController.stopNavigation();
+    } catch (e) {
+      _logger.e('Error stopping navigation: $e');
+    }
+
+    // Proceed to start trip
     startTrip();
   }
 
-  @override
-  void onClose() {
-    bidController.dispose();
-    super.onClose();
-  }
+
 }
 
 // Main trip flow widget
 class DriverTripFlow extends StatelessWidget {
-  const DriverTripFlow({Key? key}) : super(key: key);
+  final TripState? initialState;
+
+  const DriverTripFlow({Key? key, this.initialState}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<DriverTripController>(
-      init: DriverTripController(),
+      init: DriverTripController(initialState: initialState),
       builder: (controller) {
         return Obx(() {
           switch (controller.currentState.value) {
@@ -398,7 +540,7 @@ class TripRequestCard extends StatelessWidget {
                           ),
                           SizedBox(height: 12.h),
                           Text(
-                            'Drop off',
+                            'Drop Off',
                             style: TextStyle(
                               fontSize: 12.sp,
                               fontWeight: FontWeight.w500,
@@ -419,6 +561,65 @@ class TripRequestCard extends StatelessWidget {
                 ),
               ),
             ),
+
+            // Ride Needs
+            if (trip.rideNeeds.isNotEmpty) ...[
+              SizedBox(height: 12.h),
+              Wrap(
+                spacing: 8.w,
+                runSpacing: 8.h,
+                children: trip.rideNeeds.map((need) => Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(20.r),
+                    border: Border.all(color: AppColors.primaryColor.withOpacity(0.3)),
+                  ),
+                  child: Text(
+                    need.replaceAll('_', ' '),
+                    style: TextStyle(
+                      fontSize: 10.sp,
+                      color: AppColors.primaryColor,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                )).toList(),
+              ),
+            ],
+
+            // Note
+            if (trip.note.isNotEmpty) ...[
+              SizedBox(height: 12.h),
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(10.w),
+                decoration: BoxDecoration(
+                  color: Colors.grey[100],
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Note',
+                      style: TextStyle(
+                        fontSize: 11.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.tesxtColor,
+                      ),
+                    ),
+                    SizedBox(height: 4.h),
+                    Text(
+                      trip.note,
+                      style: TextStyle(
+                        fontSize: 11.sp,
+                        color: Colors.grey[700],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
 
             SizedBox(height: 16.h),
 
@@ -469,7 +670,7 @@ class TripRequestCard extends StatelessWidget {
                 SizedBox(width: 12.w),
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: () {},
+                    onPressed: () => Get.back(),
                     style: OutlinedButton.styleFrom(
                       padding: EdgeInsets.symmetric(vertical: 12.h),
                       side: const BorderSide(color: Colors.red),
@@ -506,317 +707,337 @@ class TripDetailBottomSheet extends StatelessWidget {
     final trip = controller.selectedTrip.value!;
 
     return Container(
-      height:600.h,
+      height:MediaQuery.of(context).size.height * 0.8,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
       ),
-      child: Column(
-        children: [
-          // Handle bar
-          Container(
-            width: 40.w,
-            height: 4.h,
-            margin: EdgeInsets.only(top: 8.h, bottom: 16.h),
-            decoration: BoxDecoration(
-              color: Colors.grey[300],
-              borderRadius: BorderRadius.circular(2.r),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Handle bar
+            Container(
+              width: 40.w,
+              height: 4.h,
+              margin: EdgeInsets.only(top: 8.h, bottom: 16.h),
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2.r),
+              ),
             ),
-          ),
-          Padding(
-            padding:  EdgeInsets.only(left: 10.sp,bottom: 16.sp),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                LogoWidget(
-                  width: 40.0,
-                  height: 40.0,
-                  fontSize: 15.sp,
-                ),
-                IconButton(
-                        onPressed: () => controller.searchAgain(),
-                        icon: Icon(Icons.close),
-                      ),
-              ],
+            Padding(
+              padding:  EdgeInsets.only(left: 10.sp,bottom: 16.sp),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  LogoWidget(
+                    width: 40.0,
+                    height: 40.0,
+                    fontSize: 15.sp,
+                  ),
+                  IconButton(
+                          onPressed: () => controller.searchAgain(),
+                          icon: Icon(Icons.close),
+                        ),
+                ],
+              ),
             ),
-          ),
-          // Close button
-          // Align(
-          //   alignment: Alignment.topRight,
-          //   child: Padding(
-          //     padding: EdgeInsets.only(right: 16.w),
-          //     child: IconButton(
-          //       onPressed: () => controller.searchAgain(),
-          //       icon: Icon(Icons.close),
-          //     ),
-          //   ),
-          // ),
+            // Close button
+            // Align(
+            //   alignment: Alignment.topRight,
+            //   child: Padding(
+            //     padding: EdgeInsets.only(right: 16.w),
+            //     child: IconButton(
+            //       onPressed: () => controller.searchAgain(),
+            //       icon: Icon(Icons.close),
+            //     ),
+            //   ),
+            // ),
 
-          // Passenger info
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w),
-            child: Row(
-              children: [
-                CircleAvatar(
-                  radius: 25.r,
-                  backgroundImage: AssetImage(trip.passengerImage),
-                ),
-                SizedBox(width: 16.w),
-                Expanded(
+            // Passenger info
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 25.r,
+                    backgroundImage: AssetImage(trip.passengerImage),
+                  ),
+                  SizedBox(width: 16.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+
+                          trip.passengerName,
+                          style: TextStyle(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.tesxtColor,
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            Row(
+                              children: List.generate(5, (i) => Icon(
+                                Icons.star,
+                                size: 14.sp,
+                                color: i < trip.rating.floor() ? Colors.amber : Colors.grey[300],
+                              )),
+                            ),
+                            SizedBox(width: 4.w),
+                            Text(
+                              '(${trip.rating})',
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        '\$${trip.fare.toStringAsFixed(0)}',
+                        style: TextStyle(
+                          fontSize: 24.sp,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primaryColor,
+                        ),
+                      ),
+                      Text(
+                        '${trip.distance} km',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding:  EdgeInsets.symmetric(horizontal:  10.sp ),
+              child: CustomHorizontalLine(
+                thickness: 2.sp,
+                color: Colors.black38,
+              ),
+            ),
+            SizedBox(height: 24.h),
+
+            // Locations
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: Column(
+
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 8.w,
+                        height: 8.h,
+                        margin: EdgeInsets.only(top: 8.h),
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryColor,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      SizedBox(width: 12.w),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Pick up',
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.tesxtColor,
+                              ),
+                            ),
+                            Text(
+                              trip.pickupLocation,
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: 16.h),
+
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 8.w,
+                        height: 8.h,
+                        margin: EdgeInsets.only(top: 8.h),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      SizedBox(width: 12.w),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Drop off',
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.tesxtColor,
+                              ),
+                            ),
+                            Text(
+                              trip.dropoffLocation,
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding:  EdgeInsets.symmetric(horizontal:  10.sp ),
+              child: CustomHorizontalLine(
+                thickness: 2.sp,
+                color: Colors.black38,
+              ),
+            ),
+            SizedBox(height: 16.h),
+
+            // Ride Needs
+            if (trip.rideNeeds.isNotEmpty)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+               // mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    'Ride Requirements',
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.tesxtColor,
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  Wrap(
+                    spacing: 8.w,
+                    runSpacing: 8.h,
+                    children: trip.rideNeeds.map((need) => Container(
+                      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(20.r),
+                        border: Border.all(color: AppColors.primaryColor.withOpacity(0.3)),
+                      ),
+                      child: Text(
+                        need.replaceAll('_', ' '),
+                        style: TextStyle(
+                          fontSize: 11.sp,
+                          color: AppColors.primaryColor,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    )).toList(),
+                  ),
+                  SizedBox(height: 16.h),
+                ],
+              ),
+
+            // Passenger note
+            if (trip.note.isNotEmpty)
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                child: Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(12.w),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        trip.passengerName,
+                        'Passenger\'s Note',
                         style: TextStyle(
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.w600,
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.bold,
                           color: AppColors.tesxtColor,
                         ),
                       ),
-                      Row(
-                        children: [
-                          Row(
-                            children: List.generate(5, (i) => Icon(
-                              Icons.star,
-                              size: 14.sp,
-                              color: i < trip.rating.floor() ? Colors.amber : Colors.grey[300],
-                            )),
-                          ),
-                          SizedBox(width: 4.w),
-                          Text(
-                            '(${trip.rating})',
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ],
+                      SizedBox(height: 4.h),
+                      Text(
+                        trip.note,
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          color: Colors.grey[700],
+                        ),
                       ),
                     ],
                   ),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      '\$${trip.fare.toStringAsFixed(0)}',
-                      style: TextStyle(
-                        fontSize: 24.sp,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.primaryColor,
-                      ),
-                    ),
-                    Text(
-                      '${trip.distance} km',
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding:  EdgeInsets.symmetric(horizontal:  10.sp ),
-            child: CustomHorizontalLine(
-              thickness: 2.sp,
-              color: Colors.black38,
-            ),
-          ),
-          SizedBox(height: 24.h),
-
-          // Locations
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w),
-            child: Column(
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: 8.w,
-                      height: 8.h,
-                      margin: EdgeInsets.only(top: 8.h),
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryColor,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    SizedBox(width: 12.w),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Pick up',
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w500,
-                              color: AppColors.tesxtColor,
-                            ),
-                          ),
-                          Text(
-                            trip.pickupLocation,
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              color: Colors.grey[700],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-
-                SizedBox(height: 16.h),
-
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: 8.w,
-                      height: 8.h,
-                      margin: EdgeInsets.only(top: 8.h),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    SizedBox(width: 12.w),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Drop off',
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w500,
-                              color: AppColors.tesxtColor,
-                            ),
-                          ),
-                          Text(
-                            trip.dropoffLocation,
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              color: Colors.grey[700],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding:  EdgeInsets.symmetric(horizontal:  10.sp ),
-            child: CustomHorizontalLine(
-              thickness: 2.sp,
-              color: Colors.black38,
-            ),
-          ),
-          SizedBox(height: 24.h),
-
-          // Passenger note
-          if (trip.note.isNotEmpty)
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(12.w),
-                decoration: BoxDecoration(
-
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Passenger\'s Note',
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.tesxtColor,
-                      ),
-                    ),
-                    SizedBox(height: 4.h),
-                    Text(
-                      trip.note,
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                  ],
-                ),
               ),
-            ),
 
-         // const Spacer(),
-          SizedBox(height: 16.h,),
-          // Action buttons
-          Padding(
-            padding: EdgeInsets.all(32.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                SizedBox(
-                  width: double.infinity,
-                  height: 50.h,
-                  child: ElevatedButton(
-                    onPressed: () => controller.acceptTrip(),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryColor,
-                     // padding: EdgeInsets.symmetric(vertical: 20.h), // increased height
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24.r),
+           // const Spacer(),
+            SizedBox(height: 16.h,),
+            // Action buttons
+            Padding(
+              padding: EdgeInsets.all(32.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50.h,
+                    child: OutlinedButton(
+                      onPressed: () => controller.showBiddingScreen(),
+                      style: OutlinedButton.styleFrom(
+                      //  padding: EdgeInsets.symmetric(vertical: 20.h), // increased height
+                        side: BorderSide(color: AppColors.grayShade100, width: 2),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(24.r),
+                        ),
                       ),
-                    ),
-                    child: Text(
-                      'Accept Offer',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 15.sp, // increased size
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                ),
-
-                SizedBox(height: 16.h), // spacing between buttons
-
-                SizedBox(
-                  width: double.infinity,
-                  height: 50.h,
-                  child: OutlinedButton(
-                    onPressed: () => controller.showBiddingScreen(),
-                    style: OutlinedButton.styleFrom(
-                    //  padding: EdgeInsets.symmetric(vertical: 20.h), // increased height
-                      side: BorderSide(color: AppColors.grayShade100, width: 2),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24.r),
-                      ),
-                    ),
-                    child: Text(
-                      'Bid',
-                      style: TextStyle(
-                        color: AppColors.grayShade100,
-                        fontSize: 18.sp, // increased size
-                        fontWeight: FontWeight.w700,
+                      child: Text(
+                        'Bid',
+                        style: TextStyle(
+                          color: AppColors.grayShade100,
+                          fontSize: 18.sp, // increased size
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
 
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -832,7 +1053,7 @@ class BiddingBottomSheet extends StatelessWidget {
     final trip = controller.selectedTrip.value!;
 
     return Container(
-      height: 450.h,
+      height: MediaQuery.of(context).size.height * 0.8,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
@@ -931,7 +1152,13 @@ class BiddingBottomSheet extends StatelessWidget {
           ),
 
           SizedBox(height: 24.h),
-
+          Padding(
+            padding:  EdgeInsets.symmetric(horizontal:  10.sp ),
+            child: CustomHorizontalLine(
+              thickness: 2.sp,
+              color: Colors.black38,
+            ),
+          ),
           // Locations
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -940,14 +1167,14 @@ class BiddingBottomSheet extends StatelessWidget {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      width: 8.w,
-                      height: 8.h,
-                      margin: EdgeInsets.only(top: 8.h),
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryColor,
-                        shape: BoxShape.circle,
-                      ),
+                    Column(
+                      children: [
+                        Image.asset(AppImage.passenger),
+                        SizedBox(height: 4.h),
+                        CustomVerticalLine(height: 60.h, color: Colors.black),
+                       // SizedBox(height: 4.h),
+
+                      ],
                     ),
                     SizedBox(width: 12.w),
                     Expanded(
@@ -980,14 +1207,12 @@ class BiddingBottomSheet extends StatelessWidget {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      width: 8.w,
-                      height: 8.h,
-                      margin: EdgeInsets.only(top: 8.h),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        shape: BoxShape.circle,
-                      ),
+                    Column(
+                      children: [
+                        Icon(Icons.location_on,color: AppColors.togglebuttonColor,),
+                        SizedBox(height: 4.h),
+
+                      ],
                     ),
                     SizedBox(width: 12.w),
                     Expanded(
@@ -1019,7 +1244,13 @@ class BiddingBottomSheet extends StatelessWidget {
           ),
 
           SizedBox(height: 24.h),
-
+          Padding(
+            padding:  EdgeInsets.symmetric(horizontal:  10.sp ),
+            child: CustomHorizontalLine(
+              thickness: 2.sp,
+              color: Colors.black38,
+            ),
+          ),
           // Bid price input
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -1037,33 +1268,39 @@ class BiddingBottomSheet extends StatelessWidget {
                 SizedBox(height: 12.h),
                 Container(
                   width: double.infinity,
-                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
+                  height: 48.h,
+                  padding: EdgeInsets.symmetric(horizontal: 16.w,),
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey[300]!),
-                    borderRadius: BorderRadius.circular(8.r),
+                    borderRadius: BorderRadius.circular(32.r),
                   ),
                   child: Row(
                     children: [
                       Text(
                         '\$',
                         style: TextStyle(
-                          fontSize: 24.sp,
+                          fontSize: 14.sp,
                           fontWeight: FontWeight.w500,
-                          color: AppColors.tesxtColor,
+                          color: Colors.grey[200]!
+
                         ),
+                        textAlign: TextAlign.justify,
                       ),
-                      SizedBox(width: 8.w),
+                      SizedBox(width: 5.w),
                       Expanded(
                         child: TextField(
                           controller: controller.bidController,
                           keyboardType: TextInputType.number,
                           style: TextStyle(
-                            fontSize: 24.sp,
+                            fontSize: 14.sp,
                             fontWeight: FontWeight.w500,
                             color: AppColors.tesxtColor,
                           ),
                           decoration: InputDecoration(
                             hintText: '60',
+                            hintStyle: TextStyle(
+                              color: Colors.grey[200]!
+                            ),
                             border: InputBorder.none,
                             contentPadding: EdgeInsets.zero,
                           ),
@@ -1079,7 +1316,7 @@ class BiddingBottomSheet extends StatelessWidget {
             ),
           ),
 
-          const Spacer(),
+        //  const Spacer(),
 
           // Submit button
           Padding(
@@ -1121,7 +1358,7 @@ class TripTakenBottomSheet extends StatelessWidget {
     final controller = Get.find<DriverTripController>();
 
     return Container(
-      height: 200.h,
+      height: MediaQuery.of(context).size.height * 0.5,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
@@ -1133,19 +1370,36 @@ class TripTakenBottomSheet extends StatelessWidget {
           Container(
             width: 40.w,
             height: 4.h,
-            margin: EdgeInsets.only(top: 8.h, bottom: 32.h),
+            margin: EdgeInsets.only(top: 8.h, bottom: 24.h),
             decoration: BoxDecoration(
               color: Colors.grey[300],
               borderRadius: BorderRadius.circular(2.r),
             ),
           ),
 
+          // Success icon
+          Container(
+            width: 60.w,
+            height: 60.w,
+            decoration: BoxDecoration(
+              color: AppColors.primaryColor.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.check_circle,
+              color: AppColors.primaryColor,
+              size: 40.sp,
+            ),
+          ),
+
+          SizedBox(height: 16.h),
+
           Text(
-            'The trip has been accepted\nby another rider.',
+            'Ride Accepted!',
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 18.sp,
-              fontWeight: FontWeight.w600,
+              fontSize: 20.sp,
+              fontWeight: FontWeight.bold,
               color: AppColors.tesxtColor,
             ),
           ),
@@ -1153,34 +1407,40 @@ class TripTakenBottomSheet extends StatelessWidget {
           SizedBox(height: 8.h),
 
           Text(
-            'Please search again.',
+            'Navigate to pickup location',
             style: TextStyle(
               fontSize: 14.sp,
               color: Colors.grey[600],
             ),
           ),
 
-          SizedBox(height: 32.h),
+          SizedBox(height: 24.h),
 
+          // Go to map button
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.w),
             child: SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () => controller.searchAgain(),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryColor,
-                  padding: EdgeInsets.symmetric(vertical: 16.h),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                ),
-                child: Text(
-                  'Search Again',
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  // Close bottom sheet and navigate to map with TripAcceptedBottomSheet
+                 // Get.back();
+                  controller.goToMapWithPickupRoute();
+                },
+                icon: Icon(Icons.map, color: Colors.white),
+                label: Text(
+                  'Go to map',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w600,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryColor,
+                  padding: EdgeInsets.symmetric(vertical: 16.h),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.r),
                   ),
                 ),
               ),
@@ -1199,7 +1459,7 @@ class TripAcceptedBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<DriverTripController>();
-    final trip = controller.selectedTrip.value!;
+    final trip = controller.selectedTrip.value;
 
     return Container(
       height: 300.h,
@@ -1256,7 +1516,8 @@ class TripAcceptedBottomSheet extends StatelessWidget {
                     children: [
                       Icon(Icons.location_on,color: AppColors.togglebuttonColor,) ,
                       Text(
-                        trip.pickupLocation,
+                        "I will pick you up ",
+                     //   trip.pickupLocation,
                         style: TextStyle(
                           fontSize: 14.sp,
                           color: Colors.grey[700],
