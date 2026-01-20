@@ -303,5 +303,23 @@ class SocketIoService extends GetxService {
     _logger.i('Emitting pickup-rider event with empty body');
     emit('pickup-rider', {});
   }
+
+  // Emit drop-off rider (for drivers)
+  Future<void> emitDropOffRider() async {
+    // Ensure socket is connected before emitting
+    if (!isSocketReady) {
+      _logger.i('Socket not ready, connecting before emitting drop-off-rider...');
+      await connect();
+      await Future.delayed(const Duration(milliseconds: 500));
+    }
+
+    if (!isSocketReady) {
+      _logger.e('Cannot emit drop-off-rider - socket is not ready after connect attempt');
+      return;
+    }
+
+    _logger.i('Emitting drop-off-rider event with empty body');
+    emit('drop-off-rider', {});
+  }
 }
 

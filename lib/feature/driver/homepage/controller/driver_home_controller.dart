@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ui' as ui;
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
@@ -31,11 +33,16 @@ class DriverHomeScreenController extends GetxController {
   final RxBool isNavigatingToPickup = false.obs;
   LatLng? pickupLocation;
   String? pickupName;
+  LatLng? destinationLocation;
+  String? destinationName;
   StreamSubscription<Position>? _locationSubscription;
 
   // Google API Key from manifest
   static const String _googleApiKey = 'AIzaSyCOAYoZktEbWIRX4mbS9D9ypHXdyYWFpSo';
 
+  // Custom markers
+  BitmapDescriptor? _pickupMarkerIcon;
+  BitmapDescriptor? _driverMarkerIcon;
 
   static const CameraPosition defaultLocation = CameraPosition(
     target: LatLng(23.8103, 90.4125),
@@ -45,8 +52,62 @@ class DriverHomeScreenController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _loadCustomMarkers();
     _initializeMap();
     _setupSocketListeners();
+  }
+
+  Future<void> _loadCustomMarkers() async {
+    try {
+      _pickupMarkerIcon = await _getBitmapDescriptorFromAsset(
+        'assets/images/location_pin.png',
+        50, // width
+      );
+      _logger.i('Pickup marker icon loaded');
+
+      _driverMarkerIcon = await _getBitmapDescriptorFromAsset(
+        'assets/images/3D_car.png',
+        80, // width
+      );
+      _logger.i('Driver marker icon loaded');
+
+      _logger.i('Custom markers loaded successfully');
+
+      // Update markers if they already exist
+      if (markers.isNotEmpty && currentPosition != null) {
+        _updateDriverMarker();
+      }
+    } catch (e, stackTrace) {
+      _logger.e('Error loading custom markers: $e');
+      _logger.e('Stack trace: $stackTrace');
+    }
+  }
+
+  Future<BitmapDescriptor> _getBitmapDescriptorFromAsset(String assetPath, int width) async {
+    final ByteData data = await rootBundle.load(assetPath);
+    final ui.Codec codec = await ui.instantiateImageCodec(
+      data.buffer.asUint8List(),
+      targetWidth: width,
+    );
+    final ui.FrameInfo fi = await codec.getNextFrame();
+    final ByteData? byteData = await fi.image.toByteData(format: ui.ImageByteFormat.png);
+    final Uint8List resizedImageData = byteData!.buffer.asUint8List();
+    return BitmapDescriptor.bytes(resizedImageData);
+  }
+
+  void _updateDriverMarker() {
+    if (currentPosition == null) return;
+
+    markers.removeWhere((m) => m.markerId.value == 'driver_location');
+    markers.add(
+      Marker(
+        markerId: const MarkerId('driver_location'),
+        position: LatLng(currentPosition!.latitude, currentPosition!.longitude),
+        icon: _driverMarkerIcon ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+        infoWindow: const InfoWindow(title: 'You'),
+      ),
+    );
+    update();
   }
 
   Future<void> _setupSocketListeners() async {
@@ -139,29 +200,31 @@ class DriverHomeScreenController extends GetxController {
     update();
   }
 
-  // Show route to pickup location with polyline
+  // Show route from current location to pickup with polyline
   void showRouteToPickup({
     required double pickupLat,
     required double pickupLng,
     required String pickupName,
   }) {
-    _logger.i('Showing route to pickup: $pickupName ($pickupLat, $pickupLng)');
+    _logger.i('showRouteToPickup called - pickupLat: $pickupLat, pickupLng: $pickupLng, pickupName: $pickupName');
+    _logger.i('Current position: $currentPosition');
 
     this.pickupLocation = LatLng(pickupLat, pickupLng);
     this.pickupName = pickupName;
     isNavigatingToPickup.value = true;
 
-    // Add pickup marker
+    // Add pickup marker with custom icon
     markers.add(
       Marker(
         markerId: const MarkerId('pickup_location'),
         position: LatLng(pickupLat, pickupLng),
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+        icon: _pickupMarkerIcon ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
         infoWindow: InfoWindow(title: 'Pickup', snippet: pickupName),
       ),
     );
+    _logger.i('Pickup marker added. Total markers: ${markers.length}');
 
-    // Get and draw route
+    // Get and draw route from current location to pickup
     _getRouteToPickup();
 
     // Start real-time location tracking
@@ -170,25 +233,26 @@ class DriverHomeScreenController extends GetxController {
     // Move camera to show both locations
     _fitBothLocations();
 
+    _logger.i('Calling update() after showRouteToPickup setup');
     update();
   }
 
-  Future<void> _getRouteToPickup() async {
-    if (currentPosition == null || pickupLocation == null) {
-      _logger.e('Cannot get route - missing current position or pickup location');
+  Future<void> _getRoutePickupToDestination() async {
+    if (pickupLocation == null || destinationLocation == null) {
+      _logger.e('Cannot get route - missing pickup or destination location');
       return;
     }
 
     try {
-      final origin = '${currentPosition!.latitude},${currentPosition!.longitude}';
-      final destination = '${pickupLocation!.latitude},${pickupLocation!.longitude}';
+      final origin = '${pickupLocation!.latitude},${pickupLocation!.longitude}';
+      final destination = '${destinationLocation!.latitude},${destinationLocation!.longitude}';
 
       final url = Uri.parse(
         'https://maps.googleapis.com/maps/api/directions/json?'
         'origin=$origin&destination=$destination&key=$_googleApiKey&mode=driving',
       );
 
-      _logger.i('Fetching route from Google Directions API');
+      _logger.i('Fetching route from pickup to destination via Google Directions API');
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
@@ -200,9 +264,9 @@ class DriverHomeScreenController extends GetxController {
 
           polylines.value = {
             Polyline(
-              polylineId: const PolylineId('route_to_pickup'),
+              polylineId: const PolylineId('route_pickup_to_destination'),
               points: polylinePoints,
-              color: Colors.blue,
+              color: Colors.black,
               width: 5,
             ),
           };
@@ -212,10 +276,73 @@ class DriverHomeScreenController extends GetxController {
         } else {
           _logger.e('No routes found: ${data['status']}');
           // Fallback: draw straight line
+          _drawStraightLinePickupToDestination();
+        }
+      } else {
+        _logger.e('Directions API error: ${response.statusCode}');
+        _drawStraightLinePickupToDestination();
+      }
+    } catch (e) {
+      _logger.e('Error fetching route: $e');
+      _drawStraightLinePickupToDestination();
+    }
+  }
+
+  Future<void> _getRouteToPickup() async {
+    _logger.i('_getRouteToPickup called - currentPosition: $currentPosition, pickupLocation: $pickupLocation');
+
+    if (currentPosition == null || pickupLocation == null) {
+      _logger.e('Cannot get route - missing current position or pickup location');
+      return;
+    }
+
+    try {
+      final origin = '${currentPosition!.latitude},${currentPosition!.longitude}';
+      final destination = '${pickupLocation!.latitude},${pickupLocation!.longitude}';
+
+      _logger.i('Route request - origin: $origin, destination: $destination');
+
+      final url = Uri.parse(
+        'https://maps.googleapis.com/maps/api/directions/json?'
+        'origin=$origin&destination=$destination&key=$_googleApiKey&mode=driving',
+      );
+
+      _logger.i('Fetching route from Google Directions API: $url');
+      final response = await http.get(url);
+
+      _logger.i('Directions API response status code: ${response.statusCode}');
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        _logger.i('Directions API response status: ${data['status']}');
+
+        if (data['status'] == 'OK' && data['routes'].isNotEmpty) {
+          final points = data['routes'][0]['overview_polyline']['points'];
+          final polylinePoints = _decodePolyline(points);
+
+          _logger.i('Decoded ${polylinePoints.length} polyline points');
+
+          polylines.value = {
+            Polyline(
+              polylineId: const PolylineId('route_to_pickup'),
+              points: polylinePoints,
+              color: Colors.black,
+              width: 5,
+            ),
+          };
+
+          _logger.i('Polylines set. Current polylines count: ${polylines.value.length}');
+          _logger.i('Calling update() after setting polylines');
+          update();
+        } else {
+          _logger.e('No routes found: ${data['status']}');
+          _logger.i('API response: ${response.body}');
+          // Fallback: draw straight line
           _drawStraightLine();
         }
       } else {
         _logger.e('Directions API error: ${response.statusCode}');
+        _logger.i('API response body: ${response.body}');
         _drawStraightLine();
       }
     } catch (e) {
@@ -265,7 +392,12 @@ class DriverHomeScreenController extends GetxController {
 
   // Fallback: draw straight line if API fails
   void _drawStraightLine() {
-    if (currentPosition == null || pickupLocation == null) return;
+    _logger.i('_drawStraightLine called - currentPosition: $currentPosition, pickupLocation: $pickupLocation');
+
+    if (currentPosition == null || pickupLocation == null) {
+      _logger.e('Cannot draw straight line - missing position data');
+      return;
+    }
 
     polylines.value = {
       Polyline(
@@ -274,14 +406,61 @@ class DriverHomeScreenController extends GetxController {
           LatLng(currentPosition!.latitude, currentPosition!.longitude),
           pickupLocation!,
         ],
-        color: Colors.blue,
+        color: Colors.black,
         width: 5,
         patterns: [PatternItem.dash(20), PatternItem.gap(10)],
       ),
     };
 
-    _logger.i('Drew straight line fallback');
+    _logger.i('Drew straight line fallback. Polylines count: ${polylines.value.length}');
     update();
+  }
+
+  // Fallback: draw straight line from pickup to destination if API fails
+  void _drawStraightLinePickupToDestination() {
+    if (pickupLocation == null || destinationLocation == null) return;
+
+    polylines.value = {
+      Polyline(
+        polylineId: const PolylineId('route_pickup_to_destination'),
+        points: [
+          pickupLocation!,
+          destinationLocation!,
+        ],
+        color: Colors.black,
+        width: 5,
+        patterns: [PatternItem.dash(20), PatternItem.gap(10)],
+      ),
+    };
+
+    _logger.i('Drew straight line fallback from pickup to destination');
+    update();
+  }
+
+  // Fit camera to show both pickup and destination
+  void _fitPickupAndDestination() {
+    if (mapController == null || pickupLocation == null || destinationLocation == null) return;
+
+    final bounds = LatLngBounds(
+      southwest: LatLng(
+        pickupLocation!.latitude < destinationLocation!.latitude
+            ? pickupLocation!.latitude
+            : destinationLocation!.latitude,
+        pickupLocation!.longitude < destinationLocation!.longitude
+            ? pickupLocation!.longitude
+            : destinationLocation!.longitude,
+      ),
+      northeast: LatLng(
+        pickupLocation!.latitude > destinationLocation!.latitude
+            ? pickupLocation!.latitude
+            : destinationLocation!.latitude,
+        pickupLocation!.longitude > destinationLocation!.longitude
+            ? pickupLocation!.longitude
+            : destinationLocation!.longitude,
+      ),
+    );
+
+    mapController!.animateCamera(CameraUpdate.newLatLngBounds(bounds, 100));
   }
 
   void _startLocationTracking() {
@@ -299,13 +478,13 @@ class DriverHomeScreenController extends GetxController {
 
       currentPosition = position;
 
-      // Update driver marker
+      // Update driver marker with custom car icon
       markers.removeWhere((m) => m.markerId.value == 'driver_location');
       markers.add(
         Marker(
           markerId: const MarkerId('driver_location'),
           position: LatLng(position.latitude, position.longitude),
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+          icon: _driverMarkerIcon ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
           infoWindow: const InfoWindow(title: 'You'),
         ),
       );
@@ -396,7 +575,8 @@ class DriverHomeScreenController extends GetxController {
         Marker(
           markerId: const MarkerId('driver_location'),
           position: LatLng(position.latitude, position.longitude),
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+          icon: _driverMarkerIcon ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+          infoWindow: const InfoWindow(title: 'You'),
         ),
       };
 

@@ -102,6 +102,34 @@ class DriverTripController extends GetxController {
     // Initialize state - use initialState if provided, otherwise pendingRequests
     currentState = (initialState ?? TripState.pendingRequests).obs;
     _loadRideRequestData();
+    _setupRideAcceptedListener();
+  }
+
+  void _setupRideAcceptedListener() {
+    // Listen for ride-accepted from DriverHomeScreenController
+    try {
+      final homeController = Get.find<DriverHomeScreenController>();
+      ever(homeController.isRideAccepted, (bool isAccepted) {
+        if (isAccepted) {
+          _logger.i('Ride accepted detected in DriverTripController, changing state to tripTaken');
+
+          // Set the accepted ride data
+          acceptedRideId.value = homeController.acceptedRideId.value;
+          acceptedRiderId.value = homeController.acceptedRiderId.value;
+          isRideAccepted.value = true;
+
+          // Ensure we have the trip selected
+          if (selectedTrip.value == null && pendingTrips.isNotEmpty) {
+            selectedTrip.value = pendingTrips.first;
+          }
+
+          // Change state to show TripTakenBottomSheet
+          currentState.value = TripState.tripTaken;
+        }
+      });
+    } catch (e) {
+      _logger.e('Error setting up ride accepted listener: $e');
+    }
   }
 
   @override
@@ -217,14 +245,13 @@ class DriverTripController extends GetxController {
       final pickupLocation = currentRideRequest.value!.pickUp;
       _logger.i('Pickup location: ${pickupLocation.name}, coordinates: ${pickupLocation.coordinates}');
 
-      // Notify DriverHomeScreenController to show polyline
+      // Notify DriverHomeScreenController to show polyline from current location to pickup
       try {
         final homeController = Get.find<DriverHomeScreenController>();
         homeController.showRouteToPickup(
+          // Static pickup location (since API returns [0,0])
           pickupLat: 23.73439856033021,
-         pickupLng: 90.40467599770942,
-         // pickupLat: pickupLocation.latitude,
-        //  pickupLng: pickupLocation.longitude,
+          pickupLng: 90.40467599770942,
           pickupName: pickupLocation.name,
         );
       } catch (e) {
@@ -248,7 +275,14 @@ class DriverTripController extends GetxController {
     currentState.value = TripState.dropOffArrived;
   }
 
-  void completeTrip() {
+  Future<void> completeTrip() async {
+    _logger.i('Completing trip - emitting drop-off-rider socket event');
+
+    // Emit drop-off-rider socket event
+    await SocketIoService.to.emitDropOffRider();
+
+    _logger.i('drop-off-rider event emitted successfully');
+
     currentState.value = TripState.pendingRequests;
     selectedTrip.value = null;
   }
