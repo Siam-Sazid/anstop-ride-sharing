@@ -81,8 +81,9 @@ enum TripState {
 // Driver trip controller
 class DriverTripController extends GetxController {
   final TripState? initialState;
+  final VoidCallback? onDismiss;
 
-  DriverTripController({this.initialState});
+  DriverTripController({this.initialState, this.onDismiss});
 
   late final Rx<TripState> currentState;
   final RxList<TripRequest> pendingTrips = <TripRequest>[].obs;
@@ -132,11 +133,7 @@ class DriverTripController extends GetxController {
     }
   }
 
-  @override
-  void onClose() {
-    bidController.dispose();
-    super.onClose();
-  }
+
 
   void _loadRideRequestData() {
     try {
@@ -220,8 +217,8 @@ class DriverTripController extends GetxController {
         duration: const Duration(seconds: 2),
       );
 
-      // Close the bottom sheet after submitting
-      Get.back();
+      // Close the trip flow after submitting
+      closeTripFlow();
     } else {
       Get.snackbar(
         'Invalid Bid',
@@ -237,26 +234,37 @@ class DriverTripController extends GetxController {
     currentState.value = TripState.tripAccepted;
   }
 
-  void goToMapWithPickupRoute() {
+  Future<void> goToMapWithPickupRoute() async {
     _logger.i('Going to map with pickup route');
 
-    // Get pickup location from ride request
-    if (currentRideRequest.value != null) {
-      final pickupLocation = currentRideRequest.value!.pickUp;
-      _logger.i('Pickup location: ${pickupLocation.name}, coordinates: ${pickupLocation.coordinates}');
+    try {
+      final homeController = Get.find<DriverHomeScreenController>();
 
-      // Notify DriverHomeScreenController to show polyline from current location to pickup
-      try {
-        final homeController = Get.find<DriverHomeScreenController>();
-        homeController.showRouteToPickup(
+      // Get pickup location from local or home controller's ride request
+      final rideRequest = currentRideRequest.value ?? homeController.currentRideRequest.value;
+
+      if (rideRequest != null) {
+        final pickupLocation = rideRequest.pickUp;
+        _logger.i('Pickup location: ${pickupLocation.name}, coordinates: ${pickupLocation.coordinates}');
+
+        // Notify DriverHomeScreenController to show polyline from current location to pickup
+        await homeController.showRouteToPickup(
           // Static pickup location (since API returns [0,0])
           pickupLat: 23.73439856033021,
           pickupLng: 90.40467599770942,
           pickupName: pickupLocation.name,
         );
-      } catch (e) {
-        _logger.e('Error getting DriverHomeScreenController: $e');
+      } else {
+        _logger.e('No ride request available');
+        // Still show route with default pickup name
+        await homeController.showRouteToPickup(
+          pickupLat: 23.73439856033021,
+          pickupLng: 90.40467599770942,
+          pickupName: 'Pickup Location',
+        );
       }
+    } catch (e) {
+      _logger.e('Error in goToMapWithPickupRoute: $e');
     }
 
     // Change state to tripAccepted to show the TripAcceptedBottomSheet
@@ -264,6 +272,10 @@ class DriverTripController extends GetxController {
   }
 
   void startTrip() {
+    // Ensure selectedTrip is set before transitioning
+    if (selectedTrip.value == null && pendingTrips.isNotEmpty) {
+      selectedTrip.value = pendingTrips.first;
+    }
     currentState.value = TripState.activeTrip;
   }
 
@@ -292,6 +304,10 @@ class DriverTripController extends GetxController {
     selectedTrip.value = null;
   }
 
+  void closeTripFlow() {
+    onDismiss?.call();
+  }
+
   Future<void> confirmPickup() async {
     _logger.i('Confirming pickup - emitting pickup-rider socket event');
 
@@ -318,13 +334,14 @@ class DriverTripController extends GetxController {
 // Main trip flow widget
 class DriverTripFlow extends StatelessWidget {
   final TripState? initialState;
+  final VoidCallback? onDismiss;
 
-  const DriverTripFlow({Key? key, this.initialState}) : super(key: key);
+  const DriverTripFlow({Key? key, this.initialState, this.onDismiss}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<DriverTripController>(
-      init: DriverTripController(initialState: initialState),
+      init: DriverTripController(initialState: initialState, onDismiss: onDismiss),
       builder: (controller) {
         return Obx(() {
           switch (controller.currentState.value) {
@@ -704,7 +721,7 @@ class TripRequestCard extends StatelessWidget {
                 SizedBox(width: 12.w),
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: () => Get.back(),
+                    onPressed: () => Get.find<DriverTripController>().closeTripFlow(),
                     style: OutlinedButton.styleFrom(
                       padding: EdgeInsets.symmetric(vertical: 12.h),
                       side: const BorderSide(color: Colors.red),
@@ -738,7 +755,12 @@ class TripDetailBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<DriverTripController>();
-    final trip = controller.selectedTrip.value!;
+    final trip = controller.selectedTrip.value ??
+        (controller.pendingTrips.isNotEmpty ? controller.pendingTrips.first : null);
+
+    if (trip == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
     return Container(
       height:MediaQuery.of(context).size.height * 0.8,
@@ -1084,7 +1106,12 @@ class BiddingBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<DriverTripController>();
-    final trip = controller.selectedTrip.value!;
+    final trip = controller.selectedTrip.value ??
+        (controller.pendingTrips.isNotEmpty ? controller.pendingTrips.first : null);
+
+    if (trip == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.8,
@@ -1603,7 +1630,12 @@ class ActiveTripBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<DriverTripController>();
-    final trip = controller.selectedTrip.value!;
+    final trip = controller.selectedTrip.value ??
+        (controller.pendingTrips.isNotEmpty ? controller.pendingTrips.first : null);
+
+    if (trip == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1892,7 +1924,12 @@ class DropOffNavigationBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<DriverTripController>();
-    final trip = controller.selectedTrip.value!;
+    final trip = controller.selectedTrip.value ??
+        (controller.pendingTrips.isNotEmpty ? controller.pendingTrips.first : null);
+
+    if (trip == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
     return Container(
       height: MediaQuery.of(context).size.height,
@@ -2195,7 +2232,12 @@ class DropOffArrivedBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<DriverTripController>();
-    final trip = controller.selectedTrip.value!;
+    final trip = controller.selectedTrip.value ??
+        (controller.pendingTrips.isNotEmpty ? controller.pendingTrips.first : null);
+
+    if (trip == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
     return Column(
       children: [

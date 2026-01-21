@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -37,12 +38,29 @@ class DriverHomeScreenController extends GetxController {
   String? destinationName;
   StreamSubscription<Position>? _locationSubscription;
 
+  // Route tracking for snap-to-route and rotation
+  List<LatLng> _currentRoutePoints = [];
+  double _currentBearing = 0.0;
+  int _currentRouteSegmentIndex = 0;
+
+  // Simulation mode for testing/demo
+  final RxBool isSimulationMode = false.obs;
+  Timer? _simulationTimer;
+  int _simulationPointIndex = 0;
+  double _simulationProgress = 0.0; // 0.0 to 1.0 between two points
+  static const double _simulationSpeed = 0.05; // Progress per tick (adjust for speed)
+  static const int _simulationIntervalMs = 50; // Timer interval in milliseconds
+
   // Google API Key from manifest
   static const String _googleApiKey = 'AIzaSyCOAYoZktEbWIRX4mbS9D9ypHXdyYWFpSo';
 
   // Custom markers
   BitmapDescriptor? _pickupMarkerIcon;
   BitmapDescriptor? _driverMarkerIcon;
+
+  // Store original car image for rotation
+  ui.Image? _carImage;
+  int _carImageSize = 80;
 
   static const CameraPosition defaultLocation = CameraPosition(
     target: LatLng(23.8103, 90.4125),
@@ -65,22 +83,96 @@ class DriverHomeScreenController extends GetxController {
       );
       _logger.i('Pickup marker icon loaded');
 
-      _driverMarkerIcon = await _getBitmapDescriptorFromAsset(
-        'assets/images/3D_car.png',
-        80, // width
-      );
+      // Load and store the car image for rotation
+      _carImage = await _loadCarImage('assets/images/3D_car.png', _carImageSize);
+      _driverMarkerIcon = await _getRotatedCarBitmap(0); // Initial rotation 0
       _logger.i('Driver marker icon loaded');
 
       _logger.i('Custom markers loaded successfully');
 
       // Update markers if they already exist
       if (markers.isNotEmpty && currentPosition != null) {
-        _updateDriverMarker();
+        await _updateDriverMarker();
       }
     } catch (e, stackTrace) {
       _logger.e('Error loading custom markers: $e');
       _logger.e('Stack trace: $stackTrace');
     }
+  }
+
+  // Load car image and store it for rotation
+  Future<ui.Image> _loadCarImage(String assetPath, int width) async {
+    final ByteData data = await rootBundle.load(assetPath);
+    final ui.Codec codec = await ui.instantiateImageCodec(
+      data.buffer.asUint8List(),
+      targetWidth: width,
+    );
+    final ui.FrameInfo fi = await codec.getNextFrame();
+    return fi.image;
+  }
+
+  // Create a rotated bitmap descriptor from the car image
+  Future<BitmapDescriptor> _getRotatedCarBitmap(double rotationDegrees) async {
+    _logger.i('_getRotatedCarBitmap called with rotation: ${rotationDegrees.toStringAsFixed(1)}°');
+
+    if (_carImage == null) {
+      _logger.e('Car image is null! Cannot rotate.');
+      return BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen);
+    }
+
+    final int imageWidth = _carImage!.width;
+    final int imageHeight = _carImage!.height;
+
+    // Calculate the size needed for the rotated image (diagonal of original)
+    final double diagonal = math.sqrt(imageWidth * imageWidth + imageHeight * imageHeight);
+    final int canvasSize = diagonal.ceil();
+
+    // Remove the +90 test offset once rotation is confirmed working
+    final double finalRotation = rotationDegrees; // Use actual bearing
+
+    final double rotationRadians = finalRotation * math.pi / 180;
+
+    _logger.i('Car image: ${imageWidth}x$imageHeight, canvas: $canvasSize, rotation: ${finalRotation.toStringAsFixed(1)}°');
+
+    // Create a picture recorder and canvas
+    final ui.PictureRecorder recorder = ui.PictureRecorder();
+    final Canvas canvas = Canvas(recorder, Rect.fromLTWH(0, 0, canvasSize.toDouble(), canvasSize.toDouble()));
+
+    // Calculate center offset
+    final double centerX = canvasSize / 2.0;
+    final double centerY = canvasSize / 2.0;
+
+    // Save canvas state
+    canvas.save();
+
+    // Move to center of canvas
+    canvas.translate(centerX, centerY);
+
+    // Rotate around center
+    canvas.rotate(rotationRadians);
+
+    // Draw image centered at origin (which is now the center of canvas, rotated)
+    canvas.drawImage(
+      _carImage!,
+      Offset(-imageWidth / 2.0, -imageHeight / 2.0),
+      Paint()..filterQuality = FilterQuality.high,
+    );
+
+    // Restore canvas state
+    canvas.restore();
+
+    // Convert to image
+    final ui.Picture picture = recorder.endRecording();
+    final ui.Image rotatedImage = await picture.toImage(canvasSize, canvasSize);
+    final ByteData? byteData = await rotatedImage.toByteData(format: ui.ImageByteFormat.png);
+
+    if (byteData == null) {
+      _logger.e('Failed to get byte data from rotated image');
+      return BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen);
+    }
+
+    _logger.i('Rotated bitmap SUCCESS - size: $canvasSize, bytes: ${byteData.lengthInBytes}');
+    return BitmapDescriptor.bytes(byteData.buffer.asUint8List());
   }
 
   Future<BitmapDescriptor> _getBitmapDescriptorFromAsset(String assetPath, int width) async {
@@ -95,19 +187,105 @@ class DriverHomeScreenController extends GetxController {
     return BitmapDescriptor.bytes(resizedImageData);
   }
 
-  void _updateDriverMarker() {
+  Future<void> _updateDriverMarker() async {
     if (currentPosition == null) return;
+
+    // Get rotated car bitmap based on current bearing
+    final rotatedIcon = await _getRotatedCarBitmap(_currentBearing);
 
     markers.removeWhere((m) => m.markerId.value == 'driver_location');
     markers.add(
       Marker(
         markerId: const MarkerId('driver_location'),
         position: LatLng(currentPosition!.latitude, currentPosition!.longitude),
-        icon: _driverMarkerIcon ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+        icon: rotatedIcon,
         infoWindow: const InfoWindow(title: 'You'),
+        anchor: const Offset(0.5, 0.5),
+        flat: true,
       ),
     );
     update();
+  }
+
+  // Calculate bearing (angle) between two points in degrees
+  double _calculateBearing(LatLng from, LatLng to) {
+    final lat1 = from.latitude * math.pi / 180;
+    final lat2 = to.latitude * math.pi / 180;
+    final diffLng = (to.longitude - from.longitude) * math.pi / 180;
+
+    final x = math.sin(diffLng) * math.cos(lat2);
+    final y = math.cos(lat1) * math.sin(lat2) -
+        math.sin(lat1) * math.cos(lat2) * math.cos(diffLng);
+
+    final bearing = math.atan2(x, y);
+    return (bearing * 180 / math.pi + 360) % 360;
+  }
+
+  // Find the closest point on the route and return snapped position with bearing
+  ({LatLng position, double bearing, int segmentIndex}) _snapToRouteWithBearing(LatLng currentPosition) {
+    if (_currentRoutePoints.isEmpty) {
+      return (position: currentPosition, bearing: _currentBearing, segmentIndex: 0);
+    }
+
+    double minDistance = double.infinity;
+    LatLng closestPoint = currentPosition;
+    int closestSegmentIndex = _currentRouteSegmentIndex;
+
+    // Search from current segment onwards (driver moves forward)
+    // Also check a few segments back in case of GPS drift
+    final startIndex = math.max(0, _currentRouteSegmentIndex - 2);
+
+    for (int i = startIndex; i < _currentRoutePoints.length; i++) {
+      final point = _currentRoutePoints[i];
+      final distance = Geolocator.distanceBetween(
+        currentPosition.latitude,
+        currentPosition.longitude,
+        point.latitude,
+        point.longitude,
+      );
+
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestPoint = point;
+        closestSegmentIndex = i;
+      }
+    }
+
+    // Calculate bearing to next point on route
+    double bearing = _currentBearing;
+    if (closestSegmentIndex < _currentRoutePoints.length - 1) {
+      bearing = _calculateBearing(
+        closestPoint,
+        _currentRoutePoints[closestSegmentIndex + 1],
+      );
+    }
+
+    _logger.i('Snapped to route point $closestSegmentIndex, distance: ${minDistance.toStringAsFixed(1)}m, bearing: ${bearing.toStringAsFixed(1)}°');
+
+    return (position: closestPoint, bearing: bearing, segmentIndex: closestSegmentIndex);
+  }
+
+  // Update driver marker with position and rotated bitmap
+  Future<void> _updateDriverMarkerWithRotation(LatLng position, double bearing) async {
+    // Get rotated car bitmap
+    final rotatedIcon = await _getRotatedCarBitmap(bearing);
+
+    // Create a new marker
+    final newMarker = Marker(
+      markerId: const MarkerId('driver_location'),
+      position: position,
+      icon: rotatedIcon,
+      infoWindow: const InfoWindow(title: 'You'),
+      anchor: const Offset(0.5, 0.5),
+      flat: true,
+    );
+
+    // Create a new Set to ensure Google Maps detects the change
+    final updatedMarkers = markers.where((m) => m.markerId.value != 'driver_location').toSet();
+    updatedMarkers.add(newMarker);
+    markers = updatedMarkers;
+
+    _logger.i('Marker updated with bearing: ${bearing.toStringAsFixed(1)}°, icon hash: ${rotatedIcon.hashCode}');
   }
 
   Future<void> _setupSocketListeners() async {
@@ -153,7 +331,13 @@ class DriverHomeScreenController extends GetxController {
         _handleRideAccepted(data);
       });
 
-      _logger.i('Socket listeners set up successfully - ride-request and ride-accepted');
+      // Set up the ride-picked-up listener
+      socketService.onRidePickedUp((data) {
+        _logger.i('Ride picked up received: $data');
+        _handleRidePickedUp(data);
+      });
+
+      _logger.i('Socket listeners set up successfully - ride-request, ride-accepted, and ride-picked-up');
     } catch (e) {
       _logger.e('Error setting up socket listeners: $e');
     }
@@ -186,6 +370,13 @@ class DriverHomeScreenController extends GetxController {
       if (data is Map<String, dynamic>) {
         currentRideRequest.value = RideRequestModel.fromJson(data);
         hasNewRideRequest.value = true;
+
+        // Store destination location for later use (when ride-picked-up is received)
+        final destination = currentRideRequest.value!.destination;
+        destinationLocation = LatLng(destination.latitude, destination.longitude);
+        destinationName = destination.name;
+        _logger.i('Stored destination: $destinationName at [${destination.longitude}, ${destination.latitude}]');
+
         _logger.i('Ride request parsed successfully: ${currentRideRequest.value?.rideId}');
         update();
       }
@@ -200,18 +391,92 @@ class DriverHomeScreenController extends GetxController {
     update();
   }
 
+  Future<void> _handleRidePickedUp(dynamic data) async {
+    try {
+      _logger.i('Handling ride-picked-up event');
+
+      // Use stored destination location (stored when ride-request was received)
+      if (destinationLocation != null && destinationName != null) {
+        _logger.i('Using stored destination: $destinationName at [${destinationLocation!.longitude}, ${destinationLocation!.latitude}]');
+
+        // Show route from pickup to destination - AWAIT this
+        await showRouteToDestination(
+          destinationLat: destinationLocation!.latitude,
+          destinationLng: destinationLocation!.longitude,
+          destinationName: destinationName!,
+        );
+      } else {
+        _logger.e('No destination location stored - cannot show route');
+      }
+    } catch (e) {
+      _logger.e('Error handling ride picked up: $e');
+    }
+  }
+
+  // Show route from pickup location to destination with polyline
+  Future<void> showRouteToDestination({
+    required double destinationLat,
+    required double destinationLng,
+    required String destinationName,
+  }) async {
+    _logger.i('showRouteToDestination called - destinationLat: $destinationLat, destinationLng: $destinationLng, destinationName: $destinationName');
+
+    // Use the static pickup location that was used earlier
+    if (pickupLocation == null) {
+      _logger.e('No pickup location set - cannot show route to destination');
+      // Set default pickup location
+      pickupLocation = const LatLng(23.73439856033021, 90.40467599770942);
+    }
+
+    destinationLocation = LatLng(destinationLat, destinationLng);
+    this.destinationName = destinationName;
+
+    // Reset route tracking for new route
+    _currentRoutePoints = [];
+    _currentRouteSegmentIndex = 0;
+
+    // Add destination marker
+    markers.removeWhere((m) => m.markerId.value == 'destination_location');
+    markers.add(
+      Marker(
+        markerId: const MarkerId('destination_location'),
+        position: LatLng(destinationLat, destinationLng),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+        infoWindow: InfoWindow(title: 'Destination', snippet: destinationName),
+      ),
+    );
+    _logger.i('Destination marker added. Total markers: ${markers.length}');
+
+    // Get and draw route from pickup to destination - AWAIT this!
+    await _getRoutePickupToDestination();
+    _logger.i('Route fetched. Route points count: ${_currentRoutePoints.length}');
+
+    // Start location tracking for destination route AFTER route is fetched
+    _startLocationTracking();
+
+    // Move camera to show both locations
+    _fitPickupAndDestination();
+
+    _logger.i('Calling update() after showRouteToDestination setup');
+    update();
+  }
+
   // Show route from current location to pickup with polyline
-  void showRouteToPickup({
+  Future<void> showRouteToPickup({
     required double pickupLat,
     required double pickupLng,
     required String pickupName,
-  }) {
+  }) async {
     _logger.i('showRouteToPickup called - pickupLat: $pickupLat, pickupLng: $pickupLng, pickupName: $pickupName');
     _logger.i('Current position: $currentPosition');
 
     this.pickupLocation = LatLng(pickupLat, pickupLng);
     this.pickupName = pickupName;
     isNavigatingToPickup.value = true;
+
+    // Reset route tracking for new route
+    _currentRoutePoints = [];
+    _currentRouteSegmentIndex = 0;
 
     // Add pickup marker with custom icon
     markers.add(
@@ -224,10 +489,11 @@ class DriverHomeScreenController extends GetxController {
     );
     _logger.i('Pickup marker added. Total markers: ${markers.length}');
 
-    // Get and draw route from current location to pickup
-    _getRouteToPickup();
+    // Get and draw route from current location to pickup - AWAIT this!
+    await _getRouteToPickup();
+    _logger.i('Route fetched. Route points count: ${_currentRoutePoints.length}');
 
-    // Start real-time location tracking
+    // Start real-time location tracking AFTER route is fetched
     _startLocationTracking();
 
     // Move camera to show both locations
@@ -261,6 +527,10 @@ class DriverHomeScreenController extends GetxController {
         if (data['status'] == 'OK' && data['routes'].isNotEmpty) {
           final points = data['routes'][0]['overview_polyline']['points'];
           final polylinePoints = _decodePolyline(points);
+
+          // Store route points for snap-to-route and bearing calculation
+          _currentRoutePoints = polylinePoints;
+          _currentRouteSegmentIndex = 0;
 
           polylines.value = {
             Polyline(
@@ -321,6 +591,10 @@ class DriverHomeScreenController extends GetxController {
           final polylinePoints = _decodePolyline(points);
 
           _logger.i('Decoded ${polylinePoints.length} polyline points');
+
+          // Store route points for snap-to-route and bearing calculation
+          _currentRoutePoints = polylinePoints;
+          _currentRouteSegmentIndex = 0;
 
           polylines.value = {
             Polyline(
@@ -465,6 +739,7 @@ class DriverHomeScreenController extends GetxController {
 
   void _startLocationTracking() {
     _logger.i('Starting real-time location tracking');
+    _logger.i('Route points available: ${_currentRoutePoints.length}');
 
     _locationSubscription?.cancel();
 
@@ -473,30 +748,160 @@ class DriverHomeScreenController extends GetxController {
         accuracy: LocationAccuracy.high,
         distanceFilter: 10, // Update every 10 meters
       ),
-    ).listen((Position position) {
+    ).listen((Position position) async {
       _logger.i('Location updated: ${position.latitude}, ${position.longitude}');
+      _logger.i('Current route points count: ${_currentRoutePoints.length}');
 
       currentPosition = position;
 
-      // Update driver marker with custom car icon
-      markers.removeWhere((m) => m.markerId.value == 'driver_location');
-      markers.add(
-        Marker(
-          markerId: const MarkerId('driver_location'),
-          position: LatLng(position.latitude, position.longitude),
-          icon: _driverMarkerIcon ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
-          infoWindow: const InfoWindow(title: 'You'),
-        ),
-      );
+      final currentLatLng = LatLng(position.latitude, position.longitude);
 
-      // Update route polyline
-      if (isNavigatingToPickup.value) {
-        _getRouteToPickup();
+      // Snap to route and get bearing if we have route points
+      if (_currentRoutePoints.isNotEmpty) {
+        final snappedResult = _snapToRouteWithBearing(currentLatLng);
+
+        // Update current bearing and segment index
+        _currentBearing = snappedResult.bearing;
+        _currentRouteSegmentIndex = snappedResult.segmentIndex;
+
+        _logger.i('ROTATION DEBUG - Bearing: ${snappedResult.bearing.toStringAsFixed(1)}°, Segment: ${snappedResult.segmentIndex}');
+
+        // Update driver marker with snapped position and rotated bitmap
+        await _updateDriverMarkerWithRotation(snappedResult.position, snappedResult.bearing);
+
+        _logger.i('Driver marker updated - snapped position: ${snappedResult.position}, bearing: ${snappedResult.bearing.toStringAsFixed(1)}°');
+      } else {
+        _logger.w('No route points available - marker will not rotate');
+        // No route, just update marker at actual position without rotation
+        markers.removeWhere((m) => m.markerId.value == 'driver_location');
+        markers.add(
+          Marker(
+            markerId: const MarkerId('driver_location'),
+            position: currentLatLng,
+            icon: _driverMarkerIcon ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+            infoWindow: const InfoWindow(title: 'You'),
+          ),
+        );
       }
+
+      // NOTE: Removed route re-fetch to avoid resetting route points and segment index
 
       update();
     });
   }
+
+  // ==================== SIMULATION MODE ====================
+
+  /// Start simulation mode - car auto-moves along the route
+  void startSimulation() {
+    if (_currentRoutePoints.isEmpty) {
+      _logger.e('Cannot start simulation - no route points available');
+      return;
+    }
+
+    _logger.i('Starting route simulation with ${_currentRoutePoints.length} points');
+
+    // Stop real GPS tracking if active
+    _locationSubscription?.cancel();
+    _locationSubscription = null;
+
+    // Reset simulation state
+    _simulationPointIndex = 0;
+    _simulationProgress = 0.0;
+    isSimulationMode.value = true;
+
+    // Start simulation timer
+    _simulationTimer?.cancel();
+    _simulationTimer = Timer.periodic(
+      const Duration(milliseconds: _simulationIntervalMs),
+      (_) => _advanceSimulation(),
+    );
+
+    update();
+  }
+
+  /// Stop simulation mode
+  void stopSimulation() {
+    _logger.i('Stopping route simulation');
+
+    _simulationTimer?.cancel();
+    _simulationTimer = null;
+    isSimulationMode.value = false;
+    _simulationPointIndex = 0;
+    _simulationProgress = 0.0;
+
+    update();
+  }
+
+  /// Toggle simulation mode on/off
+  void toggleSimulation() {
+    if (isSimulationMode.value) {
+      stopSimulation();
+    } else {
+      startSimulation();
+    }
+  }
+
+  /// Advance the simulation by one step
+  Future<void> _advanceSimulation() async {
+    if (_currentRoutePoints.isEmpty || _simulationPointIndex >= _currentRoutePoints.length - 1) {
+      _logger.i('Simulation reached end of route');
+      stopSimulation();
+      return;
+    }
+
+    // Get current and next points
+    final currentPoint = _currentRoutePoints[_simulationPointIndex];
+    final nextPoint = _currentRoutePoints[_simulationPointIndex + 1];
+
+    // Advance progress
+    _simulationProgress += _simulationSpeed;
+
+    // Check if we've reached the next point
+    if (_simulationProgress >= 1.0) {
+      _simulationProgress = 0.0;
+      _simulationPointIndex++;
+
+      if (_simulationPointIndex >= _currentRoutePoints.length - 1) {
+        _logger.i('Simulation completed - reached destination');
+        stopSimulation();
+        return;
+      }
+    }
+
+    // Interpolate position between current and next point
+    final interpolatedPosition = _interpolatePosition(
+      currentPoint,
+      nextPoint,
+      _simulationProgress,
+    );
+
+    // Calculate bearing to next point
+    final bearing = _calculateBearing(currentPoint, nextPoint);
+
+    // Update marker with interpolated position and rotation
+    await _updateDriverMarkerWithRotation(interpolatedPosition, bearing);
+
+    _logger.d('Simulation: point $_simulationPointIndex/${_currentRoutePoints.length - 1}, progress: ${(_simulationProgress * 100).toStringAsFixed(0)}%, bearing: ${bearing.toStringAsFixed(1)}°');
+
+    update();
+  }
+
+  /// Interpolate between two LatLng points
+  LatLng _interpolatePosition(LatLng from, LatLng to, double progress) {
+    final lat = from.latitude + (to.latitude - from.latitude) * progress;
+    final lng = from.longitude + (to.longitude - from.longitude) * progress;
+    return LatLng(lat, lng);
+  }
+
+  /// Set simulation speed (0.01 = slow, 0.1 = fast)
+  void setSimulationSpeed(double speed) {
+    _logger.i('Setting simulation speed to $speed');
+    // Note: This requires restarting simulation to take effect
+    // For dynamic speed, you'd modify _simulationSpeed directly
+  }
+
+  // ==================== END SIMULATION MODE ====================
 
   void _fitBothLocations() {
     if (mapController == null || currentPosition == null || pickupLocation == null) return;
@@ -529,6 +934,15 @@ class DriverHomeScreenController extends GetxController {
     _locationSubscription?.cancel();
     _locationSubscription = null;
     polylines.clear();
+
+    // Stop simulation if running
+    stopSimulation();
+
+    // Clear route tracking data
+    _currentRoutePoints = [];
+    _currentRouteSegmentIndex = 0;
+    _currentBearing = 0.0;
+
     markers.removeWhere((m) => m.markerId.value == 'pickup_location');
     update();
   }
@@ -571,12 +985,17 @@ class DriverHomeScreenController extends GetxController {
 
       currentPosition = position;
 
+      // Get rotated car bitmap (initial bearing is 0)
+      final rotatedIcon = await _getRotatedCarBitmap(_currentBearing);
+
       markers = {
         Marker(
           markerId: const MarkerId('driver_location'),
           position: LatLng(position.latitude, position.longitude),
-          icon: _driverMarkerIcon ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+          icon: rotatedIcon,
           infoWindow: const InfoWindow(title: 'You'),
+          anchor: const Offset(0.5, 0.5),
+          flat: true,
         ),
       };
 
@@ -593,6 +1012,7 @@ class DriverHomeScreenController extends GetxController {
   void onClose() {
     mapController?.dispose();
     _locationSubscription?.cancel();
+    _simulationTimer?.cancel();
     // Remove socket listeners
     SocketIoService.to.offRideRequest();
     SocketIoService.to.offRideAccepted();

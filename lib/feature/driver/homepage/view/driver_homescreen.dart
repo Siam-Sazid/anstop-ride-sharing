@@ -23,7 +23,10 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
   late AnimationController _animationController;
   late Animation<double> _rippleAnimation;
   late DriverHomeScreenController _homeController;
-  bool _isBottomSheetOpen = false;
+
+  // Bottom sheet visibility states
+  final RxBool _showTripFlow = false.obs;
+  final Rx<TripState?> _tripFlowInitialState = Rx<TripState?>(null);
 
   @override
   void initState() {
@@ -45,7 +48,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
   void _setupRideRequestObserver() {
     // Listen for new ride requests
     ever(_homeController.hasNewRideRequest, (bool hasRequest) {
-      if (hasRequest && mounted && !_isBottomSheetOpen) {
+      if (hasRequest && mounted && !_showTripFlow.value) {
         setState(() {
           _isOnline = true;
         });
@@ -56,46 +59,33 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
 
     // Listen for ride accepted (after driver submits bid and passenger accepts)
     ever(_homeController.isRideAccepted, (bool isAccepted) {
-      if (isAccepted && mounted && !_isBottomSheetOpen) {
+      if (isAccepted && mounted && !_showTripFlow.value) {
         _showDriverTripFlowWithAcceptedState();
       }
     });
   }
 
   void _showDriverTripFlowWithAcceptedState() {
-    if (_isBottomSheetOpen) return;
+    if (_showTripFlow.value) return;
 
-    _isBottomSheetOpen = true;
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      isDismissible: false,
-      enableDrag: false,
-      builder: (context) => const DriverTripFlow(initialState: TripState.tripTaken),
-    ).whenComplete(() {
-      _isBottomSheetOpen = false;
-      _homeController.clearRideAccepted();
-    });
+    _tripFlowInitialState.value = TripState.tripTaken;
+    _showTripFlow.value = true;
   }
 
   void _showDriverTripFlow() {
     // Only show if there's a valid ride request and bottom sheet is not already open
-    if (_isBottomSheetOpen) return;
+    if (_showTripFlow.value) return;
     if (_homeController.currentRideRequest.value == null) return;
 
-    _isBottomSheetOpen = true;
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      isDismissible: false,
-      enableDrag: false,
-      builder: (context) => const DriverTripFlow(),
-    ).whenComplete(() {
-      _isBottomSheetOpen = false;
-      _homeController.clearRideRequest();
-    });
+    _tripFlowInitialState.value = null;
+    _showTripFlow.value = true;
+  }
+
+  void _hideTripFlow() {
+    _showTripFlow.value = false;
+    _tripFlowInitialState.value = null;
+    _homeController.clearRideRequest();
+    _homeController.clearRideAccepted();
   }
 
   @override
@@ -109,7 +99,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
     return Scaffold(
       appBar: AppBar(
         title: CustomToggleSwitch(
-          isOnline: _isOnline,
+          isOnline: !_isOnline,
           onChanged: (value) {
             setState(() {
               _isOnline = value;
@@ -153,6 +143,25 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                   ),
                 ),
 
+              // 🚗 Simulation toggle button (only show when route exists)
+              if (controller.polylines.value.isNotEmpty)
+                Positioned(
+                  top: 16.h,
+                  right: 16.w,
+                  child: Obx(() => FloatingActionButton.small(
+                    onPressed: () => controller.toggleSimulation(),
+                    backgroundColor: controller.isSimulationMode.value
+                        ? Colors.red
+                        : AppColors.primaryColor,
+                    child: Icon(
+                      controller.isSimulationMode.value
+                          ? Icons.stop
+                          : Icons.play_arrow,
+                      color: Colors.white,
+                    ),
+                  )),
+                ),
+
               if (controller.currentPosition != null &&
                   !controller.isLoading &&
                   _isOnline)
@@ -172,7 +181,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
 
               //  Glass dialog (only when offline)
               // Glass dialog (only when offline)
-              if (!_isOnline)
+              if (_isOnline)
                 Positioned(
                   bottom: 50.h,
                   left: 0,
@@ -249,8 +258,6 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                 ),
                               ),
                               SizedBox(width: 16.w),
-                              // if (_isOnline && !controller.isLoading)
-                              //    DriverTripFlow(),
                             ],
                           ),
                         ),
@@ -259,7 +266,18 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                   ),
                 ),
 
-
+              // Trip Flow Bottom Sheet - positioned at bottom, allows map interaction
+              Obx(() => _showTripFlow.value
+                  ? Positioned(
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      child: DriverTripFlow(
+                        initialState: _tripFlowInitialState.value,
+                        onDismiss: _hideTripFlow,
+                      ),
+                    )
+                  : const SizedBox.shrink()),
             ],
           );
         },

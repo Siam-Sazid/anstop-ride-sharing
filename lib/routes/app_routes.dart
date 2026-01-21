@@ -396,19 +396,19 @@ abstract class AppRoutes {
     /// Support Routes
     GetPage(
       name: supportListScreen,
-      page: () => const SupportListScreen(),
+      page: () =>  SupportListScreen(),
       binding: SupportListBinding(),
     ),
     GetPage(
       name: createSupportScreen,
-      page: () => const CreateSupportScreen(),
+      page: () =>  CreateSupportScreen(),
       binding: CreateSupportBinding(),
     ),
 
     /// Wallet Routes
     GetPage(
       name: addMoneyScreen,
-      page: () => const AddMoneyScreen(),
+      page: () =>  AddMoneyScreen(),
       binding: WalletBinding(),
     ),
   ];

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:ride_sharing/feature/auth/controller/login_controller.dart';
 import 'package:ride_sharing/feature/settings/controller/change_password_controller.dart';
 import 'package:ride_sharing/feature/settings/controller/legal_pages_controller.dart';
 import 'package:ride_sharing/feature/settings/data/legal_document_model.dart';
@@ -7,6 +8,7 @@ import 'package:ride_sharing/l10n/l10n_helper.dart';
 import 'package:ride_sharing/feature/settings/utils/settings_menu_item.dart';
 import 'package:ride_sharing/feature/settings/view/change_password_screen.dart';
 import 'package:ride_sharing/feature/settings/view/legal_pages_screen.dart';
+import 'package:ride_sharing/routes/app_routes.dart';
 import 'package:ride_sharing/utils/driver/driver_custom_drawer.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 import '../../../app/utils/app_colors.dart';
@@ -19,6 +21,8 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ChangePasswordController changePasswordController = Get.put(ChangePasswordController());
+    LoginController loginController = Get.put(LoginController());
+
 
     return Scaffold(
       backgroundColor: SettingsColors.backgroundColor,
@@ -28,11 +32,14 @@ class SettingsScreen extends StatelessWidget {
         systemOverlayStyle: SystemUiOverlayStyle.dark,
         leading: IconButton(
           icon: const Icon(
-            Icons.menu,
+            Icons.arrow_back_ios_new,
             color: SettingsColors.primaryText,
             size: 24,
           ),
-          onPressed: () {},
+          onPressed: () {
+
+          loginController.navigateToHomeByRole();
+          },
         ),
         title: Text(
           AppLocalization.tr.settingsTitle,

@@ -1,9 +1,12 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ride_sharing/feature/auth/controller/login_controller.dart';
 import 'package:ride_sharing/feature/passenger/wallet/view/passenger_wallet_dialog_view.dart';
 import 'package:ride_sharing/feature/wallet/controller/wallet_controller.dart';
 import 'package:ride_sharing/routes/app_routes.dart';
 import 'package:ride_sharing/utils/balanced_card.dart';
+import 'package:ride_sharing/utils/driver/driver_custom_drawer.dart';
+import 'package:ride_sharing/utils/passenger/passenger_custom_drawer.dart';
 import 'package:ride_sharing/utils/transaction_items.dart';
 import 'package:ride_sharing/widgets/custom_app_bar_title.dart';
 import '../../../../app/utils/app_colors.dart';
@@ -20,6 +23,7 @@ class DriverWalletPage extends StatefulWidget {
 class _DriverWalletPageState extends State<DriverWalletPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final WalletController _walletController = Get.put(WalletController());
+  final LoginController loginController = Get.put(LoginController());
 
   // Store withdrawal form data
   int? _withdrawAmount;
@@ -96,6 +100,7 @@ class _DriverWalletPageState extends State<DriverWalletPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
+      drawer: DriverCustomDrawer(),
       backgroundColor: AppColors.backgroundColor,
       appBar: CustomAppBarTitle(
       scaffoldKey: _scaffoldKey,

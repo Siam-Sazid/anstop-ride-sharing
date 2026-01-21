@@ -16,37 +16,35 @@ class DriverGoogleMapWidget extends StatelessWidget {
         // Log current state for debugging
         _logger.i('DriverGoogleMapWidget rebuild - markers: ${controller.markers.length}, polylines: ${controller.polylines.value.length}');
 
-        return Obx(() {
-          final polylines = controller.polylines.value;
-          _logger.i('Obx rebuild - polylines count: ${polylines.length}');
+        // Get polylines value (reactive)
+        final polylines = controller.polylines.value;
 
-          return GoogleMap(
-            initialCameraPosition: DriverHomeScreenController.defaultLocation,
-            myLocationEnabled: true,
-            myLocationButtonEnabled: false,
-            mapType: MapType.normal,
-            zoomControlsEnabled: false,
-            markers: controller.markers,
-            polylines: polylines,
-            onMapCreated: (GoogleMapController googleMapController) {
-              _logger.i('GoogleMap onMapCreated called');
-              controller.mapController = googleMapController;
-              if (controller.currentPosition != null) {
-                googleMapController.animateCamera(
-                  CameraUpdate.newCameraPosition(
-                    CameraPosition(
-                      target: LatLng(
-                        controller.currentPosition!.latitude,
-                        controller.currentPosition!.longitude,
-                      ),
-                      zoom: 15.0,
+        return GoogleMap(
+          initialCameraPosition: DriverHomeScreenController.defaultLocation,
+          myLocationEnabled: true,
+          myLocationButtonEnabled: false,
+          mapType: MapType.normal,
+          zoomControlsEnabled: false,
+          markers: controller.markers,
+          polylines: polylines,
+          onMapCreated: (GoogleMapController googleMapController) {
+            _logger.i('GoogleMap onMapCreated called');
+            controller.mapController = googleMapController;
+            if (controller.currentPosition != null) {
+              googleMapController.animateCamera(
+                CameraUpdate.newCameraPosition(
+                  CameraPosition(
+                    target: LatLng(
+                      controller.currentPosition!.latitude,
+                      controller.currentPosition!.longitude,
                     ),
+                    zoom: 15.0,
                   ),
-                );
-              }
-            },
-          );
-        });
+                ),
+              );
+            }
+          },
+        );
       },
     );
   }

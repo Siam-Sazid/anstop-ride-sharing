@@ -6,6 +6,7 @@ import 'package:ride_sharing/feature/auth/data/signin_request_model.dart';
 import 'package:ride_sharing/feature/auth/data/signin_response_model.dart';
 import 'package:ride_sharing/feature/auth/service/auth_service.dart';
 import 'package:ride_sharing/routes/app_routes.dart';
+import 'package:ride_sharing/services/fcm_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginController extends GetxController {
@@ -21,6 +22,8 @@ class LoginController extends GetxController {
 
   // ==================== Services ====================
   final AuthService _authService = AuthService();
+  final FcmService _fcmService = FcmService();
+
 
   // ==================== Lifecycle ====================
   @override
@@ -95,8 +98,14 @@ class LoginController extends GetxController {
         }
 
         // Save tokens and user data to shared preferences
-        await _saveUserData(signInResponse.data);
-
+         await _saveUserData(signInResponse.data);
+        if (signInResponse.data.accessToken.isNotEmpty) {
+          await _fcmService.initFCM(
+            accessToken: signInResponse.data.accessToken,
+          );
+        }else{
+          debugPrint("No access token for fcm token");
+        }
         // Show success message
         // Get.snackbar(
         //   'Success',
@@ -139,6 +148,18 @@ class LoginController extends GetxController {
       );
     } finally {
       isLoading.value = false;
+    }
+  }
+  Future<void> navigateToHomeByRole() async {
+    final prefs = await SharedPreferences.getInstance();
+    final roles = prefs.getStringList('userRole') ?? [];
+
+    if (roles.contains('DRIVER')) {
+      Get.toNamed(AppRoutes.driverHomeScreen);
+    } else if (roles.contains('RIDER')) {
+      Get.toNamed(AppRoutes.passengerHomeScreen);
+    } else {
+      Get.toNamed(AppRoutes.passengerHomeScreen);
     }
   }
 

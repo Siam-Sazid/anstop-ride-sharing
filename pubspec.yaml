@@ -46,6 +46,8 @@ dependencies:
   flutter_rating_bar: ^4.0.0
   flutter_stripe:
   flutter_dotenv: ^5.1.0
+  firebase_core: ^4.4.0
+  firebase_messaging: ^16.1.1
 
 
 
@@ -66,13 +68,13 @@ flutter_gen:
     # flare_flutter: true
     # rive: true
 
-flutter_icons:
+flutter_launcher_icons:
   android: true
   ios: true
   remove_alpha_ios: true
-  image_path: "assets/images/app_logo.png"
-  adaptive_icon_background: "#FFFFFF"
-  adaptive_icon_foreground: "assets/images/app_logo.png"
+  image_path: "assets/images/david_logo.png"
+  adaptive_icon_background: "#1B4332"
+  adaptive_icon_foreground: "assets/images/david_logo.png"
 
 flutter:
   generate: true

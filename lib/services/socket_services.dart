@@ -321,5 +321,24 @@ class SocketIoService extends GetxService {
     _logger.i('Emitting drop-off-rider event with empty body');
     emit('drop-off-rider', {});
   }
+
+  // Listen for ride picked up (for drivers - when passenger is picked up)
+  void onRidePickedUp(Function(dynamic) handler) {
+    if (_socket == null) {
+      _logger.e('Cannot register ride-picked-up listener - socket is null!');
+      return;
+    }
+    _logger.i('Registering ride-picked-up listener, socket connected: ${_socket!.connected}');
+    _socket!.on('ride-picked-up', (data) {
+      _logger.i('ride-picked-up event received in service: $data');
+      handler(data);
+    });
+  }
+
+  // Stop listening for ride picked up
+  void offRidePickedUp() {
+    _logger.i('Removing ride-picked-up listener');
+    _socket?.off('ride-picked-up');
+  }
 }
 

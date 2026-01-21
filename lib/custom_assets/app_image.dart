@@ -29,6 +29,7 @@ class AppImage {
   static String undrawMyLocation = "$baseUrl/undraw_my-location.png";
   static String wallet = "$baseUrl/Wallet.png";
   static String walletDrawer = "$baseUrl/Wallet_drawer.png";
+  static String davidLogo = "$baseUrl/david_logo.png";
   static const String defaultProfileImageUrl =
       "https://thumbs.dreamstime.com/b/icon-profile-color-green-icon-profile-color-green-circle-color-dark-green-background-color-white-194702090.jpg";
 

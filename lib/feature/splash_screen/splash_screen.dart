@@ -7,12 +7,16 @@ import 'package:ride_sharing/feature/auth/view/log_in_screen.dart';
 import 'package:ride_sharing/feature/auth/view/registration.dart';
 import 'package:ride_sharing/feature/driver/homepage/view/driver_homescreen.dart';
 import 'package:ride_sharing/feature/splash_screen/onboarding_page_first.dart';
+import 'package:ride_sharing/services/fcm_service.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 
 import '../../l10n/l10n_helper.dart';
 import '../auth/view/email_validation_screen.dart';
 import '../auth/view/otp_varification_screen.dart';
 import '../auth/view/reset_password_screen.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
+
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -23,6 +27,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   bool isFrench = false;
+  final FcmService _fcmService = FcmService();
 
   @override
   void initState() {

@@ -5,6 +5,7 @@ import 'package:ride_sharing/feature/passenger/wallet/view/passenger_wallet_dial
 import 'package:ride_sharing/feature/wallet/controller/wallet_controller.dart';
 import 'package:ride_sharing/routes/app_routes.dart';
 import 'package:ride_sharing/utils/balanced_card.dart';
+import 'package:ride_sharing/utils/passenger/passenger_custom_drawer.dart';
 import 'package:ride_sharing/utils/transaction_items.dart';
 import 'package:ride_sharing/widgets/custom_app_bar_title.dart';
 import '../../../../app/utils/app_colors.dart';
@@ -56,6 +57,8 @@ class _PassengerWalletPageState extends State<PassengerWalletPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
+      drawer: PassengerCustomDrawer(),
       backgroundColor: AppColors.backgroundColor,
       appBar:  CustomAppBarTitle(
         scaffoldKey: _scaffoldKey,

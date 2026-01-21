@@ -54,4 +54,7 @@ class ApiUrls {
   // Ride Requests
   static String calculateFare(double distance) => '$baseUrl/rides/calculate-fare?distance=$distance';
   static const String createRideRequest = '$baseUrl/ride-requests/create-ride-request';
+  static const String setFcmToken = '$baseUrl/users/fcm-token';
+
+
 }

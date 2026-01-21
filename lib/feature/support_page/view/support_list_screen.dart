@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
+import 'package:ride_sharing/feature/auth/controller/login_controller.dart';
 import 'package:ride_sharing/l10n/l10n_helper.dart';
 import 'package:ride_sharing/routes/app_routes.dart';
 import 'package:ride_sharing/widgets/logo.dart';
@@ -9,8 +10,8 @@ import '../controller/support_list_controller.dart';
 import '../widget/support_list_item.dart';
 
 class SupportListScreen extends GetView<SupportListController> {
-  const SupportListScreen({super.key});
-
+   SupportListScreen({super.key});
+  LoginController loginController = Get.put(LoginController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,8 +20,8 @@ class SupportListScreen extends GetView<SupportListController> {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Get.back(),
+          icon:  Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => loginController.navigateToHomeByRole()
         ),
         title: Text(
           AppLocalization.tr.supportTitle,

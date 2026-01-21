@@ -13,7 +13,8 @@
       "Bash(bash:*)",
       "Bash(powershell:*)",
       "Bash(git diff:*)",
-      "Bash(dir \"C:\\\\Users\\\\Siam\\\\ride_sharing_app\\\\lib\\\\feature\\\\passenger\\\\trip_details\" /s /b)"
+      "Bash(dir \"C:\\\\Users\\\\Siam\\\\ride_sharing_app\\\\lib\\\\feature\\\\passenger\\\\trip_details\" /s /b)",
+      "Bash(flutter pub run:*)"
     ]
   }
 }
