@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -20,6 +21,8 @@ class DriverHomeScreen extends StatefulWidget {
 class _DriverHomeScreenState extends State<DriverHomeScreen>
     with SingleTickerProviderStateMixin {
   bool _isOnline = false;
+  bool _showPulseIndicator = false;
+  Timer? _pulseTimer;
   late AnimationController _animationController;
   late Animation<double> _rippleAnimation;
   late DriverHomeScreenController _homeController;
@@ -50,7 +53,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
     ever(_homeController.hasNewRideRequest, (bool hasRequest) {
       if (hasRequest && mounted && !_showTripFlow.value) {
         setState(() {
-          _isOnline = true;
+          _isOnline = false;
         });
         _animationController.forward();
         _showDriverTripFlow();
@@ -99,15 +102,32 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
     return Scaffold(
       appBar: AppBar(
         title: CustomToggleSwitch(
-          isOnline: !_isOnline,
+          isOnline: _isOnline,
           onChanged: (value) {
             setState(() {
               _isOnline = value;
               if (_isOnline) {
+                // Show pulse indicator for 2 seconds
+                _showPulseIndicator = true;
+
+                // Cancel any existing timer
+                _pulseTimer?.cancel();
+
+                // Hide after 2 seconds
+                _pulseTimer = Timer(const Duration(seconds: 2), () {
+                  if (mounted) {
+                    setState(() {
+                      _showPulseIndicator = false;
+                    });
+                  }
+                });
+
                 _animationController.forward();
-                // Bottom sheet will only show when ride-request socket event is received
               } else {
                 _animationController.stop();
+                // Immediately hide pulse when going offline
+                _showPulseIndicator = false;
+                _pulseTimer?.cancel();
               }
             });
           },
@@ -146,7 +166,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
               // 🚗 Simulation toggle button (only show when route exists)
               if (controller.polylines.value.isNotEmpty)
                 Positioned(
-                  top: 16.h,
+                  top: 70.h,
                   right: 16.w,
                   child: Obx(() => FloatingActionButton.small(
                     onPressed: () => controller.toggleSimulation(),
@@ -164,7 +184,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
 
               if (controller.currentPosition != null &&
                   !controller.isLoading &&
-                  _isOnline)
+                  _showPulseIndicator) // 👈 Now controlled by timer flag
                 Positioned.fill(
                   child: Center(
                     child: PulsingLocationIndicator(
@@ -181,7 +201,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
 
               //  Glass dialog (only when offline)
               // Glass dialog (only when offline)
-              if (_isOnline)
+              if (!_isOnline)
                 Positioned(
                   bottom: 50.h,
                   left: 0,

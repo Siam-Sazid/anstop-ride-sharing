@@ -340,5 +340,24 @@ class SocketIoService extends GetxService {
     _logger.i('Removing ride-picked-up listener');
     _socket?.off('ride-picked-up');
   }
+
+  // Listen for accept-bid response (for passengers - when driver accepts)
+  void onAcceptBid(Function(dynamic) handler) {
+    if (_socket == null) {
+      _logger.e('Cannot register accept-bid listener - socket is null!');
+      return;
+    }
+    _logger.i('Registering accept-bid listener, socket connected: ${_socket!.connected}');
+    _socket!.on('accept-bid', (data) {
+      _logger.i('accept-bid event received in service: $data');
+      handler(data);
+    });
+  }
+
+  // Stop listening for accept-bid
+  void offAcceptBid() {
+    _logger.i('Removing accept-bid listener');
+    _socket?.off('accept-bid');
+  }
 }
 

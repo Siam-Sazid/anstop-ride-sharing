@@ -6,6 +6,7 @@ import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/feature/driver/homepage/controller/driver_home_controller.dart';
 import 'package:ride_sharing/feature/driver/trip_flow/model/ride_request_model.dart';
 import 'package:ride_sharing/services/socket_services.dart';
+import 'package:ride_sharing/feature/driver/trip_flow/view/trip_completion_payment_dialogs.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 import 'package:ride_sharing/widgets/custom_horizontal_line.dart';
 import 'package:ride_sharing/widgets/custom_vertical_line.dart';
@@ -97,6 +98,11 @@ class DriverTripController extends GetxController {
   final RxString acceptedRiderId = ''.obs;
   final RxBool isRideAccepted = false.obs;
 
+  // Flags to prevent duplicate handling
+  bool _isRidePickedUpHandled = false;
+
+  final Logger _logger = Logger();
+
   @override
   void onInit() {
     super.onInit();
@@ -104,6 +110,7 @@ class DriverTripController extends GetxController {
     currentState = (initialState ?? TripState.pendingRequests).obs;
     _loadRideRequestData();
     _setupRideAcceptedListener();
+    _setupRidePickedUpListener();
   }
 
   void _setupRideAcceptedListener() {
@@ -130,6 +137,63 @@ class DriverTripController extends GetxController {
       });
     } catch (e) {
       _logger.e('Error setting up ride accepted listener: $e');
+    }
+  }
+
+  void _setupRidePickedUpListener() {
+    // Listen for ride-picked-up from DriverHomeScreenController
+    try {
+      final homeController = Get.find<DriverHomeScreenController>();
+      ever(homeController.isRidePickedUp, (bool isPickedUp) {
+        if (isPickedUp && !_isRidePickedUpHandled) {
+          _isRidePickedUpHandled = true;
+          _logger.i('Ride picked up detected in DriverTripController, changing state to dropOffArrived');
+          _logger.i('Debug - selectedTrip: ${selectedTrip.value}, pendingTrips: ${pendingTrips.length}, currentRideRequest: ${currentRideRequest.value}, homeController.currentRideRequest: ${homeController.currentRideRequest.value}');
+
+          // Ensure we have the trip selected
+          if (selectedTrip.value == null) {
+            if (pendingTrips.isNotEmpty) {
+              selectedTrip.value = pendingTrips.first;
+              _logger.i('Set selectedTrip from pendingTrips.first');
+            } else {
+              // Try to create trip from currentRideRequest
+              final rideRequest = currentRideRequest.value ??
+                  homeController.currentRideRequest.value;
+              if (rideRequest != null) {
+                selectedTrip.value = TripRequest.fromRideRequest(rideRequest);
+                _logger.i('Created selectedTrip from rideRequest in _setupRidePickedUpListener');
+              } else {
+                // Fallback: create a default trip to avoid loading indicator
+                _logger.w('No ride request available, creating default trip');
+                selectedTrip.value = TripRequest(
+                  id: 'default',
+                  riderId: '',
+                  passengerName: 'Rider',
+                  passengerImage: 'assets/images/passenger1.jpg',
+                  rating: 5.0,
+                  pickupTime: 'Now',
+                  pickupLocation: homeController.pickupName ?? 'Pickup Location',
+                  dropoffLocation: homeController.destinationName ?? 'Destination',
+                  fare: 0,
+                  distance: 0,
+                  vehicleType: 'Standard',
+                  note: '',
+                );
+              }
+            }
+          }
+
+          _logger.i('Final selectedTrip: ${selectedTrip.value?.id}');
+
+          // Change state to show DropOffArrivedBottomSheet (commented out DropOffNavigationBottomSheet)
+        //   currentState.value = TripState.dropOffNavigation;
+          currentState.value = TripState.dropOffArrived;
+          _logger.i('State set to: ${currentState.value}');
+
+        }
+      });
+    } catch (e) {
+      _logger.e('Error setting up ride picked up listener: $e');
     }
   }
 
@@ -189,8 +253,6 @@ class DriverTripController extends GetxController {
   void showBiddingScreen() {
     currentState.value = TripState.bidding;
   }
-
-  final Logger _logger = Logger();
 
   Future<void> submitBid() async {
     if (bidAmount.value > 0 && currentRideRequest.value != null) {
@@ -273,8 +335,20 @@ class DriverTripController extends GetxController {
 
   void startTrip() {
     // Ensure selectedTrip is set before transitioning
-    if (selectedTrip.value == null && pendingTrips.isNotEmpty) {
-      selectedTrip.value = pendingTrips.first;
+    if (selectedTrip.value == null) {
+      if (pendingTrips.isNotEmpty) {
+        selectedTrip.value = pendingTrips.first;
+      } else {
+        // Try to create trip from currentRideRequest or homeController
+        final rideRequest = currentRideRequest.value ??
+            Get.find<DriverHomeScreenController>().currentRideRequest.value;
+        if (rideRequest != null) {
+          selectedTrip.value = TripRequest.fromRideRequest(rideRequest);
+          _logger.i('Created selectedTrip from rideRequest in startTrip()');
+        } else {
+          _logger.e('Cannot start trip - no ride request data available');
+        }
+      }
     }
     currentState.value = TripState.activeTrip;
   }
@@ -295,8 +369,50 @@ class DriverTripController extends GetxController {
 
     _logger.i('drop-off-rider event emitted successfully');
 
+    // Show PaymentConfirmationDialog
+    if (Get.context != null) {
+      TripDialogs.showPaymentConfirmation(
+        Get.context!,
+        onPaymentReceived: () {
+          _logger.i('Payment received - navigating to driver home');
+          _finishTripAndNavigateHome();
+        },
+        onDifferentAmount: () {
+          _logger.i('Different amount - navigating to driver home');
+          _finishTripAndNavigateHome();
+        },
+      );
+    } else {
+      // Fallback if context is not available
+      _finishTripAndNavigateHome();
+    }
+  }
+
+  void _finishTripAndNavigateHome() {
+    // Close dialog if open
+    if (Get.isDialogOpen ?? false) {
+      Get.back();
+    }
+
+    // Clear ride states in home controller
+    try {
+      final homeController = Get.find<DriverHomeScreenController>();
+      homeController.clearRidePickedUp();
+      homeController.clearRideAccepted();
+      homeController.clearRideRequest();
+    } catch (e) {
+      _logger.e('Error clearing ride states: $e');
+    }
+
+    // Reset flags for next trip
+    _isRidePickedUpHandled = false;
+
+    // Close the trip flow bottom sheet and go back to driver home
     currentState.value = TripState.pendingRequests;
     selectedTrip.value = null;
+
+    // Dismiss the trip flow
+    onDismiss?.call();
   }
 
   void searchAgain() {
@@ -324,8 +440,8 @@ class DriverTripController extends GetxController {
       _logger.e('Error stopping navigation: $e');
     }
 
-    // Proceed to start trip
-    startTrip();
+    // Note: State transition to dropOffNavigation will happen via
+    // _setupRidePickedUpListener when ride-picked-up socket event is received
   }
 
 
@@ -2137,14 +2253,14 @@ class DropOffNavigationBottomSheet extends StatelessWidget {
 
                     SizedBox(height: 20.h),
 
-                    // Drop Off Button
+                    // Drop Off Button - emits drop-off-rider socket event
                     Padding(
                       padding:  EdgeInsets.symmetric(horizontal:  16.sp),
                       child: SizedBox(
                         width: double.infinity,
                         height: 50.h,
                         child: ElevatedButton(
-                          onPressed: () => controller.arrivedAtDestination(),
+                          onPressed: () => controller.completeTrip(),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.greenShade300,
 
@@ -2239,313 +2355,270 @@ class DropOffArrivedBottomSheet extends StatelessWidget {
       return const Center(child: CircularProgressIndicator());
     }
 
-    return Column(
-      children: [
-        // Navigation banner at top
-        Container(
-          width: double.infinity,
-          padding: EdgeInsets.all(16.w),
-          decoration: BoxDecoration(
-            color: AppColors.primaryColor,
-            borderRadius: BorderRadius.circular(8.r),
-          ),
-          margin: EdgeInsets.symmetric(vertical:  70.w),
-          child: Row(
-            children: [
-              Icon(
-                Icons.navigation,
-                color: Colors.white,
-                size: 20.sp,
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.95,
+      child: Stack(
+        children: [
+          // Navigation banner at top (with some top margin)
+          Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(16.w),
+              decoration: BoxDecoration(
+                color: AppColors.primaryColor,
+                borderRadius: BorderRadius.circular(8.r),
               ),
-              SizedBox(width: 12.w),
-              Expanded(
-                child: Text(
-                  '200 m    Turn right at block b, road no 18',
-                  style: TextStyle(
+              margin: EdgeInsets.only(top: 70.w), // Adjust as needed
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.navigation,
                     color: Colors.white,
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w500,
+                    size: 20.sp,
                   ),
-                ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: Text(
+                      '200 m    Turn right at block b, road no 18',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ),
-
-        // Bottom sheet content (same as previous screen)
-        Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
             ),
-            child: Column(
-              children: [
-                // Handle bar
-                Container(
-                  width: 40.w,
-                  height: 4.h,
-                  margin: EdgeInsets.only(top: 8.h, bottom: 16.h),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(2.r),
-                  ),
-                ),
+          ),
 
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w),
-                    child: Column(
-                      children: [
-                        // Passenger info
-                        Row(
-                          children: [
-                            CircleAvatar(
-                              radius: 20.r,
-                              backgroundImage: AssetImage(trip.passengerImage),
-                            ),
-                            SizedBox(width: 12.w),
-                            Expanded(
-                              child: Text(
-                                trip.passengerName,
-                                style: TextStyle(
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.tesxtColor,
+          // Bottom sheet anchored to the bottom
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.4,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+              ),
+              child: Column(
+                children: [
+                  // Handle bar
+                  Container(
+                    width: 40.w,
+                    height: 4.h,
+                    margin: EdgeInsets.only(top: 8.h, bottom: 16.h),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(2.r),
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
+                      child: Column(
+                        children: [
+                          // Passenger info
+                          Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 20.r,
+                                backgroundImage: AssetImage(trip.passengerImage),
+                              ),
+                              SizedBox(width: 12.w),
+                              Expanded(
+                                child: Text(
+                                  trip.passengerName,
+                                  style: TextStyle(
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.tesxtColor,
+                                  ),
                                 ),
                               ),
-                            ),
-                            Row(
-                              children: List.generate(5, (i) => Icon(
-                                Icons.star,
-                                size: 12.sp,
-                                color: i < trip.rating.floor() ? Colors.amber : Colors.grey[300],
-                              )),
-                            ),
-                            SizedBox(width: 4.w),
-                            Text(
-                              '5.0',
-                              style: TextStyle(
-                                fontSize: 12.sp,
-                                color: Colors.grey[600],
+                              Row(
+                                children: List.generate(5, (i) => Icon(
+                                  Icons.star,
+                                  size: 12.sp,
+                                  color: i < trip.rating.floor()
+                                      ? Colors.amber
+                                      : Colors.grey[300],
+                                )),
                               ),
-                            ),
-                          ],
-                        ),
-
-                        SizedBox(height: 16.h),
-                        Divider(color: Colors.grey[300]),
-                        SizedBox(height: 16.h),
-
-                        // Trip info
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Pick Up',
-                                    style: TextStyle(
-                                      fontSize: 12.sp,
-                                      color: Colors.grey[600],
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  Text(
-                                    'Block B, Banasree, Dhaka',
-                                    style: TextStyle(
-                                      fontSize: 14.sp,
-                                      color: AppColors.tesxtColor,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Drop off',
-                                    style: TextStyle(
-                                      fontSize: 12.sp,
-                                      color: Colors.grey[600],
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  Text(
-                                    'Dhanmondi, Dhaka',
-                                    style: TextStyle(
-                                      fontSize: 14.sp,
-                                      color: AppColors.tesxtColor,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        SizedBox(height: 16.h),
-
-                        // Time, Distance, Fare
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                children: [
-                                  Text(
-                                    'EST',
-                                    style: TextStyle(
-                                      fontSize: 12.sp,
-                                      color: Colors.grey[600],
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  Text(
-                                    '6 min',
-                                    style: TextStyle(
-                                      fontSize: 16.sp,
-                                      color: AppColors.tesxtColor,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              child: Column(
-                                children: [
-                                  Text(
-                                    'Distance',
-                                    style: TextStyle(
-                                      fontSize: 12.sp,
-                                      color: Colors.grey[600],
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  Text(
-                                    '3.3 km',
-                                    style: TextStyle(
-                                      fontSize: 16.sp,
-                                      color: AppColors.tesxtColor,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              child: Column(
-                                children: [
-                                  Text(
-                                    'Fare',
-                                    style: TextStyle(
-                                      fontSize: 12.sp,
-                                      color: Colors.grey[600],
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  Text(
-                                    '\$ 24',
-                                    style: TextStyle(
-                                      fontSize: 16.sp,
-                                      color: AppColors.tesxtColor,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        SizedBox(height: 20.h),
-
-                        // Drop Off Button
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: () => controller.completeTrip(),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryColor,
-                              padding: EdgeInsets.symmetric(vertical: 16.h),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12.r),
-                              ),
-                            ),
-                            child: Text(
-                              'Drop Off',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        SizedBox(height: 20.h),
-
-                        // Navigation directions
-                        Expanded(
-                          child: ListView(
-                            children: [
-                              NavigationStep(
-                                icon: Icons.straight,
-                                instruction: 'Head west on Road No. 3',
-                                distance: '240 m',
-                              ),
-                              NavigationStep(
-                                icon: Icons.turn_left,
-                                instruction: 'Turn left onto Ave 3',
-                                distance: '80 m',
-                              ),
-                              NavigationStep(
-                                icon: Icons.turn_right,
-                                instruction: 'Turn right onto Road No. 5',
-                                distance: '400 m',
-                              ),
-                              NavigationStep(
-                                icon: Icons.turn_left,
-                                instruction: 'Turn left',
-                                distance: '110 m',
-                              ),
-                              NavigationStep(
-                                icon: Icons.turn_right,
-                                instruction: 'Turn right at Titas Gas Rd',
-                                distance: '160 m',
-                              ),
-                              NavigationStep(
-                                icon: Icons.turn_left,
-                                instruction: 'Turn left',
-                                distance: '130 m',
-                              ),
-                              NavigationStep(
-                                icon: Icons.turn_right,
-                                instruction: 'Turn right at Rampura',
-                                distance: '160 m',
-                              ),
-                              NavigationStep(
-                                icon: Icons.turn_right,
-                                instruction: 'Turn right',
-                                distance: '400 m',
+                              SizedBox(width: 4.w),
+                              Text(
+                                '5.0',
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  color: Colors.grey[600],
+                                ),
                               ),
                             ],
                           ),
-                        ),
-                      ],
+                          SizedBox(height: 16.h),
+                          Divider(color: Colors.grey[300]),
+                          SizedBox(height: 16.h),
+
+                          // Trip info
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Pick Up',
+                                      style: TextStyle(
+                                        fontSize: 12.sp,
+                                        color: Colors.grey[600],
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Block B, Banasree, Dhaka',
+                                      style: TextStyle(
+                                        fontSize: 14.sp,
+                                        color: AppColors.tesxtColor,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Drop off',
+                                      style: TextStyle(
+                                        fontSize: 12.sp,
+                                        color: Colors.grey[600],
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Dhanmondi, Dhaka',
+                                      style: TextStyle(
+                                        fontSize: 14.sp,
+                                        color: AppColors.tesxtColor,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 16.h),
+
+                          // Time, Distance, Fare
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      'EST',
+                                      style: TextStyle(
+                                        fontSize: 12.sp,
+                                        color: Colors.grey[600],
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    Text(
+                                      '6 min',
+                                      style: TextStyle(
+                                        fontSize: 16.sp,
+                                        color: AppColors.tesxtColor,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      'Distance',
+                                      style: TextStyle(
+                                        fontSize: 12.sp,
+                                        color: Colors.grey[600],
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    Text(
+                                      '3.3 km',
+                                      style: TextStyle(
+                                        fontSize: 16.sp,
+                                        color: AppColors.tesxtColor,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      'Fare',
+                                      style: TextStyle(
+                                        fontSize: 12.sp,
+                                        color: Colors.grey[600],
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    Text(
+                                      '\$ 24',
+                                      style: TextStyle(
+                                        fontSize: 16.sp,
+                                        color: AppColors.tesxtColor,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 20.h),
+
+                          // Drop Off Button
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: () => controller.completeTrip(),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primaryColor,
+                                padding: EdgeInsets.symmetric(vertical: 16.h),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.r),
+                                ),
+                              ),
+                              child: Text(
+                                'Drop Off',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 20.h),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

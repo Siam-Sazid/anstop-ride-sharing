@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:logger/logger.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/passenger/cancel_taxi.dart';
 import 'package:ride_sharing/feature/passenger/payment/view/passenger_payment_screen.dart';
+import 'package:ride_sharing/services/socket_services.dart';
 import 'package:ride_sharing/utils/cancel_driver_widget.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/utils/car_details.dart';
+import 'package:ride_sharing/feature/passenger/car_booking/utils/driver_arrived_bottom_sheet.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/utils/driver_status_widget.dart';
 import 'package:ride_sharing/utils/support_note_widget.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/utils/trip_id.dart';
@@ -14,15 +17,118 @@ import 'package:ride_sharing/widgets/custom_horizontal_line.dart';
 import 'package:get/get.dart';
 
 class BookingCarsBottomSheet extends StatefulWidget {
+  final String driverName;
+  final String? driverProfilePicture;
+  final double driverRating;
+  final int driverTotalReviews;
+  final String carBrand;
+  final String carModel;
+  final String licensePlateNumber;
+  final String? licensePlatePicture;
+  final String bidAmount;
+  final String tripDistance;
+  final String pickUpAddress;
+  final String destinationAddress;
+
+  const BookingCarsBottomSheet({
+    Key? key,
+    this.driverName = '',
+    this.driverProfilePicture,
+    this.driverRating = 0.0,
+    this.driverTotalReviews = 0,
+    this.carBrand = '',
+    this.carModel = '',
+    this.licensePlateNumber = '',
+    this.licensePlatePicture,
+    this.bidAmount = '',
+    this.tripDistance = '',
+    this.pickUpAddress = '',
+    this.destinationAddress = '',
+  }) : super(key: key);
+
   @override
   _BookingCarsBottomSheetState createState() => _BookingCarsBottomSheetState();
 }
 
 class _BookingCarsBottomSheetState extends State<BookingCarsBottomSheet> {
   int rating = 0;
+  final Logger _logger = Logger();
+
+  @override
+  void initState() {
+    super.initState();
+    _initRidePickedUpListener();
+  }
+
+  @override
+  void dispose() {
+    _logger.i('Disposing BookingCarsBottomSheet, removing ride-picked-up listener');
+    SocketIoService.to.offRidePickedUp();
+    super.dispose();
+  }
+
+  Future<void> _initRidePickedUpListener() async {
+    final socketService = SocketIoService.to;
+
+    // Ensure socket is connected before setting up listener
+    if (!socketService.isConnected.value) {
+      _logger.i('Socket not connected for ride-picked-up, connecting...');
+      await socketService.connect();
+      await Future.delayed(const Duration(milliseconds: 500));
+    }
+
+    _logger.i('Setting up listener for ride-picked-up event in BookingCarsBottomSheet');
+
+    // Listen for ride-picked-up event (driver has arrived and picked up passenger)
+    socketService.onRidePickedUp((data) {
+      _logger.i('Received ride-picked-up event in BookingCarsBottomSheet: $data');
+
+      if (mounted) {
+        // Close current bottom sheet and show DriverArrivedBottomSheet with driver data
+        Navigator.pop(context);
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          builder: (BuildContext context) {
+            return DriverArrivedBottomSheet(
+              driverName: widget.driverName,
+              driverProfilePicture: widget.driverProfilePicture,
+              driverRating: widget.driverRating,
+              driverTotalReviews: widget.driverTotalReviews,
+              carBrand: widget.carBrand,
+              carModel: widget.carModel,
+              licensePlateNumber: widget.licensePlateNumber,
+              licensePlatePicture: widget.licensePlatePicture,
+              bidAmount: widget.bidAmount,
+              tripDistance: widget.tripDistance,
+              pickUpAddress: widget.pickUpAddress,
+              destinationAddress: widget.destinationAddress,
+            );
+          },
+        );
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    // Use dynamic data or fallback to static
+    final displayName = widget.driverName.isNotEmpty ? widget.driverName : 'John Doe';
+    final displayImageUrl = widget.driverProfilePicture ?? 'https://picsum.photos/250?image=9';
+    final displayRating = widget.driverRating > 0 ? widget.driverRating : 3.54;
+    final displayTrips = widget.driverTotalReviews > 0 ? widget.driverTotalReviews : 3;
+    final displayPrice = widget.bidAmount.isNotEmpty ? '\$${widget.bidAmount}' : '\$24';
+    final displayDistance = widget.tripDistance.isNotEmpty ? '${widget.tripDistance} km' : '28 km';
+    final displayCarTitle = widget.licensePlateNumber.isNotEmpty
+        ? widget.licensePlateNumber
+        : 'DHK METRO - 8475Dkk';
+    final displayCarSubtitle = (widget.carBrand.isNotEmpty || widget.carModel.isNotEmpty)
+        ? '${widget.carBrand} ${widget.carModel}'.trim()
+        : 'Toyota';
+    final displayDestination = widget.destinationAddress.isNotEmpty
+        ? widget.destinationAddress
+        : 'Green Road, Dhaka';
+
     return Container(
       height: MediaQuery.of(context).size.height * 0.7,
       width: double.infinity,
@@ -41,21 +147,22 @@ class _BookingCarsBottomSheetState extends State<BookingCarsBottomSheet> {
 
          // SizedBox(height: 16.sp),
           CarDetailsWidget(
-            title: 'DHK METRO - 8475Dkk',
-            subtitle: 'Toyota',
-            imagePath: AppImage.carsSideView,
+            title: displayCarTitle,
+            subtitle: displayCarSubtitle,
+            imagePath: widget.licensePlatePicture ?? AppImage.carsSideView,
             backgroundColor: AppColors.violetShade,
+            isNetworkImage: widget.licensePlatePicture != null && widget.licensePlatePicture!.isNotEmpty,
           ),
           SizedBox(height: 16.sp),
           /// User Info Section with Avatar and Rating
           UserInfoSection(
-            imageUrl: 'https://picsum.photos/250?image=9',
-            name: 'John Doe',
-            rating: 3.54,
-            trips: 3,
+            imageUrl: displayImageUrl,
+            name: displayName,
+            rating: displayRating,
+            trips: displayTrips,
             profession: 'Professional',
-            price: '\$24',
-            distance: '28 km',
+            price: displayPrice,
+            distance: displayDistance,
           ),
          // SupportNoteWidget(),
           Padding(
@@ -68,7 +175,13 @@ class _BookingCarsBottomSheetState extends State<BookingCarsBottomSheet> {
               children: [
                 Icon(Icons.location_on, color: AppColors.primaryColor),
                 SizedBox(width: 5.sp),
-                Text('Green Road, Dhaka'),
+                Expanded(
+                  child: Text(
+                    displayDestination,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
               ],
             ),
           ),
@@ -93,23 +206,11 @@ class _BookingCarsBottomSheetState extends State<BookingCarsBottomSheet> {
           TripIdWidget(),
           CustomHorizontalLine(thickness: 5.sp,),
           // Cancel Button
-          CancelDriverWidget(
-            onCancelPressed: () {
-              // // Custom behavior when cancel button is pressed
-              // print("Cancel button pressed!");
-              // showModalBottomSheet(
-              //   context: context,
-              //   isScrollControlled: true,
-              //   builder: (BuildContext context) {
-              //    // Navigator.pop(context);
-              //  //   return DriverArrivedBottomSheet(); // Your bottom sheet widget
-              //
-              //
-              //   },
-              // );
-              Get.to(() => CancelTaxiScreen());
-            },
-          ),
+          // CancelDriverWidget(
+          //   onCancelPressed: () {
+          //     Get.to(() => CancelTaxiScreen());
+          //   },
+          // ),
 
         ],
       ),

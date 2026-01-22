@@ -9,29 +9,57 @@ import '../../../../widgets/custom_horizontal_line.dart';
 
 
 class RideBegunBottomSheet extends StatefulWidget {
+  final String driverName;
+  final String? driverProfilePicture;
+  final double driverRating;
+  final int driverTotalReviews;
+  final String bidAmount;
+  final String tripDistance;
+  final String destinationAddress;
+
+  const RideBegunBottomSheet({
+    Key? key,
+    this.driverName = '',
+    this.driverProfilePicture,
+    this.driverRating = 0.0,
+    this.driverTotalReviews = 0,
+    this.bidAmount = '',
+    this.tripDistance = '',
+    this.destinationAddress = '',
+  }) : super(key: key);
+
   @override
   _RideBegunBottomSheetState createState() => _RideBegunBottomSheetState();
 }
 
 class _RideBegunBottomSheetState extends State<RideBegunBottomSheet> {
   int rating = 0;
+
+  @override
   void initState() {
     super.initState();
-    // Automatically navigate to DriverArrivedBottomSheet after 3 seconds
+    // Automatically navigate to PassengerPaymentScreen after 2 seconds
     _goToNextRoute();
   }
 
   Future<void> _goToNextRoute() async {
     await Future.delayed(Duration(seconds: 2));
-    //  Get.offAll(() => LogInScreen());
-    // Get.offAll(() => DriverRegistration());
-    // Get.offAll(() => EmailValidationScreen());
-    // Get.offAll(() => DriverHomeScreen());
     Get.to(() => PassengerPaymentScreen());
-
   }
+
   @override
   Widget build(BuildContext context) {
+    // Use dynamic data or fallback to static
+    final displayName = widget.driverName.isNotEmpty ? widget.driverName : 'John Doe';
+    final displayImageUrl = widget.driverProfilePicture ?? 'https://picsum.photos/250?image=9';
+    final displayRating = widget.driverRating > 0 ? widget.driverRating : 3.54;
+    final displayTrips = widget.driverTotalReviews > 0 ? widget.driverTotalReviews : 3;
+    final displayPrice = widget.bidAmount.isNotEmpty ? '\$${widget.bidAmount}' : '\$24';
+    final displayDistance = widget.tripDistance.isNotEmpty ? '${widget.tripDistance} km' : '28 km';
+    final displayDestination = widget.destinationAddress.isNotEmpty
+        ? widget.destinationAddress
+        : 'Green Road Dhaka';
+
     return Container(
       height: MediaQuery.of(context).size.height * 0.3,
       width: double.infinity,
@@ -51,13 +79,13 @@ class _RideBegunBottomSheetState extends State<RideBegunBottomSheet> {
         //  SizedBox(height: 16.sp),
           /// User Info Section with Avatar and Rating
           UserInfoSection(
-            imageUrl: 'https://picsum.photos/250?image=9',
-            name: 'John Doe',
-            rating: 3.54,
-            trips: 3,
+            imageUrl: displayImageUrl,
+            name: displayName,
+            rating: displayRating,
+            trips: displayTrips,
             profession: 'Professional',
-            price: '\$24',
-            distance: '28 km',
+            price: displayPrice,
+            distance: displayDistance,
           ),
         //  SizedBox(height: 16.sp),
           CustomHorizontalLine(thickness: 5.sp,),
@@ -65,23 +93,28 @@ class _RideBegunBottomSheetState extends State<RideBegunBottomSheet> {
             padding:  EdgeInsets.all(16.0),
             child: Row(
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Your Trip',style: TextStyle(fontSize: 15.sp,fontWeight: FontWeight.bold),),
-                    SizedBox(height: 2.sp,),
-                    Row(
-                      children: [
-                        Icon(Icons.location_on,color: AppColors.greenShade50,),
-                        Text('Green Road Dhaka'),
-                      ],
-                    ),
-                    // SizedBox(height: 8.h,),
-
-                  ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Your Trip',style: TextStyle(fontSize: 15.sp,fontWeight: FontWeight.bold),),
+                      SizedBox(height: 2.sp,),
+                      Row(
+                        children: [
+                          Icon(Icons.location_on,color: AppColors.greenShade50,),
+                          Expanded(
+                            child: Text(
+                              displayDestination,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-               Spacer(),
-               Text('5.9 km'),
+               Text(displayDistance),
               ],
             ),
           ),

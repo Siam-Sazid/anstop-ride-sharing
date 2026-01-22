@@ -8,7 +8,39 @@ import 'package:ride_sharing/widgets/custom_button.dart';
 import 'package:ride_sharing/widgets/logo.dart';
 import 'package:ride_sharing/services/socket_services.dart';
 
-import 'find_nearby_cars_bottom_sheet.dart';
+import 'booking_car_bottomsheet.dart';
+
+// Model for car information from driver
+class CarInformation {
+  final String id;
+  final String brand;
+  final String model;
+  final String yearOfManufacture;
+  final String? licensePlateNumber;
+  final String? licensePlatePicture;
+
+  CarInformation({
+    required this.id,
+    required this.brand,
+    required this.model,
+    required this.yearOfManufacture,
+    this.licensePlateNumber,
+    this.licensePlatePicture,
+  });
+
+  factory CarInformation.fromJson(Map<String, dynamic> json) {
+    final licensePlate = json['licensePlate'] as Map<String, dynamic>?;
+
+    return CarInformation(
+      id: json['_id'] ?? '',
+      brand: json['brand'] ?? '',
+      model: json['model'] ?? '',
+      yearOfManufacture: json['yearOfManufacture'] ?? '',
+      licensePlateNumber: licensePlate?['number'],
+      licensePlatePicture: licensePlate?['picture'],
+    );
+  }
+}
 
 class NearbyDriver {
   final String id;
@@ -17,21 +49,30 @@ class NearbyDriver {
   final String locationName;
   final double distance;
   final List<double> coordinates;
+  final String? profilePicture;
+  final double rating;
+  final int totalReviews;
+  final CarInformation? carInformation;
   String? bidAmount; // Dynamic bid amount from driver
 
   NearbyDriver({
     required this.id,
     required this.name,
-    required this.email,
-    required this.locationName,
-    required this.distance,
-    required this.coordinates,
+    this.email = '',
+    this.locationName = '',
+    this.distance = 0.0,
+    this.coordinates = const [0.0, 0.0],
+    this.profilePicture,
+    this.rating = 0.0,
+    this.totalReviews = 0,
+    this.carInformation,
     this.bidAmount,
   });
 
   factory NearbyDriver.fromJson(Map<String, dynamic> json) {
     final location = json['location'] as Map<String, dynamic>?;
     final coords = location?['coordinates'] as List<dynamic>? ?? [0.0, 0.0];
+    final carInfo = json['carInformation'] as Map<String, dynamic>?;
 
     return NearbyDriver(
       id: json['_id'] ?? '',
@@ -40,27 +81,49 @@ class NearbyDriver {
       locationName: json['locationName'] ?? '',
       distance: (json['distance'] as num?)?.toDouble() ?? 0.0,
       coordinates: coords.map((e) => (e as num).toDouble()).toList(),
+      profilePicture: json['profilePicture'],
+      rating: (json['rating'] as num?)?.toDouble() ?? 0.0,
+      totalReviews: (json['totalReviews'] as num?)?.toInt() ?? 0,
+      carInformation: carInfo != null ? CarInformation.fromJson(carInfo) : null,
     );
   }
 }
 
-// Model for bid data from socket
+// Model for bid data from socket (updated structure with driver object)
 class BidData {
   final String rideId;
   final String amount;
   final String driverId;
+  final String driverName;
+  final String? profilePicture;
+  final double rating;
+  final int totalReviews;
+  final CarInformation? carInformation;
 
   BidData({
     required this.rideId,
     required this.amount,
     required this.driverId,
+    required this.driverName,
+    this.profilePicture,
+    this.rating = 0.0,
+    this.totalReviews = 0,
+    this.carInformation,
   });
 
   factory BidData.fromJson(Map<String, dynamic> json) {
+    final driver = json['driver'] as Map<String, dynamic>?;
+    final carInfo = driver?['carInformation'] as Map<String, dynamic>?;
+
     return BidData(
       rideId: json['rideId'] ?? '',
       amount: json['amount']?.toString() ?? '0',
-      driverId: json['driverId'] ?? '',
+      driverId: driver?['_id'] ?? '',
+      driverName: driver?['name'] ?? '',
+      profilePicture: driver?['profilePicture'],
+      rating: (driver?['rating'] as num?)?.toDouble() ?? 0.0,
+      totalReviews: (driver?['totalReviews'] as num?)?.toInt() ?? 0,
+      carInformation: carInfo != null ? CarInformation.fromJson(carInfo) : null,
     );
   }
 }
@@ -68,12 +131,14 @@ class BidData {
 class AcceptCarBottomSheet extends StatefulWidget {
   final String pickUpAddress;
   final String destinationAddress;
+  final String tripDistance; // Distance of the trip (e.g., "7.3" km)
   final List<dynamic>? initialDriversData;
 
   const AcceptCarBottomSheet({
     Key? key,
     required this.pickUpAddress,
     required this.destinationAddress,
+    this.tripDistance = '',
     this.initialDriversData,
   }) : super(key: key);
 
@@ -86,6 +151,10 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
   Map<String, String> driverBids = {}; // Map of driverId -> bidAmount
   Map<String, String> driverRideIds = {}; // Map of driverId -> rideId
   bool isLoading = true;
+  bool isAccepting = false; // Loading state when accepting a bid
+  String? acceptingDriverId; // Track which driver's bid is being accepted
+  NearbyDriver? acceptedDriver; // Store the accepted driver's data
+  String? acceptedBidAmount; // Store the accepted bid amount
   final Logger _logger = Logger();
 
   @override
@@ -94,6 +163,7 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
     _initDriversData();
     _initSocketAndListen();
     _initNewBidListener();
+    _initRideAcceptedListener();
   }
 
   void _initDriversData() {
@@ -173,7 +243,7 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
 
       if (data != null && data is Map<String, dynamic>) {
         final bidData = BidData.fromJson(data);
-        _logger.i('Parsed bid - driverId: ${bidData.driverId}, amount: ${bidData.amount}');
+        _logger.i('Parsed bid - driverId: ${bidData.driverId}, name: ${bidData.driverName}, amount: ${bidData.amount}');
 
         if (mounted) {
           setState(() {
@@ -181,16 +251,79 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
             driverBids[bidData.driverId] = bidData.amount;
             driverRideIds[bidData.driverId] = bidData.rideId;
 
-            // Also update the driver in the list if exists
+            // Check if driver exists in the list
+            bool driverExists = false;
             for (int i = 0; i < nearbyDrivers.length; i++) {
               if (nearbyDrivers[i].id == bidData.driverId) {
                 nearbyDrivers[i].bidAmount = bidData.amount;
+                driverExists = true;
                 break;
               }
             }
+
+            // If driver doesn't exist, add them to the list
+            if (!driverExists) {
+              final newDriver = NearbyDriver(
+                id: bidData.driverId,
+                name: bidData.driverName,
+                profilePicture: bidData.profilePicture,
+                rating: bidData.rating,
+                totalReviews: bidData.totalReviews,
+                carInformation: bidData.carInformation,
+                bidAmount: bidData.amount,
+              );
+              nearbyDrivers.add(newDriver);
+              _logger.i('Added new driver to list: ${bidData.driverName}');
+            }
+
+            // Mark as not loading since we have at least one driver
+            isLoading = false;
           });
           _logger.i('Updated bid for driver ${bidData.driverId}: \$${bidData.amount}, rideId: ${bidData.rideId}');
         }
+      }
+    });
+  }
+
+  Future<void> _initRideAcceptedListener() async {
+    final socketService = SocketIoService.to;
+
+    // Ensure socket is connected before setting up listener
+    if (!socketService.isConnected.value) {
+      _logger.i('Socket not connected for ride-accepted, connecting...');
+      await socketService.connect();
+      await Future.delayed(const Duration(milliseconds: 500));
+    }
+
+    _logger.i('Setting up listener for ride-accepted event');
+
+    // Listen for ride-accepted response from server (sent after passenger accepts bid)
+    socketService.onRideAccepted((data) {
+      _logger.i('Received ride-accepted event in AcceptCarBottomSheet: $data');
+
+      if (mounted && acceptedDriver != null) {
+        // Close current bottom sheet and show BookingCarsBottomSheet with driver data
+        Navigator.pop(context);
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          builder: (BuildContext context) {
+            return BookingCarsBottomSheet(
+              driverName: acceptedDriver!.name,
+              driverProfilePicture: acceptedDriver!.profilePicture,
+              driverRating: acceptedDriver!.rating,
+              driverTotalReviews: acceptedDriver!.totalReviews,
+              carBrand: acceptedDriver!.carInformation?.brand ?? '',
+              carModel: acceptedDriver!.carInformation?.model ?? '',
+              licensePlateNumber: acceptedDriver!.carInformation?.licensePlateNumber ?? '',
+              licensePlatePicture: acceptedDriver!.carInformation?.licensePlatePicture,
+              bidAmount: acceptedBidAmount ?? '',
+              tripDistance: widget.tripDistance,
+              pickUpAddress: widget.pickUpAddress,
+              destinationAddress: widget.destinationAddress,
+            );
+          },
+        );
       }
     });
   }
@@ -200,6 +333,7 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
     _logger.i('Disposing AcceptCarBottomSheet, removing socket listeners');
     SocketIoService.to.offNearestDrivers();
     SocketIoService.to.offNewBid();
+    SocketIoService.to.offRideAccepted();
     super.dispose();
   }
 
@@ -349,16 +483,19 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
   }
 
   Widget _buildDriverCard(NearbyDriver driver) {
+    // Calculate filled stars based on rating (0-5)
+    final int filledStars = driver.rating.round().clamp(0, 5);
+
     return Container(
       padding: EdgeInsets.symmetric(vertical: 8.sp),
       child: Column(
         children: [
           Row(
             children: [
-              // Static profile image
+              // Profile image from driver data
               ClipOval(
                 child: Image.network(
-                  'https://picsum.photos/250?image=9',
+                  driver.profilePicture ?? 'https://picsum.photos/250?image=9',
                   width: 50.w,
                   height: 50.h,
                   fit: BoxFit.cover,
@@ -395,16 +532,37 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
                       ),
                     ),
                     SizedBox(height: 4.sp),
-                    // Rating stars (static for now)
+                    // Rating stars based on driver's actual rating
                     Row(
-                      children: List.generate(5, (index) {
-                        return Icon(
-                          Icons.star,
-                          color: index < 4 ? Colors.yellow : Colors.grey,
-                          size: 14.sp,
-                        );
-                      }),
+                      children: [
+                        ...List.generate(5, (index) {
+                          return Icon(
+                            Icons.star,
+                            color: index < filledStars ? Colors.yellow : Colors.grey,
+                            size: 14.sp,
+                          );
+                        }),
+                        SizedBox(width: 4.sp),
+                        Text(
+                          '(${driver.totalReviews})',
+                          style: TextStyle(
+                            fontSize: 10.sp,
+                            color: AppColors.appGreyColor,
+                          ),
+                        ),
+                      ],
                     ),
+                    // Car info if available
+                    if (driver.carInformation != null)
+                      Text(
+                        '${driver.carInformation!.brand} ${driver.carInformation!.model}',
+                        style: TextStyle(
+                          fontSize: 11.sp,
+                          color: AppColors.appGreyColor,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                   ],
                 ),
               ),
@@ -448,39 +606,50 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
             height: 40.h,
             child: CustomButton(
               height: 40,
-              onPressed: () async {
-                // Check if this driver has submitted a bid
-                final rideId = driverRideIds[driver.id];
-                if (rideId != null && rideId.isNotEmpty) {
-                  _logger.i('Accepting bid - rideId: $rideId, driverId: ${driver.id}');
+              onPressed: (isAccepting && acceptingDriverId == driver.id)
+                  ? null
+                  : () async {
+                      // Check if this driver has submitted a bid
+                      final rideId = driverRideIds[driver.id];
+                      if (rideId != null && rideId.isNotEmpty) {
+                        _logger.i('Accepting bid - rideId: $rideId, driverId: ${driver.id}');
 
-                  // Emit accept-bid socket event
-                  await SocketIoService.to.emitAcceptBid(
-                    rideId: rideId,
-                    driverId: driver.id,
-                  );
+                        // Set loading state and store accepted driver data
+                        setState(() {
+                          isAccepting = true;
+                          acceptingDriverId = driver.id;
+                          acceptedDriver = driver;
+                          acceptedBidAmount = driverBids[driver.id] ?? driver.bidAmount;
+                        });
 
-                  _logger.i('Accept-bid emitted successfully');
-                } else {
-                  _logger.w('No bid found for driver ${driver.id}, cannot accept');
-                }
+                        // Emit accept-bid socket event
+                        await SocketIoService.to.emitAcceptBid(
+                          rideId: rideId,
+                          driverId: driver.id,
+                        );
 
-                Navigator.pop(context);
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  builder: (BuildContext context) {
-                    return FindNearbyCarsBottomSheet();
-                  },
-                );
-              },
-              title: Text(
-                'Accept',
-                style: TextStyle(
-                  color: AppColors.white,
-                  fontSize: 14.sp,
-                ),
-              ),
+                        _logger.i('Accept-bid emitted successfully, waiting for socket response...');
+                        // Navigation will happen when accept-bid event is received from socket
+                      } else {
+                        _logger.w('No bid found for driver ${driver.id}, cannot accept');
+                      }
+                    },
+              title: (isAccepting && acceptingDriverId == driver.id)
+                  ? SizedBox(
+                      width: 20.w,
+                      height: 20.h,
+                      child: CircularProgressIndicator(
+                        color: AppColors.white,
+                        strokeWidth: 2,
+                      ),
+                    )
+                  : Text(
+                      'Accept',
+                      style: TextStyle(
+                        color: AppColors.white,
+                        fontSize: 14.sp,
+                      ),
+                    ),
             ),
           ),
         ],

@@ -97,7 +97,7 @@ class PickUpLocationScreen extends StatelessWidget {
                                   Expanded(
                                     child: GooglePlaceAutoCompleteTextField(
                                       textEditingController: controller.pickUpAddressController,
-                                      googleAPIKey: AppLocalization.tr.googleApiKey,
+                                      googleAPIKey: "AIzaSyBUHqcmvmiPPwuwl33JkMP3lAzKMxREenI",
                                       inputDecoration: InputDecoration(
                                         border: InputBorder.none,
                                         hintText: AppLocalization.tr.whereAreYouHeadedHint,
@@ -181,7 +181,7 @@ class PickUpLocationScreen extends StatelessWidget {
                                   Expanded(
                                     child: GooglePlaceAutoCompleteTextField(
                                       textEditingController: controller.destinationAddressController,
-                                      googleAPIKey: AppLocalization.tr.googleApiKey,
+                                      googleAPIKey: "AIzaSyBUHqcmvmiPPwuwl33JkMP3lAzKMxREenI",
                                       inputDecoration: InputDecoration(
                                         border: InputBorder.none,
                                         hintText: AppLocalization.tr.whereAreYouHeadedHint,

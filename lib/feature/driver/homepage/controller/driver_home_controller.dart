@@ -29,6 +29,9 @@ class DriverHomeScreenController extends GetxController {
   final RxString acceptedRideId = ''.obs;
   final RxString acceptedRiderId = ''.obs;
 
+  // Ride picked up state (after driver confirms pickup)
+  final RxBool isRidePickedUp = false.obs;
+
   // Polyline state for navigation
   final RxSet<Polyline> polylines = <Polyline>{}.obs;
   final RxBool isNavigatingToPickup = false.obs;
@@ -52,7 +55,7 @@ class DriverHomeScreenController extends GetxController {
   static const int _simulationIntervalMs = 50; // Timer interval in milliseconds
 
   // Google API Key from manifest
-  static const String _googleApiKey = 'AIzaSyCOAYoZktEbWIRX4mbS9D9ypHXdyYWFpSo';
+  static const String _googleApiKey = 'AIzaSyBUHqcmvmiPPwuwl33JkMP3lAzKMxREenI';
 
   // Custom markers
   BitmapDescriptor? _pickupMarkerIcon;
@@ -365,6 +368,11 @@ class DriverHomeScreenController extends GetxController {
     update();
   }
 
+  void clearRidePickedUp() {
+    isRidePickedUp.value = false;
+    update();
+  }
+
   void _handleRideRequest(dynamic data) {
     try {
       if (data is Map<String, dynamic>) {
@@ -394,6 +402,9 @@ class DriverHomeScreenController extends GetxController {
   Future<void> _handleRidePickedUp(dynamic data) async {
     try {
       _logger.i('Handling ride-picked-up event');
+
+      // Set ride picked up state - this will trigger DriverTripController to show DropOffNavigationBottomSheet
+      isRidePickedUp.value = true;
 
       // Use stored destination location (stored when ride-request was received)
       if (destinationLocation != null && destinationName != null) {
