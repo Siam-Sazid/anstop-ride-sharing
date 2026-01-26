@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:logger/logger.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/utils/car_details.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/utils/driver_status_widget.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/utils/ride_begun_bottom_sheet.dart';
+import 'package:ride_sharing/services/socket_services.dart';
 import 'package:ride_sharing/utils/user_info_section.dart';
 import 'package:get/get.dart';
 import 'package:ride_sharing/feature/passenger/payment/view/passenger_payment_screen.dart';
@@ -47,6 +49,58 @@ class DriverArrivedBottomSheet extends StatefulWidget {
 
 class _DriverArrivedBottomSheetState extends State<DriverArrivedBottomSheet> {
   int rating = 0;
+  final Logger _logger = Logger();
+  String? _paymentMethod;
+
+  @override
+  void initState() {
+    super.initState();
+    _initRideCompletedListener();
+  }
+
+  @override
+  void dispose() {
+    _logger.i('Disposing DriverArrivedBottomSheet, removing ride-completed listener');
+    SocketIoService.to.offRideCompleted();
+    super.dispose();
+  }
+
+  Future<void> _initRideCompletedListener() async {
+    final socketService = SocketIoService.to;
+
+    // Ensure socket is connected before setting up listener
+    if (!socketService.isConnected.value) {
+      _logger.i('Socket not connected for ride-completed, connecting...');
+      await socketService.connect();
+      await Future.delayed(const Duration(milliseconds: 500));
+    }
+
+    _logger.i('Setting up listener for ride-completed event in DriverArrivedBottomSheet');
+
+    // Listen for ride-completed event
+    socketService.onRideCompleted((data) {
+      _logger.i('Received ride-completed event in DriverArrivedBottomSheet: $data');
+
+      if (mounted && data != null && data is Map<String, dynamic>) {
+        final paymentMethod = data['paymentMethod'] as String? ?? '';
+        _logger.i('Payment method from ride-completed: $paymentMethod');
+
+        // Close current bottom sheet and navigate to PassengerPaymentScreen
+        Navigator.pop(context);
+        Get.offAll(() => PassengerPaymentScreen(
+          driverName: widget.driverName,
+          driverProfilePicture: widget.driverProfilePicture,
+          driverRating: widget.driverRating,
+          driverTotalReviews: widget.driverTotalReviews,
+          bidAmount: widget.bidAmount,
+          tripDistance: widget.tripDistance,
+          pickUpAddress: widget.pickUpAddress,
+          destinationAddress: widget.destinationAddress,
+          paymentMethod: paymentMethod,
+        ));
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -107,19 +161,14 @@ class _DriverArrivedBottomSheetState extends State<DriverArrivedBottomSheet> {
                   context: context,
                   isScrollControlled: true,
                   builder: (BuildContext context) {
-                    return GestureDetector(
-                      onTap: (){
-                        Get.offAll(() => PassengerPaymentScreen());
-                      },
-                      child: RideBegunBottomSheet(
-                        driverName: widget.driverName,
-                        driverProfilePicture: widget.driverProfilePicture,
-                        driverRating: widget.driverRating,
-                        driverTotalReviews: widget.driverTotalReviews,
-                        bidAmount: widget.bidAmount,
-                        tripDistance: widget.tripDistance,
-                        destinationAddress: widget.destinationAddress,
-                      ),
+                    return RideBegunBottomSheet(
+                      driverName: widget.driverName,
+                      driverProfilePicture: widget.driverProfilePicture,
+                      driverRating: widget.driverRating,
+                      driverTotalReviews: widget.driverTotalReviews,
+                      bidAmount: widget.bidAmount,
+                      tripDistance: widget.tripDistance,
+                      destinationAddress: widget.destinationAddress,
                     );
                   },
                 );

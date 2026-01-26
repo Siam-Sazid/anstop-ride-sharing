@@ -55,7 +55,7 @@ class DriverHomeScreenController extends GetxController {
   static const int _simulationIntervalMs = 50; // Timer interval in milliseconds
 
   // Google API Key from manifest
-  static const String _googleApiKey = 'AIzaSyBUHqcmvmiPPwuwl33JkMP3lAzKMxREenI';
+  static const String _googleApiKey = "AIzaSyBTNR1NWw7LcTsEJTTogqVZ39tgY--eD5U";
 
   // Custom markers
   BitmapDescriptor? _pickupMarkerIcon;
@@ -63,7 +63,7 @@ class DriverHomeScreenController extends GetxController {
 
   // Store original car image for rotation
   ui.Image? _carImage;
-  int _carImageSize = 80;
+  int _carImageSize = 50;
 
   static const CameraPosition defaultLocation = CameraPosition(
     target: LatLng(23.8103, 90.4125),
@@ -530,10 +530,18 @@ class DriverHomeScreenController extends GetxController {
       );
 
       _logger.i('Fetching route from pickup to destination via Google Directions API');
+      _logger.i('Request URL: $url');
       final response = await http.get(url);
+
+      _logger.i('Response status code: ${response.statusCode}');
+      _logger.i('FULL API RESPONSE: ${response.body}');
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
+        _logger.i('Directions API status: ${data['status']}');
+        if (data['error_message'] != null) {
+          _logger.e('API Error Message: ${data['error_message']}');
+        }
 
         if (data['status'] == 'OK' && data['routes'].isNotEmpty) {
           final points = data['routes'][0]['overview_polyline']['points'];
@@ -592,10 +600,14 @@ class DriverHomeScreenController extends GetxController {
       final response = await http.get(url);
 
       _logger.i('Directions API response status code: ${response.statusCode}');
+      _logger.i('FULL API RESPONSE: ${response.body}');
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         _logger.i('Directions API response status: ${data['status']}');
+        if (data['error_message'] != null) {
+          _logger.e('API Error Message: ${data['error_message']}');
+        }
 
         if (data['status'] == 'OK' && data['routes'].isNotEmpty) {
           final points = data['routes'][0]['overview_polyline']['points'];
@@ -684,20 +696,24 @@ class DriverHomeScreenController extends GetxController {
       return;
     }
 
+    final startPoint = LatLng(currentPosition!.latitude, currentPosition!.longitude);
+    final endPoint = pickupLocation!;
+
+    // Set route points for fallback (straight line has just 2 points)
+    _currentRoutePoints = [startPoint, endPoint];
+    _currentRouteSegmentIndex = 0;
+
     polylines.value = {
       Polyline(
         polylineId: const PolylineId('route_to_pickup'),
-        points: [
-          LatLng(currentPosition!.latitude, currentPosition!.longitude),
-          pickupLocation!,
-        ],
+        points: [startPoint, endPoint],
         color: Colors.black,
         width: 5,
         patterns: [PatternItem.dash(20), PatternItem.gap(10)],
       ),
     };
 
-    _logger.i('Drew straight line fallback. Polylines count: ${polylines.value.length}');
+    _logger.i('Drew straight line fallback. Polylines count: ${polylines.value.length}, route points: ${_currentRoutePoints.length}');
     update();
   }
 
@@ -705,20 +721,24 @@ class DriverHomeScreenController extends GetxController {
   void _drawStraightLinePickupToDestination() {
     if (pickupLocation == null || destinationLocation == null) return;
 
+    final startPoint = pickupLocation!;
+    final endPoint = destinationLocation!;
+
+    // Set route points for fallback (straight line has just 2 points)
+    _currentRoutePoints = [startPoint, endPoint];
+    _currentRouteSegmentIndex = 0;
+
     polylines.value = {
       Polyline(
         polylineId: const PolylineId('route_pickup_to_destination'),
-        points: [
-          pickupLocation!,
-          destinationLocation!,
-        ],
+        points: [startPoint, endPoint],
         color: Colors.black,
         width: 5,
         patterns: [PatternItem.dash(20), PatternItem.gap(10)],
       ),
     };
 
-    _logger.i('Drew straight line fallback from pickup to destination');
+    _logger.i('Drew straight line fallback from pickup to destination. Route points: ${_currentRoutePoints.length}');
     update();
   }
 

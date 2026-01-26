@@ -359,5 +359,24 @@ class SocketIoService extends GetxService {
     _logger.i('Removing accept-bid listener');
     _socket?.off('accept-bid');
   }
+
+  // Listen for ride-completed (for passengers - when ride is completed)
+  void onRideCompleted(Function(dynamic) handler) {
+    if (_socket == null) {
+      _logger.e('Cannot register ride-completed listener - socket is null!');
+      return;
+    }
+    _logger.i('Registering ride-completed listener, socket connected: ${_socket!.connected}');
+    _socket!.on('ride-completed', (data) {
+      _logger.i('ride-completed event received in service: $data');
+      handler(data);
+    });
+  }
+
+  // Stop listening for ride-completed
+  void offRideCompleted() {
+    _logger.i('Removing ride-completed listener');
+    _socket?.off('ride-completed');
+  }
 }
 

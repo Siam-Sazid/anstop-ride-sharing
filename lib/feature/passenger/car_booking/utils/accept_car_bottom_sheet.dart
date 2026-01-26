@@ -255,7 +255,20 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
             bool driverExists = false;
             for (int i = 0; i < nearbyDrivers.length; i++) {
               if (nearbyDrivers[i].id == bidData.driverId) {
-                nearbyDrivers[i].bidAmount = bidData.amount;
+                // Replace with updated driver info from bid data
+                nearbyDrivers[i] = NearbyDriver(
+                  id: bidData.driverId,
+                  name: bidData.driverName,
+                  email: nearbyDrivers[i].email,
+                  locationName: nearbyDrivers[i].locationName,
+                  distance: nearbyDrivers[i].distance,
+                  coordinates: nearbyDrivers[i].coordinates,
+                  profilePicture: bidData.profilePicture ?? nearbyDrivers[i].profilePicture,
+                  rating: bidData.rating > 0 ? bidData.rating : nearbyDrivers[i].rating,
+                  totalReviews: bidData.totalReviews > 0 ? bidData.totalReviews : nearbyDrivers[i].totalReviews,
+                  carInformation: bidData.carInformation ?? nearbyDrivers[i].carInformation,
+                  bidAmount: bidData.amount,
+                );
                 driverExists = true;
                 break;
               }
