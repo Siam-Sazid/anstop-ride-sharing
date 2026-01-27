@@ -87,7 +87,8 @@ class _RideBegunBottomSheetState extends State<RideBegunBottomSheet> {
                       SizedBox(height: 2.sp,),
                       Row(
                         children: [
-                          Icon(Icons.location_on,color: AppColors.greenShade50,),
+                          Icon(
+                            Icons.location_on,color: AppColors.greenShade50,),
                           Expanded(
                             child: Text(
                               displayDestination,

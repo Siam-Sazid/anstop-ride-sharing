@@ -322,6 +322,7 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
           isScrollControlled: true,
           builder: (BuildContext context) {
             return BookingCarsBottomSheet(
+              rideId: driverRideIds[acceptedDriver!.id] ?? '',
               driverName: acceptedDriver!.name,
               driverProfilePicture: acceptedDriver!.profilePicture,
               driverRating: acceptedDriver!.rating,

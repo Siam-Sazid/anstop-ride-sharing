@@ -29,6 +29,7 @@ class BookingCarsBottomSheet extends StatefulWidget {
   final String tripDistance;
   final String pickUpAddress;
   final String destinationAddress;
+  final String rideId;
 
   const BookingCarsBottomSheet({
     Key? key,
@@ -44,6 +45,7 @@ class BookingCarsBottomSheet extends StatefulWidget {
     this.tripDistance = '',
     this.pickUpAddress = '',
     this.destinationAddress = '',
+    required this.rideId,
   }) : super(key: key);
 
   @override
@@ -202,7 +204,13 @@ class _BookingCarsBottomSheetState extends State<BookingCarsBottomSheet> {
               ],
             ),
           ),
+          SupportNoteWidget(
+            conversationId: widget.rideId,
+            userName: displayName,
+            userStatus: 'Driver',
+          ),
           CustomHorizontalLine(thickness: 5.sp,),
+
           TripIdWidget(),
           CustomHorizontalLine(thickness: 5.sp,),
           // Cancel Button

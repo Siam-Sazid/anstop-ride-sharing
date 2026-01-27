@@ -221,7 +221,7 @@ class _FindNearbyCarsBottomSheetState extends State<FindNearbyCarsBottomSheet> {
                       context: context,
                       isScrollControlled: true,
                       builder: (BuildContext context) {
-                        return BookingCarsBottomSheet();
+                        return BookingCarsBottomSheet(rideId: '');
                       },
                     );
                   },
