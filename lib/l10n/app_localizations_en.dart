@@ -773,4 +773,102 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get confirmBookmark => 'Confirm Bookmark';
+
+  @override
+  String get driverYouAreOffline => 'You are offline';
+
+  @override
+  String get driverYouAreOnline => 'You are online';
+
+  @override
+  String get driverGoOnlineMessage => 'Go online to get trips and earn money.';
+
+  @override
+  String get driverGoOnlineButton => 'Go\nOnline';
+
+  @override
+  String get driverGoOfflineButton => 'Go Offline';
+
+  @override
+  String get driverGoOnline => 'Go Online';
+
+  @override
+  String get driverOnTheWayToPickUp => 'Driver is on the way to pick up';
+
+  @override
+  String get yourTrip => 'Your Trip';
+
+  @override
+  String get driverHasArrived => 'Driver has been arrived';
+
+  @override
+  String get letsRide => 'Lets Ride';
+
+  @override
+  String get yourRideHasBegun => 'Your Ride has begun';
+
+  @override
+  String get pickupLocation => 'Pickup location';
+
+  @override
+  String get destination => 'Destination';
+
+  @override
+  String get findingNearbyDrivers => 'Finding nearby drivers...';
+
+  @override
+  String get noDriversAvailable => 'No drivers available nearby';
+
+  @override
+  String get acceptButton => 'Accept';
+
+  @override
+  String get bidSubmitted => 'Bid Submitted';
+
+  @override
+  String bidSentMessage(String amount) {
+    return 'Your bid of $amount has been sent';
+  }
+
+  @override
+  String get invalidBid => 'Invalid Bid';
+
+  @override
+  String get enterValidBidAmount => 'Please enter a valid bid amount';
+
+  @override
+  String get fareLabel => 'Fare';
+
+  @override
+  String get pickUp => 'Pick up';
+
+  @override
+  String get dropOff => 'Drop Off';
+
+  @override
+  String get noteLabel => 'Note';
+
+  @override
+  String get rideRequirements => 'Ride Requirements';
+
+  @override
+  String get passengersNote => 'Passenger\'s Note';
+
+  @override
+  String get putYourOfferPrice => 'Put your offer price';
+
+  @override
+  String get bidButton => 'Bid';
+
+  @override
+  String get goToMap => 'Go to map';
+
+  @override
+  String get confirmPickup => 'Confirm Pickup';
+
+  @override
+  String get acceptOffer => 'Accept Offer';
+
+  @override
+  String get dropOffButton => 'Drop Off';
 }

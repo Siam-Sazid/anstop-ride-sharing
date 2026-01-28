@@ -14,6 +14,7 @@ import 'package:ride_sharing/utils/support_note_widget.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/utils/trip_id.dart';
 import 'package:ride_sharing/utils/user_info_section.dart';
 import 'package:ride_sharing/widgets/custom_horizontal_line.dart';
+import 'package:ride_sharing/l10n/app_localizations.dart';
 import 'package:get/get.dart';
 
 class BookingCarsBottomSheet extends StatefulWidget {
@@ -114,6 +115,7 @@ class _BookingCarsBottomSheetState extends State<BookingCarsBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     // Use dynamic data or fallback to static
     final displayName = widget.driverName.isNotEmpty ? widget.driverName : 'John Doe';
     final displayImageUrl = widget.driverProfilePicture ?? 'https://picsum.photos/250?image=9';
@@ -142,7 +144,7 @@ class _BookingCarsBottomSheetState extends State<BookingCarsBottomSheet> {
 
 
           DriverStatusWidget(
-            statusText: 'Driver is on the way to pick up',
+            statusText: l10n.driverOnTheWayToPickUp,
             time: '1 min',
             circleColor: Colors.green,
           ),
@@ -169,7 +171,7 @@ class _BookingCarsBottomSheetState extends State<BookingCarsBottomSheet> {
          // SupportNoteWidget(),
           Padding(
             padding:  EdgeInsets.all(8.0),
-            child: Text('Your Trip',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15.sp),),
+            child: Text(l10n.yourTrip,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15.sp),),
           ),
           Padding(
             padding:  EdgeInsets.all(5.sp),

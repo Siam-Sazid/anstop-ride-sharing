@@ -7,6 +7,7 @@ import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/widgets/custom_button.dart';
 import 'package:ride_sharing/widgets/logo.dart';
 import 'package:ride_sharing/services/socket_services.dart';
+import 'package:ride_sharing/l10n/app_localizations.dart';
 
 import 'booking_car_bottomsheet.dart';
 
@@ -353,6 +354,7 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       height: MediaQuery.of(context).size.height * 0.75,
       width: double.infinity,
@@ -403,7 +405,7 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
                 child: Text(
                   widget.pickUpAddress.isNotEmpty
                       ? widget.pickUpAddress
-                      : 'Pickup location',
+                      : l10n.pickupLocation,
                   style: TextStyle(fontSize: 14.sp),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -432,7 +434,7 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
                 child: Text(
                   widget.destinationAddress.isNotEmpty
                       ? widget.destinationAddress
-                      : 'Destination',
+                      : l10n.destination,
                   style: TextStyle(fontSize: 14.sp),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -460,7 +462,7 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
                         ),
                         SizedBox(height: 16.sp),
                         Text(
-                          'Finding nearby drivers...',
+                          l10n.findingNearbyDrivers,
                           style: TextStyle(
                             fontSize: 14.sp,
                             color: AppColors.appGreyColor,
@@ -472,7 +474,7 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
                 : nearbyDrivers.isEmpty
                     ? Center(
                         child: Text(
-                          'No drivers available nearby',
+                          l10n.noDriversAvailable,
                           style: TextStyle(
                             fontSize: 16.sp,
                             color: AppColors.appGreyColor,
@@ -487,7 +489,7 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
                         ),
                         itemBuilder: (context, index) {
                           final driver = nearbyDrivers[index];
-                          return _buildDriverCard(driver);
+                          return _buildDriverCard(driver, l10n);
                         },
                       ),
           ),
@@ -496,7 +498,7 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
     );
   }
 
-  Widget _buildDriverCard(NearbyDriver driver) {
+  Widget _buildDriverCard(NearbyDriver driver, AppLocalizations l10n) {
     // Calculate filled stars based on rating (0-5)
     final int filledStars = driver.rating.round().clamp(0, 5);
 
@@ -658,7 +660,7 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
                       ),
                     )
                   : Text(
-                      'Accept',
+                      l10n.acceptButton,
                       style: TextStyle(
                         color: AppColors.white,
                         fontSize: 14.sp,

@@ -7,6 +7,7 @@ import 'package:ride_sharing/feature/driver/homepage/controller/driver_home_cont
 import 'package:ride_sharing/feature/driver/trip_flow/view/driver_trip_flow.dart';
 import 'package:ride_sharing/utils/driver/driver_custom_drawer.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
+import 'package:ride_sharing/l10n/app_localizations.dart';
 import '../../../../app/utils/app_colors.dart';
 import '../utils/driver_google_map_widget.dart';
 import 'package:ride_sharing/utils/passenger/passenger_custom_drawer.dart';
@@ -99,6 +100,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
         title: CustomToggleSwitch(
@@ -223,7 +225,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                   children: [
                                     Center(
                                       child: Text(
-                                        'You are offline',
+                                        l10n.driverYouAreOffline,
                                         style: TextStyle(
                                           fontSize: 18.sp,
                                           fontWeight: FontWeight.bold,
@@ -233,7 +235,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                     ),
                                     // SizedBox(height: 8.h),
                                     Text(
-                                      'Go online to get trips and earn money.',
+                                      l10n.driverGoOnlineMessage,
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         fontSize: 12.sp,
@@ -266,7 +268,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                     // Bottom sheet will only show when ride-request socket event is received
                                   },
                                   child: Text(
-                                    'Go\nOnline',
+                                    l10n.driverGoOnlineButton,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       color: Colors.white,
@@ -411,6 +413,7 @@ class StatusAlertBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       decoration: BoxDecoration(
@@ -429,8 +432,8 @@ class StatusAlertBanner extends StatelessWidget {
           Expanded(
             child: Text(
               isOnline
-                  ? 'you are online'
-                  : 'You are offline',
+                  ? l10n.driverYouAreOnline
+                  : l10n.driverYouAreOffline,
               style: TextStyle(
                 fontSize: 14.sp,
                 color: Colors.black87,
@@ -450,7 +453,7 @@ class StatusAlertBanner extends StatelessWidget {
               ),
             ),
             child: Text(
-              isOnline ? 'Go Offline' : 'Go Online',
+              isOnline ? l10n.driverGoOfflineButton : l10n.driverGoOnline,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 14.sp,

@@ -283,5 +283,47 @@
 
   "confirmHomeAddress": "Confirm Home Address",
   "confirmWorkAddress": "Confirm Work Address",
-  "confirmBookmark": "Confirm Bookmark"
+  "confirmBookmark": "Confirm Bookmark",
+
+  "driverYouAreOffline": "You are offline",
+  "driverYouAreOnline": "You are online",
+  "driverGoOnlineMessage": "Go online to get trips and earn money.",
+  "driverGoOnlineButton": "Go\nOnline",
+  "driverGoOfflineButton": "Go Offline",
+  "driverGoOnline": "Go Online",
+
+  "driverOnTheWayToPickUp": "Driver is on the way to pick up",
+  "yourTrip": "Your Trip",
+  "driverHasArrived": "Driver has been arrived",
+  "letsRide": "Lets Ride",
+  "yourRideHasBegun": "Your Ride has begun",
+  "pickupLocation": "Pickup location",
+  "destination": "Destination",
+  "findingNearbyDrivers": "Finding nearby drivers...",
+  "noDriversAvailable": "No drivers available nearby",
+  "acceptButton": "Accept",
+
+  "bidSubmitted": "Bid Submitted",
+  "bidSentMessage": "Your bid of {amount} has been sent",
+  "@bidSentMessage": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "invalidBid": "Invalid Bid",
+  "enterValidBidAmount": "Please enter a valid bid amount",
+  "fareLabel": "Fare",
+  "pickUp": "Pick up",
+  "dropOff": "Drop Off",
+  "noteLabel": "Note",
+  "rideRequirements": "Ride Requirements",
+  "passengersNote": "Passenger's Note",
+  "putYourOfferPrice": "Put your offer price",
+  "bidButton": "Bid",
+  "goToMap": "Go to map",
+  "confirmPickup": "Confirm Pickup",
+  "acceptOffer": "Accept Offer",
+  "dropOffButton": "Drop Off"
 }

@@ -283,5 +283,47 @@
 
   "confirmHomeAddress": "Confirmer l'adresse du domicile",
   "confirmWorkAddress": "Confirmer l'adresse du travail",
-  "confirmBookmark": "Confirmer le favori"
+  "confirmBookmark": "Confirmer le favori",
+
+  "driverYouAreOffline": "Vous êtes hors ligne",
+  "driverYouAreOnline": "Vous êtes en ligne",
+  "driverGoOnlineMessage": "Passez en ligne pour obtenir des trajets et gagner de l'argent.",
+  "driverGoOnlineButton": "Passer\nEn ligne",
+  "driverGoOfflineButton": "Passer Hors ligne",
+  "driverGoOnline": "Passer En ligne",
+
+  "driverOnTheWayToPickUp": "Le conducteur est en route pour vous chercher",
+  "yourTrip": "Votre Trajet",
+  "driverHasArrived": "Le conducteur est arrivé",
+  "letsRide": "Allons-y",
+  "yourRideHasBegun": "Votre trajet a commencé",
+  "pickupLocation": "Lieu de prise en charge",
+  "destination": "Destination",
+  "findingNearbyDrivers": "Recherche de conducteurs à proximité...",
+  "noDriversAvailable": "Aucun conducteur disponible à proximité",
+  "acceptButton": "Accepter",
+
+  "bidSubmitted": "Offre Soumise",
+  "bidSentMessage": "Votre offre de {amount} a été envoyée",
+  "@bidSentMessage": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "invalidBid": "Offre Invalide",
+  "enterValidBidAmount": "Veuillez entrer un montant d'offre valide",
+  "fareLabel": "Tarif",
+  "pickUp": "Prise en charge",
+  "dropOff": "Dépose",
+  "noteLabel": "Note",
+  "rideRequirements": "Exigences du trajet",
+  "passengersNote": "Note du passager",
+  "putYourOfferPrice": "Entrez votre prix d'offre",
+  "bidButton": "Enchérir",
+  "goToMap": "Aller à la carte",
+  "confirmPickup": "Confirmer la prise en charge",
+  "acceptOffer": "Accepter l'offre",
+  "dropOffButton": "Déposer"
 }

@@ -3,9 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
 import 'package:get/get.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
-import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/feature/auth/view/log_in_screen.dart';
 import 'package:ride_sharing/feature/auth/view/registration.dart';
+import 'package:ride_sharing/l10n/app_localizations.dart';
 
 import '../../routes/app_routes.dart';
 class AuthSelectionScreen extends StatelessWidget {
@@ -15,6 +15,7 @@ class AuthSelectionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -34,19 +35,19 @@ class AuthSelectionScreen extends StatelessWidget {
               ),
 
               const SizedBox(height: 30),
-              const Text(
-                AppString.passengerWelcomeTitle,
-                style: TextStyle(
+              Text(
+                l10n.passengerWelcomeTitle,
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
                 ),
               ),
               const SizedBox(height: 10),
-              const Text(
-                AppString.passengerAuthTagline,
+              Text(
+                l10n.passengerAuthTagline,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 14,
                   color: Colors.grey,
                 ),
@@ -66,7 +67,7 @@ class AuthSelectionScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                child: Text(AppString.logInButton)
+                child: Text(l10n.logInButton)
               ),
               const SizedBox(height: 15),
               OutlinedButton(
@@ -82,7 +83,7 @@ class AuthSelectionScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                child: Text(AppString.registerButton) ,
+                child: Text(l10n.registerButton) ,
               ),
             ],
           ),

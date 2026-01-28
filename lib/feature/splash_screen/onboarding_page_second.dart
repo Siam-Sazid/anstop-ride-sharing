@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
-import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/feature/splash_screen/onboarding_page_third.dart';
+import 'package:ride_sharing/l10n/app_localizations.dart';
 
 import '../../widgets/custom_fade_slide.dart';
 import '../../widgets/custom_sliding_container.dart';
@@ -15,6 +15,7 @@ class OnboardingPageSecond extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -32,7 +33,7 @@ class OnboardingPageSecond extends StatelessWidget {
                       width: 40.h,
                       fontSize: 14.sp,
                     ),
-                    _skipButton(),
+                    _skipButton(l10n),
                   ],
                 ),
               ),
@@ -54,7 +55,7 @@ class OnboardingPageSecond extends StatelessWidget {
                CustomFadeSlide(
                  delay: 300,
                  child: Text(
-                  AppString.onboardingSafeAndSecure,
+                  l10n.onboardingSafeAndSecure,
                   style: TextStyle(
                     fontSize: 26.sp ,
                     fontWeight: FontWeight.bold,
@@ -66,7 +67,7 @@ class OnboardingPageSecond extends StatelessWidget {
                 delay: 450,
                 child: Center(
                   child: Text(
-                    AppString.onboardingJourneys,
+                    l10n.onboardingJourneys,
                     style: TextStyle(
                       fontSize: 26.sp,
                       fontWeight: FontWeight.bold,
@@ -79,7 +80,7 @@ class OnboardingPageSecond extends StatelessWidget {
                CustomFadeSlide(
                  delay: 500,
                  child: Text(
-                  AppString.onboardingSafetyMessage,
+                  l10n.onboardingSafetyMessage,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14.sp ,
@@ -120,7 +121,7 @@ class OnboardingPageSecond extends StatelessWidget {
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
-                  child: const Text(AppString.getStartedButton),
+                  child: Text(l10n.getStartedButton),
                 ),
               ),
 
@@ -132,14 +133,14 @@ class OnboardingPageSecond extends StatelessWidget {
     );
   }
 
-  Widget _skipButton() {
+  Widget _skipButton(AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color: Colors.grey[200],
         borderRadius: BorderRadius.circular(20),
       ),
-      child: const Text(AppString.skipButton),
+      child: Text(l10n.skipButton),
     );
   }
 }

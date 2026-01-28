@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:ride_sharing/l10n/l10n_helper.dart';
 import '../../../app/utils/app_colors.dart';
 
@@ -16,12 +17,28 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
   String selectedLanguage = '';
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
+    // Initialize selected language based on current locale
+    final currentLocale = Get.locale?.languageCode ?? 'en';
+    selectedLanguage = currentLocale == 'fr' ? 'French' : 'English';
+  }
 
-    if (selectedLanguage.isEmpty) {
-      selectedLanguage = AppLocalization.tr.englishLanguage;
+  void _changeLanguage(String language) {
+    setState(() {
+      selectedLanguage = language;
+    });
+
+    // Update the app locale based on selection
+    if (language == AppLocalization.tr.frenchLanguage || language == 'French') {
+      Get.updateLocale(const Locale('fr'));
+    } else {
+      Get.updateLocale(const Locale('en'));
     }
+  }
 
+  @override
+  Widget build(BuildContext context) {
     final List<String> languages = [
       AppLocalization.tr.englishLanguage,
       AppLocalization.tr.frenchLanguage,
@@ -63,13 +80,13 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
   }
 
   Widget _buildLanguageOption(String language) {
-    final isSelected = selectedLanguage == language;
+    final isSelected = selectedLanguage == language ||
+        (language == AppLocalization.tr.englishLanguage && selectedLanguage == 'English') ||
+        (language == AppLocalization.tr.frenchLanguage && selectedLanguage == 'French');
 
     return InkWell(
       onTap: () {
-        setState(() {
-          selectedLanguage = language;
-        });
+        _changeLanguage(language);
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8),

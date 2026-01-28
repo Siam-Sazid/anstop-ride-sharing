@@ -779,4 +779,105 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get confirmBookmark => 'Confirmer le favori';
+
+  @override
+  String get driverYouAreOffline => 'Vous êtes hors ligne';
+
+  @override
+  String get driverYouAreOnline => 'Vous êtes en ligne';
+
+  @override
+  String get driverGoOnlineMessage =>
+      'Passez en ligne pour obtenir des trajets et gagner de l\'argent.';
+
+  @override
+  String get driverGoOnlineButton => 'Passer\nEn ligne';
+
+  @override
+  String get driverGoOfflineButton => 'Passer Hors ligne';
+
+  @override
+  String get driverGoOnline => 'Passer En ligne';
+
+  @override
+  String get driverOnTheWayToPickUp =>
+      'Le conducteur est en route pour vous chercher';
+
+  @override
+  String get yourTrip => 'Votre Trajet';
+
+  @override
+  String get driverHasArrived => 'Le conducteur est arrivé';
+
+  @override
+  String get letsRide => 'Allons-y';
+
+  @override
+  String get yourRideHasBegun => 'Votre trajet a commencé';
+
+  @override
+  String get pickupLocation => 'Lieu de prise en charge';
+
+  @override
+  String get destination => 'Destination';
+
+  @override
+  String get findingNearbyDrivers => 'Recherche de conducteurs à proximité...';
+
+  @override
+  String get noDriversAvailable => 'Aucun conducteur disponible à proximité';
+
+  @override
+  String get acceptButton => 'Accepter';
+
+  @override
+  String get bidSubmitted => 'Offre Soumise';
+
+  @override
+  String bidSentMessage(String amount) {
+    return 'Votre offre de $amount a été envoyée';
+  }
+
+  @override
+  String get invalidBid => 'Offre Invalide';
+
+  @override
+  String get enterValidBidAmount =>
+      'Veuillez entrer un montant d\'offre valide';
+
+  @override
+  String get fareLabel => 'Tarif';
+
+  @override
+  String get pickUp => 'Prise en charge';
+
+  @override
+  String get dropOff => 'Dépose';
+
+  @override
+  String get noteLabel => 'Note';
+
+  @override
+  String get rideRequirements => 'Exigences du trajet';
+
+  @override
+  String get passengersNote => 'Note du passager';
+
+  @override
+  String get putYourOfferPrice => 'Entrez votre prix d\'offre';
+
+  @override
+  String get bidButton => 'Enchérir';
+
+  @override
+  String get goToMap => 'Aller à la carte';
+
+  @override
+  String get confirmPickup => 'Confirmer la prise en charge';
+
+  @override
+  String get acceptOffer => 'Accepter l\'offre';
+
+  @override
+  String get dropOffButton => 'Déposer';
 }

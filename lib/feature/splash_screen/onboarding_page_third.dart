@@ -3,10 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
-import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/feature/auth/view/log_in_screen.dart';
 import 'package:ride_sharing/feature/splash_screen/auth_selection_screen.dart';
 import 'package:ride_sharing/feature/splash_screen/role_selection_screen.dart';
+import 'package:ride_sharing/l10n/app_localizations.dart';
 
 import '../../routes/app_routes.dart';
 import '../../widgets/custom_fade_slide.dart';
@@ -18,6 +18,7 @@ class OnboardingPageThird extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -35,7 +36,7 @@ class OnboardingPageThird extends StatelessWidget{
                       width: 40.h,
                       fontSize: 14.sp,
                     ),
-                    _skipButton(),
+                    _skipButton(l10n),
                   ],
                 ),
               ),
@@ -58,7 +59,7 @@ class OnboardingPageThird extends StatelessWidget{
                CustomFadeSlide(
                  delay: 300,
                  child: Text(
-                  AppString.onboardingEasyAndConvenient,
+                  l10n.onboardingEasyAndConvenient,
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -70,7 +71,7 @@ class OnboardingPageThird extends StatelessWidget{
                 delay: 350,
                 child: Center(
                   child: Text(
-                    AppString.onboardingBooking,
+                    l10n.onboardingBooking,
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -83,7 +84,7 @@ class OnboardingPageThird extends StatelessWidget{
               CustomFadeSlide(
                 delay: 450,
                 child: Text(
-                  AppString.onboardingBookingMessage,
+                  l10n.onboardingBookingMessage,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 18.sp,
@@ -123,7 +124,7 @@ class OnboardingPageThird extends StatelessWidget{
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
-                  child: const Text(AppString.getStartedButton),
+                  child: Text(l10n.getStartedButton),
                 ),
               ),
 
@@ -137,14 +138,14 @@ class OnboardingPageThird extends StatelessWidget{
 }
 
 
-Widget _skipButton() {
+Widget _skipButton(AppLocalizations l10n) {
   return Container(
     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
     decoration: BoxDecoration(
       color: Colors.grey[200],
       borderRadius: BorderRadius.circular(20),
     ),
-    child: const Text(AppString.skipButton),
+    child: Text(l10n.skipButton),
   );
 }
 

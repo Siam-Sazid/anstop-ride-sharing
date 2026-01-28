@@ -1585,6 +1585,198 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Confirm Bookmark'**
   String get confirmBookmark;
+
+  /// No description provided for @driverYouAreOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'You are offline'**
+  String get driverYouAreOffline;
+
+  /// No description provided for @driverYouAreOnline.
+  ///
+  /// In en, this message translates to:
+  /// **'You are online'**
+  String get driverYouAreOnline;
+
+  /// No description provided for @driverGoOnlineMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Go online to get trips and earn money.'**
+  String get driverGoOnlineMessage;
+
+  /// No description provided for @driverGoOnlineButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Go\nOnline'**
+  String get driverGoOnlineButton;
+
+  /// No description provided for @driverGoOfflineButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Go Offline'**
+  String get driverGoOfflineButton;
+
+  /// No description provided for @driverGoOnline.
+  ///
+  /// In en, this message translates to:
+  /// **'Go Online'**
+  String get driverGoOnline;
+
+  /// No description provided for @driverOnTheWayToPickUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Driver is on the way to pick up'**
+  String get driverOnTheWayToPickUp;
+
+  /// No description provided for @yourTrip.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Trip'**
+  String get yourTrip;
+
+  /// No description provided for @driverHasArrived.
+  ///
+  /// In en, this message translates to:
+  /// **'Driver has been arrived'**
+  String get driverHasArrived;
+
+  /// No description provided for @letsRide.
+  ///
+  /// In en, this message translates to:
+  /// **'Lets Ride'**
+  String get letsRide;
+
+  /// No description provided for @yourRideHasBegun.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Ride has begun'**
+  String get yourRideHasBegun;
+
+  /// No description provided for @pickupLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Pickup location'**
+  String get pickupLocation;
+
+  /// No description provided for @destination.
+  ///
+  /// In en, this message translates to:
+  /// **'Destination'**
+  String get destination;
+
+  /// No description provided for @findingNearbyDrivers.
+  ///
+  /// In en, this message translates to:
+  /// **'Finding nearby drivers...'**
+  String get findingNearbyDrivers;
+
+  /// No description provided for @noDriversAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No drivers available nearby'**
+  String get noDriversAvailable;
+
+  /// No description provided for @acceptButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get acceptButton;
+
+  /// No description provided for @bidSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Bid Submitted'**
+  String get bidSubmitted;
+
+  /// No description provided for @bidSentMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your bid of {amount} has been sent'**
+  String bidSentMessage(String amount);
+
+  /// No description provided for @invalidBid.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid Bid'**
+  String get invalidBid;
+
+  /// No description provided for @enterValidBidAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid bid amount'**
+  String get enterValidBidAmount;
+
+  /// No description provided for @fareLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Fare'**
+  String get fareLabel;
+
+  /// No description provided for @pickUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick up'**
+  String get pickUp;
+
+  /// No description provided for @dropOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop Off'**
+  String get dropOff;
+
+  /// No description provided for @noteLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get noteLabel;
+
+  /// No description provided for @rideRequirements.
+  ///
+  /// In en, this message translates to:
+  /// **'Ride Requirements'**
+  String get rideRequirements;
+
+  /// No description provided for @passengersNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Passenger\'s Note'**
+  String get passengersNote;
+
+  /// No description provided for @putYourOfferPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Put your offer price'**
+  String get putYourOfferPrice;
+
+  /// No description provided for @bidButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Bid'**
+  String get bidButton;
+
+  /// No description provided for @goToMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to map'**
+  String get goToMap;
+
+  /// No description provided for @confirmPickup.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Pickup'**
+  String get confirmPickup;
+
+  /// No description provided for @acceptOffer.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept Offer'**
+  String get acceptOffer;
+
+  /// No description provided for @dropOffButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop Off'**
+  String get dropOffButton;
 }
 
 class _AppLocalizationsDelegate

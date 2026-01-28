@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/utils/driver_status_widget.dart';
 import 'package:ride_sharing/utils/user_info_section.dart';
+import 'package:ride_sharing/l10n/app_localizations.dart';
 import '../../../../app/utils/app_colors.dart';
 import '../../../../widgets/custom_horizontal_line.dart';
 
@@ -35,6 +36,7 @@ class _RideBegunBottomSheetState extends State<RideBegunBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     // Use dynamic data or fallback to static
     final displayName = widget.driverName.isNotEmpty ? widget.driverName : 'John Doe';
     final displayImageUrl = widget.driverProfilePicture ?? 'https://picsum.photos/250?image=9';
@@ -57,7 +59,7 @@ class _RideBegunBottomSheetState extends State<RideBegunBottomSheet> {
 
 
           DriverStatusWidget(
-            statusText: 'Your Ride has begun',
+            statusText: l10n.yourRideHasBegun,
             circleColor: Colors.green,
           ),
           CustomHorizontalLine(thickness: 5.sp,),
@@ -83,7 +85,7 @@ class _RideBegunBottomSheetState extends State<RideBegunBottomSheet> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Your Trip',style: TextStyle(fontSize: 15.sp,fontWeight: FontWeight.bold),),
+                      Text(l10n.yourTrip,style: TextStyle(fontSize: 15.sp,fontWeight: FontWeight.bold),),
                       SizedBox(height: 2.sp,),
                       Row(
                         children: [

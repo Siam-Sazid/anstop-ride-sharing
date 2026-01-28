@@ -3,15 +3,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
 import 'package:get/get.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
-import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/feature/auth/driver/registration.dart';
 import 'package:ride_sharing/feature/auth/view/log_in_screen.dart';
 import 'package:ride_sharing/feature/auth/view/registration.dart';
+import 'package:ride_sharing/l10n/app_localizations.dart';
+
 class DriverAuthSelectionScreen extends StatelessWidget {
   const DriverAuthSelectionScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -31,9 +33,9 @@ class DriverAuthSelectionScreen extends StatelessWidget {
               ),
 
               const SizedBox(height: 30),
-              const Text(
-                AppString.driverWelcomeTitle,
-                style: TextStyle(
+              Text(
+                l10n.driverWelcomeTitle,
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
@@ -41,7 +43,7 @@ class DriverAuthSelectionScreen extends StatelessWidget {
               ),
               const SizedBox(height: 10),
                Text(
-                AppString.driverAuthTagline,
+                l10n.driverAuthTagline,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 18.sp,
@@ -63,7 +65,7 @@ class DriverAuthSelectionScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
-                  child: Text(AppString.logInButton)
+                  child: Text(l10n.logInButton)
               ),
               const SizedBox(height: 15),
               OutlinedButton(
@@ -79,7 +81,7 @@ class DriverAuthSelectionScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                child: Text(AppString.registerButton) ,
+                child: Text(l10n.registerButton) ,
               ),
             ],
           ),

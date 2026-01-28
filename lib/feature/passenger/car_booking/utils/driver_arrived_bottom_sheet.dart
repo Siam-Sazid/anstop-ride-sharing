@@ -7,6 +7,7 @@ import 'package:ride_sharing/feature/passenger/car_booking/utils/driver_status_w
 import 'package:ride_sharing/feature/passenger/car_booking/utils/ride_begun_bottom_sheet.dart';
 import 'package:ride_sharing/services/socket_services.dart';
 import 'package:ride_sharing/utils/user_info_section.dart';
+import 'package:ride_sharing/l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:ride_sharing/feature/passenger/payment/view/passenger_payment_screen.dart';
 
@@ -104,6 +105,7 @@ class _DriverArrivedBottomSheetState extends State<DriverArrivedBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     // Use dynamic data or fallback to static
     final displayName = widget.driverName.isNotEmpty ? widget.driverName : 'John Doe';
     final displayImageUrl = widget.driverProfilePicture ?? 'https://picsum.photos/250?image=9';
@@ -129,7 +131,7 @@ class _DriverArrivedBottomSheetState extends State<DriverArrivedBottomSheet> {
 
 
           DriverStatusWidget(
-            statusText: 'Driver has been arrived',
+            statusText: l10n.driverHasArrived,
             circleColor: Colors.green,
           ),
 
@@ -174,7 +176,7 @@ class _DriverArrivedBottomSheetState extends State<DriverArrivedBottomSheet> {
                 );
               },
               title: Text(
-                'Lets Ride',
+                l10n.letsRide,
                 style: TextStyle(color: AppColors.white),
               ),
             ),

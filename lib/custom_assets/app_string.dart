@@ -14,7 +14,7 @@ abstract class AppString {
 
   // Onboarding Pages
   static const String onboardingWelcomeTo = 'Welcome to';
-  static const String onboardingAppName = 'app name';
+  static const String onboardingAppName = 'ANSTOP';
   static const String onboardingTagline = 'Seamless, affordable, and reliable ride-sharing at your fingertips.';
   static const String onboardingSafeAndSecure = 'Safe and Secure';
   static const String onboardingJourneys = 'Journeys';

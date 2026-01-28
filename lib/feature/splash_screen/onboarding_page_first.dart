@@ -6,6 +6,7 @@ import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/feature/splash_screen/onboarding_page_second.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 import 'package:ride_sharing/widgets/custom_sliding_container.dart';
+import 'package:ride_sharing/l10n/app_localizations.dart';
 
 import '../../widgets/custom_fade_slide.dart';
 
@@ -16,6 +17,7 @@ class OnboardingPageFirst extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -35,7 +37,7 @@ class OnboardingPageFirst extends StatelessWidget{
                       width: 40.h,
                       fontSize: 14.sp,
                     ),
-                    _skipButton(),
+                    _skipButton(l10n),
                   ],
                 ),
               ),
@@ -60,7 +62,7 @@ class OnboardingPageFirst extends StatelessWidget{
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(AppString.onboardingWelcomeTo, style: TextStyle(fontSize: 26.sp, fontWeight: FontWeight.bold)),
+                    Text(l10n.onboardingWelcomeTo, style: TextStyle(fontSize: 26.sp, fontWeight: FontWeight.bold)),
                     SizedBox(width: 5),
                     Text(AppString.onboardingAppName,
                         style: TextStyle(
@@ -77,7 +79,7 @@ class OnboardingPageFirst extends StatelessWidget{
               CustomFadeSlide(
                 delay: 450,
                 child: Text(
-                  AppString.onboardingTagline,
+                  l10n.onboardingTagline,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 14.sp),
                 ),
@@ -122,7 +124,7 @@ class OnboardingPageFirst extends StatelessWidget{
                     borderRadius: BorderRadius.circular(100.r),
                   ),
                 ),
-                child: const Text(AppString.getStartedButton),
+                child: Text(l10n.getStartedButton),
               ),
               ),
             ],
@@ -132,14 +134,14 @@ class OnboardingPageFirst extends StatelessWidget{
     );
   }
 
-  Widget _skipButton() {
+  Widget _skipButton(AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color: Colors.grey[200],
         borderRadius: BorderRadius.circular(20),
       ),
-      child: const Text(AppString.skipButton),
+      child: Text(l10n.skipButton),
     );
   }
 }

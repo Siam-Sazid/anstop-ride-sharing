@@ -10,6 +10,7 @@ import 'package:ride_sharing/feature/driver/trip_flow/view/trip_completion_payme
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 import 'package:ride_sharing/widgets/custom_horizontal_line.dart';
 import 'package:ride_sharing/widgets/custom_vertical_line.dart';
+import 'package:ride_sharing/l10n/app_localizations.dart';
 
 // import your app colors here
 // import '../../../../app/message_utils/app_colors.dart';
@@ -270,9 +271,10 @@ class DriverTripController extends GetxController {
       _logger.i('Bid submitted successfully');
 
       // Show success feedback
+      final l10n = AppLocalizations.of(Get.context!)!;
       Get.snackbar(
-        'Bid Submitted',
-        'Your bid of \$$amount has been sent',
+        l10n.bidSubmitted,
+        l10n.bidSentMessage('\$$amount'),
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.green.withOpacity(0.8),
         colorText: Colors.white,
@@ -282,9 +284,10 @@ class DriverTripController extends GetxController {
       // Close the trip flow after submitting
       closeTripFlow();
     } else {
+      final l10n = AppLocalizations.of(Get.context!)!;
       Get.snackbar(
-        'Invalid Bid',
-        'Please enter a valid bid amount',
+        l10n.invalidBid,
+        l10n.enterValidBidAmount,
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red.withOpacity(0.8),
         colorText: Colors.white,
@@ -542,6 +545,7 @@ class TripRequestCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
      // height: MediaQuery.of(context).size.height * 0.8,
       margin: EdgeInsets.only(bottom: 16.h),
@@ -632,7 +636,7 @@ class TripRequestCard extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  'Fare',
+                  l10n.fareLabel,
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w500,
@@ -691,7 +695,7 @@ class TripRequestCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Pick up',
+                            l10n.pickUp,
                             style: TextStyle(
                               fontSize: 12.sp,
                               fontWeight: FontWeight.w500,
@@ -707,7 +711,7 @@ class TripRequestCard extends StatelessWidget {
                           ),
                           SizedBox(height: 12.h),
                           Text(
-                            'Drop Off',
+                            l10n.dropOff,
                             style: TextStyle(
                               fontSize: 12.sp,
                               fontWeight: FontWeight.w500,
@@ -768,7 +772,7 @@ class TripRequestCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Note',
+                      l10n.noteLabel,
                       style: TextStyle(
                         fontSize: 11.sp,
                         fontWeight: FontWeight.w600,
@@ -804,7 +808,7 @@ class TripRequestCard extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      'Accept',
+                      l10n.acceptButton,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 14.sp,
@@ -825,7 +829,7 @@ class TripRequestCard extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      'Bid',
+                      l10n.bidButton,
                       style: TextStyle(
                         color: AppColors.appGreyColor,
                         fontSize: 14.sp,
@@ -846,7 +850,7 @@ class TripRequestCard extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      'Cancel',
+                      l10n.cancelButton,
                       style: TextStyle(
                         color: Colors.red,
                         fontSize: 14.sp,
@@ -870,6 +874,7 @@ class TripDetailBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final controller = Get.find<DriverTripController>();
     final trip = controller.selectedTrip.value ??
         (controller.pendingTrips.isNotEmpty ? controller.pendingTrips.first : null);
@@ -1029,7 +1034,7 @@ class TripDetailBottomSheet extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Pick up',
+                              l10n.pickUp,
                               style: TextStyle(
                                 fontSize: 12.sp,
                                 fontWeight: FontWeight.w500,
@@ -1069,7 +1074,7 @@ class TripDetailBottomSheet extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Drop off',
+                              l10n.dropOff,
                               style: TextStyle(
                                 fontSize: 12.sp,
                                 fontWeight: FontWeight.w500,
@@ -1107,7 +1112,7 @@ class TripDetailBottomSheet extends StatelessWidget {
                // mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text(
-                    'Ride Requirements',
+                    l10n.rideRequirements,
                     style: TextStyle(
                       fontSize: 12.sp,
                       fontWeight: FontWeight.bold,
@@ -1154,7 +1159,7 @@ class TripDetailBottomSheet extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Passenger\'s Note',
+                        l10n.passengersNote,
                         style: TextStyle(
                           fontSize: 12.sp,
                           fontWeight: FontWeight.bold,
@@ -1195,7 +1200,7 @@ class TripDetailBottomSheet extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        'Bid',
+                        l10n.bidButton,
                         style: TextStyle(
                           color: AppColors.grayShade100,
                           fontSize: 18.sp, // increased size
@@ -1221,6 +1226,7 @@ class BiddingBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final controller = Get.find<DriverTripController>();
     final trip = controller.selectedTrip.value ??
         (controller.pendingTrips.isNotEmpty ? controller.pendingTrips.first : null);
@@ -1359,7 +1365,7 @@ class BiddingBottomSheet extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Pick up',
+                            l10n.pickUp,
                             style: TextStyle(
                               fontSize: 12.sp,
                               fontWeight: FontWeight.w500,
@@ -1397,7 +1403,7 @@ class BiddingBottomSheet extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Drop off',
+                            l10n.dropOff,
                             style: TextStyle(
                               fontSize: 12.sp,
                               fontWeight: FontWeight.w500,
@@ -1435,7 +1441,7 @@ class BiddingBottomSheet extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Put your offer price',
+                  l10n.putYourOfferPrice,
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w600,
@@ -1510,7 +1516,7 @@ class BiddingBottomSheet extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  'Submit',
+                  l10n.submitButton,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16.sp,
@@ -1532,6 +1538,7 @@ class TripTakenBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final controller = Get.find<DriverTripController>();
 
     return Container(
@@ -1606,7 +1613,7 @@ class TripTakenBottomSheet extends StatelessWidget {
                 },
                 icon: Icon(Icons.map, color: Colors.white),
                 label: Text(
-                  'Go to map',
+                  l10n.goToMap,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16.sp,
@@ -1635,6 +1642,7 @@ class TripAcceptedBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final controller = Get.find<DriverTripController>();
     final trip = controller.selectedTrip.value;
 
@@ -1676,7 +1684,7 @@ class TripAcceptedBottomSheet extends StatelessWidget {
                       ),
                       SizedBox(width: 12.w),
                       Text(
-                        'Pickup location',
+                        l10n.pickupLocation,
                         style: TextStyle(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.w600,
@@ -1718,7 +1726,7 @@ class TripAcceptedBottomSheet extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        'Confirm Pickup',
+                        l10n.confirmPickup,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16.sp,
@@ -1745,6 +1753,7 @@ class ActiveTripBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final controller = Get.find<DriverTripController>();
     final trip = controller.selectedTrip.value ??
         (controller.pendingTrips.isNotEmpty ? controller.pendingTrips.first : null);
@@ -1915,7 +1924,7 @@ class ActiveTripBottomSheet extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          'Pick Up',
+                          l10n.pickUp,
                           style: TextStyle(
                             fontSize: 14.sp,
                             fontWeight: FontWeight.w600,
@@ -1924,7 +1933,7 @@ class ActiveTripBottomSheet extends StatelessWidget {
                         ),
                         const Spacer(),
                         Text(
-                          'Drop off',
+                          l10n.dropOff,
                           style: TextStyle(
                             fontSize: 14.sp,
                             fontWeight: FontWeight.w600,
@@ -1979,7 +1988,7 @@ class ActiveTripBottomSheet extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Passenger\'s Note',
+                          l10n.passengersNote,
                           style: TextStyle(
                             fontSize: 12.sp,
                             fontWeight: FontWeight.w500,
@@ -2016,7 +2025,7 @@ class ActiveTripBottomSheet extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      'Accept Offer',
+                      l10n.acceptOffer,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 16.sp,
@@ -2039,6 +2048,7 @@ class DropOffNavigationBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final controller = Get.find<DriverTripController>();
     final trip = controller.selectedTrip.value ??
         (controller.pendingTrips.isNotEmpty ? controller.pendingTrips.first : null);
@@ -2133,7 +2143,7 @@ class DropOffNavigationBottomSheet extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Pick Up',
+                                l10n.pickUp,
                                 style: TextStyle(
                                   fontSize: 12.sp,
                                   color: Colors.grey[600],
@@ -2157,7 +2167,7 @@ class DropOffNavigationBottomSheet extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Drop off',
+                              l10n.dropOff,
                               style: TextStyle(
                                 fontSize: 12.sp,
                                 color: Colors.grey[600],
@@ -2208,7 +2218,7 @@ class DropOffNavigationBottomSheet extends StatelessWidget {
                           child: Column(
                             children: [
                               Text(
-                                'Distance',
+                                l10n.distanceLabel,
                                 style: TextStyle(
                                   fontSize: 12.sp,
                                   color: Colors.grey[600],
@@ -2230,7 +2240,7 @@ class DropOffNavigationBottomSheet extends StatelessWidget {
                           child: Column(
                             children: [
                               Text(
-                                'Fare',
+                                l10n.fareLabel,
                                 style: TextStyle(
                                   fontSize: 12.sp,
                                   color: Colors.grey[600],
@@ -2269,7 +2279,7 @@ class DropOffNavigationBottomSheet extends StatelessWidget {
                             ),
                           ),
                           child: Text(
-                            'Drop Off',
+                            l10n.dropOffButton,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 16.sp,
@@ -2347,6 +2357,7 @@ class DropOffArrivedBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final controller = Get.find<DriverTripController>();
     final trip = controller.selectedTrip.value ??
         (controller.pendingTrips.isNotEmpty ? controller.pendingTrips.first : null);
@@ -2468,7 +2479,7 @@ class DropOffArrivedBottomSheet extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Pick Up',
+                                      l10n.pickUp,
                                       style: TextStyle(
                                         fontSize: 12.sp,
                                         color: Colors.grey[600],
@@ -2491,7 +2502,7 @@ class DropOffArrivedBottomSheet extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Drop off',
+                                      l10n.dropOff,
                                       style: TextStyle(
                                         fontSize: 12.sp,
                                         color: Colors.grey[600],
@@ -2542,7 +2553,7 @@ class DropOffArrivedBottomSheet extends StatelessWidget {
                                 child: Column(
                                   children: [
                                     Text(
-                                      'Distance',
+                                      l10n.distanceLabel,
                                       style: TextStyle(
                                         fontSize: 12.sp,
                                         color: Colors.grey[600],
@@ -2564,7 +2575,7 @@ class DropOffArrivedBottomSheet extends StatelessWidget {
                                 child: Column(
                                   children: [
                                     Text(
-                                      'Fare',
+                                      l10n.fareLabel,
                                       style: TextStyle(
                                         fontSize: 12.sp,
                                         color: Colors.grey[600],
@@ -2599,7 +2610,7 @@ class DropOffArrivedBottomSheet extends StatelessWidget {
                                 ),
                               ),
                               child: Text(
-                                'Drop Off',
+                                l10n.dropOffButton,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 16.sp,

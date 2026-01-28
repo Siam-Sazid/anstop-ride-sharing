@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
-import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/feature/auth/view/registration.dart';
 import 'package:ride_sharing/feature/splash_screen/driver_auth_selection_screen.dart';
 import 'package:ride_sharing/feature/splash_screen/auth_selection_screen.dart';
 import 'package:ride_sharing/feature/splash_screen/controller/role_selection_controller.dart';
 import 'package:ride_sharing/widgets/custom_fade_slide.dart';
+import 'package:ride_sharing/l10n/app_localizations.dart';
 import '../../app/utils/app_colors.dart';
 import 'package:get/get.dart';
 
@@ -17,6 +17,7 @@ class RoleSelectionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
@@ -43,7 +44,7 @@ class RoleSelectionScreen extends StatelessWidget {
                     CustomFadeSlide(
                       delay: 300,
                       child: Text(
-                        AppString.roleWelcomeTitle,
+                        l10n.roleWelcomeTitle,
                         style: TextStyle(
                           fontSize: 24.sp,
                           fontWeight: FontWeight.bold,
@@ -54,10 +55,10 @@ class RoleSelectionScreen extends StatelessWidget {
                     const SizedBox(height: 10),
                     CustomFadeSlide(
                       delay: 450,
-                      child: const Text(
-                        AppString.roleTagline,
+                      child: Text(
+                        l10n.roleTagline,
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 14,
                           color: Colors.black,
                         ),
@@ -119,7 +120,7 @@ class RoleSelectionScreen extends StatelessWidget {
                             ),
                             SizedBox(width: 10.w),
                             Text(
-                              AppString.asPassengerButton,
+                              l10n.asPassengerButton,
                               style: TextStyle(fontSize: 16.sp),
                             ),
                           ],
@@ -151,7 +152,7 @@ class RoleSelectionScreen extends StatelessWidget {
                             ),
                             SizedBox(width: 10.w),
                             Text(
-                              AppString.driverButton,
+                              l10n.driverButton,
                               style: TextStyle(fontSize: 16.sp),
                             ),
                           ],
