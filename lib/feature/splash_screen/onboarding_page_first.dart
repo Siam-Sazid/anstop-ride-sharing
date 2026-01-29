@@ -32,7 +32,7 @@ class OnboardingPageFirst extends StatelessWidget{
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    LogoWidget(
+                    IconWidget(
                       height: 40.h,
                       width: 40.h,
                       fontSize: 14.sp,
@@ -61,14 +61,17 @@ class OnboardingPageFirst extends StatelessWidget{
                 delay: 300,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(l10n.onboardingWelcomeTo, style: TextStyle(fontSize: 26.sp, fontWeight: FontWeight.bold)),
                     SizedBox(width: 5),
-                    Text(AppString.onboardingAppName,
-                        style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.primaryColor)),
+                    Container(
+                      height: 30.h,
+                      child: Image.asset(
+                        AppImage.textLogo,
+
+                      ),
+                    ),
                   ],
                 ),
               ),

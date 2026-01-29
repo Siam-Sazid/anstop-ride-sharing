@@ -137,7 +137,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
-            child: LogoWidget(
+            child: IconWidget(
               width: 40.0,
               height: 40.0,
               fontSize: 15.sp,

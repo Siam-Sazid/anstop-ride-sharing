@@ -909,7 +909,7 @@ class TripDetailBottomSheet extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  LogoWidget(
+                  IconWidget(
                     width: 40.0,
                     height: 40.0,
                     fontSize: 15.sp,

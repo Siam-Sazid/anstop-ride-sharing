@@ -63,7 +63,7 @@ class CustomAppBarTitle extends StatelessWidget implements PreferredSizeWidget {
       actions: [
         Padding(
           padding: EdgeInsets.only(right: 16.0.w, top: 8.h), // 👈 responsive padding
-          child: LogoWidget(
+          child: IconWidget(
             width: 40.w,
             height: 40.h,
             fontSize: 15.sp,

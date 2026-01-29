@@ -56,7 +56,7 @@ class _SupportPageState extends State<SupportPage> {
                       ),
 
                       // Placeholder for Logo
-                      LogoWidget(
+                      IconWidget(
                         height: 40.h,
                         width: 40.h,
                         fontSize: 14.sp,
@@ -66,7 +66,7 @@ class _SupportPageState extends State<SupportPage> {
                 ),
 
                 const SizedBox(height: 12),
-                 LogoWidget(),
+                 IconWidget(),
                 const SizedBox(height: 12),
                 Center(child: Text(AppLocalization.tr.supportMessage1)),
                 Center(child: Text(AppLocalization.tr.supportMessage2)),

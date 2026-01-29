@@ -3,6 +3,8 @@ import 'package:ride_sharing/l10n/l10n_helper.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 import 'package:ride_sharing/feature/auth/controller/otp_verification_controller.dart';
 
+import '../../../custom_assets/app_image.dart';
+
 class OtpVarificationScreen extends StatelessWidget {
   OtpVarificationScreen({super.key});
 
@@ -25,7 +27,9 @@ class OtpVarificationScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(height: 66.h),
-              LogoWidget(),
+              Image.asset(
+                  AppImage.logoAnstop
+              ),
               SizedBox(height: 52.h),
               CustomPinCodeTextField(
                 textEditingController: _controller.otpController,

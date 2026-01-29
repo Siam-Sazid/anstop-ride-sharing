@@ -85,7 +85,9 @@ class _SplashScreenState extends State<SplashScreen> {
                     ],
                   ),
                   const Spacer(),
-                  LogoWidget(),
+                  Image.asset(
+                      AppImage.logoAnstop
+                  ),
                   const SizedBox(height: 20),
                   Text(
                     AppLocalization.tr.splashTagline,

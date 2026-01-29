@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
 
-class LogoWidget extends StatelessWidget {
+class IconWidget extends StatelessWidget {
   final double width;
   final double height;
   final double fontSize;
@@ -11,7 +12,7 @@ class LogoWidget extends StatelessWidget {
   final String text;
 
   // Constructor with optional named parameters
-  const LogoWidget({
+  const IconWidget({
     super.key,
     this.width = 120,        // Default width
     this.height = 120,       // Default height
@@ -24,13 +25,12 @@ class LogoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(100),
-        child: Image.asset(
-          AppImage.davidLogo,
+      child: ClipOval(
+        child: SvgPicture.asset(
+          AppImage.anstopIcon,
           width: width.w,
           height: height.h,
-          fit: BoxFit.contain,
+          fit: BoxFit.cover,
         ),
       ),
     );

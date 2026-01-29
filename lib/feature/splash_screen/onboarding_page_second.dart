@@ -28,7 +28,7 @@ class OnboardingPageSecond extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    LogoWidget(
+                    IconWidget(
                       height: 40.h,
                       width: 40.h,
                       fontSize: 14.sp,

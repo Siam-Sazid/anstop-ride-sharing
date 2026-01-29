@@ -34,7 +34,7 @@ class EmailValidationScreen extends GetView<EmailValidationController> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 SizedBox(height: 66.h),
-                const LogoWidget(),
+                const IconWidget(),
                 SizedBox(height: 52.h),
                 CustomTextField(
                   controller: controller.emailTEController,

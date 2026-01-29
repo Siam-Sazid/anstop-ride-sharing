@@ -4,6 +4,8 @@ import 'package:ride_sharing/feature/auth/passenger/terms_of_services.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 import 'package:ride_sharing/feature/auth/controller/registration_controller.dart';
 
+import '../../../custom_assets/app_image.dart';
+
 class RegistrationScreen extends StatefulWidget {
   final String? role;
 
@@ -32,8 +34,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(height: 24.h),
-              Center(child: LogoWidget()),
+              SizedBox(height: 50.h),
+              Image.asset(
+                AppImage.textLogo
+              ),
               SizedBox(height: 15.h),
               Text(
                 AppLocalization.tr.createAccountTitle,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/feature/auth/view/email_validation_screen.dart';
 import 'package:ride_sharing/feature/auth/view/reset_password_screen.dart';
 import 'package:ride_sharing/feature/auth/controller/login_controller.dart';
@@ -26,7 +27,9 @@ class LogInScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   SizedBox(height: 66.h),
-                  LogoWidget(),
+                  Image.asset(
+                    AppImage.logoAnstop
+                  ),
                   SizedBox(height: 52.h),
                   CustomTextField(
                     controller: _controller.emailTEController,

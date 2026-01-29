@@ -367,7 +367,7 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              LogoWidget(
+              IconWidget(
                 width: 40.w,
                 height: 40.h,
                 fontSize: 15.sp,

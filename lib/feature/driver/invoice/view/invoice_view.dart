@@ -37,7 +37,7 @@ class InvoicePage extends StatelessWidget {
                 child: Column(
                   children: [
                     // Logo
-                    LogoWidget(
+                    IconWidget(
                       height: 40.h,
                       width: 42.w,
                       fontSize: 15.sp,

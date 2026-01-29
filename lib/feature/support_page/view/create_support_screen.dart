@@ -40,7 +40,7 @@ class CreateSupportScreen extends GetView<CreateSupportController> {
                         color: Color(0xFF1E1E1E),
                       ),
                     ),
-                    LogoWidget(
+                    IconWidget(
                       height: 40.h,
                       width: 40.h,
                       fontSize: 14.sp,
@@ -50,7 +50,7 @@ class CreateSupportScreen extends GetView<CreateSupportController> {
               ),
 
               const SizedBox(height: 12),
-              const LogoWidget(),
+              const IconWidget(),
               const SizedBox(height: 12),
               Center(child: Text(AppLocalization.tr.supportMessage1)),
               Center(child: Text(AppLocalization.tr.supportMessage2)),

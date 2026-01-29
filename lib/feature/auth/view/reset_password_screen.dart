@@ -1,6 +1,8 @@
 import 'package:ride_sharing/l10n/l10n_helper.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 
+import '../../../custom_assets/app_image.dart';
+
 class ResetPasswordScreen extends StatelessWidget {
   ResetPasswordScreen({super.key});
 
@@ -26,7 +28,9 @@ class ResetPasswordScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 SizedBox(height: 66.h),
-                LogoWidget(),
+                Image.asset(
+                    AppImage.logoAnstop
+                ),
                 SizedBox(height: 52.h),
                 CustomTextField(
                   controller: _passwordTEController,
