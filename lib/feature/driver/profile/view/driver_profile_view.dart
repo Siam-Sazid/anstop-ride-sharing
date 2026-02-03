@@ -58,7 +58,6 @@ class DriverProfileView extends StatelessWidget {
                     SizedBox(height: 46.h),
                     // Profile Picture
                     ClipOval(
-
                       child:
                       profile?.profilePicture != null &&
                           profile!.profilePicture!.isNotEmpty

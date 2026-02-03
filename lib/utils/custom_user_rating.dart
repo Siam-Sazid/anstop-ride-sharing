@@ -1,8 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:ride_sharing/l10n/l10n_helper.dart';
 import 'package:ride_sharing/feature/driver/profile/view/driver_profile_view.dart';
+import 'package:shimmer/shimmer.dart';
+
+import '../app/utils/app_colors.dart';
 class CustomUserRating extends StatefulWidget {
   final String name;
   final String imageUrl;
@@ -31,15 +35,44 @@ class _CustomUserRatingState extends State<CustomUserRating> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-
           ClipOval(
-            child: Image.network(
-              widget.imageUrl,
+            child: widget.imageUrl != null &&
+                widget.imageUrl.isNotEmpty
+                ? CachedNetworkImage(
+              imageUrl: widget.imageUrl,
               width: 50.w,
               height: 50.h,
               fit: BoxFit.cover,
+              placeholder: (context, url) => Shimmer.fromColors(
+                baseColor: Colors.grey.shade300,
+                highlightColor: Colors.grey.shade100,
+                child: Container(
+                  width: 100.w,
+                  height: 100.h,
+                  decoration: BoxDecoration(
+                    color: Colors.grey,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+
+              errorWidget: (context, url, error) => Icon(
+                Icons.person,
+                size: 30.sp,
+                color: AppColors.togglebuttonColor,
+              ),
+            )
+                : Container(
+              color: Colors.grey[300],
+              child: Icon(
+                Icons.person,
+                size: 50.sp,
+                color: Colors.grey[600],
+              ),
             ),
           ),
+
+
 
           SizedBox(width: 12.sp),
 

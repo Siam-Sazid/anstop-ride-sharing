@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
+import 'package:ride_sharing/feature/driver/profile/controller/driver_profile_controller.dart';
 import 'package:ride_sharing/l10n/l10n_helper.dart';
 import 'package:ride_sharing/feature/auth/view/log_in_screen.dart';
 import 'package:ride_sharing/feature/driver/homepage/view/driver_homescreen.dart';
@@ -18,8 +19,8 @@ import '../../feature/auth/view/log_out_dialog.dart';
 import '../custom_user_rating.dart';
 
 class PassengerCustomDrawer extends StatelessWidget {
-  const PassengerCustomDrawer({Key? key}) : super(key: key);
-
+   PassengerCustomDrawer({Key? key}) : super(key: key);
+  DriverProfileController driverProfileController = Get.put(DriverProfileController());
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -40,8 +41,9 @@ class PassengerCustomDrawer extends StatelessWidget {
 
               ),
               child: CustomUserRating(
-                name: AppLocalization.tr.exampleUserName,
-                imageUrl: "https://picsum.photos/250?image=9",
+                name: driverProfileController.profileData.value!.name,
+               imageUrl:    driverProfileController.profileData.value!.profilePicture ?? "https://picsum.photos/250?image=9"
+              //  imageUrl: "https://picsum.photos/250?image=9",
               //  price: 24,
              //   distance: 28,
               ),

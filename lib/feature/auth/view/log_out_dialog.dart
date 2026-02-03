@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ride_sharing/l10n/l10n_helper.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LogoutDialog extends StatelessWidget {
   const LogoutDialog({Key? key}) : super(key: key);
@@ -77,7 +78,17 @@ class LogoutDialog extends StatelessWidget {
                 // Logout Button
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
+                      // Clear all saved user data
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.remove('accessToken');
+                      await prefs.remove('refreshToken');
+                      await prefs.remove('userRole');
+                      await prefs.remove('userId');
+                      await prefs.remove('name');
+                      await prefs.remove('profilePicture');
+                      await prefs.remove('needsVerification');
+
                       Navigator.of(context).pop(true);
                     },
                     style: ElevatedButton.styleFrom(

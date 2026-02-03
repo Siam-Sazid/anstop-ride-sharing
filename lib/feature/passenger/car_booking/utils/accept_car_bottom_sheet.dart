@@ -568,7 +568,7 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
                         ),
                       ],
                     ),
-                    // Car info if available
+
                     if (driver.carInformation != null)
                       Text(
                         '${driver.carInformation!.brand} ${driver.carInformation!.model}',

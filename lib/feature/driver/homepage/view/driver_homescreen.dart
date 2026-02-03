@@ -145,7 +145,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
           ),
         ],
       ),
-      drawer: const DriverCustomDrawer(),
+      drawer:  DriverCustomDrawer(),
       body: GetBuilder<DriverHomeScreenController>(
         init: DriverHomeScreenController(),
         builder: (controller) {
