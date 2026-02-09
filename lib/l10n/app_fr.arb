@@ -10,10 +10,10 @@
   "asPassengerButton": "En tant que Passager",
   "driverButton": "Conducteur",
 
-  "onboardingWelcomeTo": "Bienvenue à",
+  "onboardingWelcomeTo": "Bienvenue sur",
   "onboardingAppName": "nom de l'application",
-  "onboardingTagline": "Un covoiturage fluide, abordable et fiable au bout de vos doigts.",
-  "onboardingSafeAndSecure": "Sûr et Sécurisé",
+  "onboardingTagline": "Le covoiturage local, fiable et abordable.",
+  "onboardingSafeAndSecure": "surs et sécurisés",
   "onboardingJourneys": "Trajets",
   "onboardingSafetyMessage": "Votre sécurité est notre priorité absolue. Chaque trajet est surveillé pour votre tranquillité d'esprit.",
   "onboardingEasyAndConvenient": "Facile et Pratique",
@@ -107,7 +107,7 @@
   "clearAllButton": "Tout effacer",
   "coffeeCategory": "Café",
   "restaurantCategory": "Restaurant",
-  "yourPickUpPointLabel": "Votre point de prise en charge",
+  "yourPickUpPointLabel": "Lieu de prise en charge",
   "yourDestinationLabel": "Votre destination",
   "savedAddressLabel": "Adresse enregistrée",
   "seeAllLink": "Voir tout >",
@@ -278,7 +278,7 @@
   "deleteItemTitle": "Supprimer l'élément",
   "deleteButton": "Supprimer",
 
-  "googleApiKey": "AIzaSyCOAYoZktEbWIRX4mbS9D9ypHXdyYWFpSo",
+  "googleApiKey": "AIzaSyD_NVUY504HfMBsvN1gACNyfaFKAulvkVI",
   "yourLocationMarker": "Votre emplacement",
 
   "confirmHomeAddress": "Confirmer l'adresse du domicile",

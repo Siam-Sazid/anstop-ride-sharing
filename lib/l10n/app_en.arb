@@ -3,7 +3,7 @@
 
   "splashEnglishLabel": "English",
   "splashFrenchLabel": "French",
-  "splashTagline": "Seamless, affordable, and reliable ride-sharing at your fingertips.",
+  "splashTagline": "Seamless, affordable, and reliable carpooling at your fingertips.",
 
   "roleWelcomeTitle": "WELCOME To Our App",
   "roleTagline": "Seamless, affordable, and reliable ride-sharing at your fingertips.",
@@ -12,9 +12,9 @@
 
   "onboardingWelcomeTo": "Welcome to",
   "onboardingAppName": "app name",
-  "onboardingTagline": "Seamless, affordable, and reliable ride-sharing at your fingertips.",
+  "onboardingTagline": "Local, reliable, and affordable carpooling",
   "onboardingSafeAndSecure": "Safe and Secure",
-  "onboardingJourneys": "Journeys",
+  "onboardingJourneys": "Trips",
   "onboardingSafetyMessage": "Your safety is our top priority. Every ride is monitored for your peace of mind.",
   "onboardingEasyAndConvenient": "Easy and Convenient",
   "onboardingBooking": "Booking",
@@ -107,7 +107,7 @@
   "clearAllButton": "Clear all",
   "coffeeCategory": "Coffee",
   "restaurantCategory": "Restaurant",
-  "yourPickUpPointLabel": "Your pick up point",
+  "yourPickUpPointLabel": "Pick-up location",
   "yourDestinationLabel": "Your destination",
   "savedAddressLabel": "Saved Adress",
   "seeAllLink": "See all >",

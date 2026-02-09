@@ -16,7 +16,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get splashTagline =>
-      'Seamless, affordable, and reliable ride-sharing at your fingertips.';
+      'Seamless, affordable, and reliable carpooling at your fingertips.';
 
   @override
   String get roleWelcomeTitle => 'WELCOME To Our App';
@@ -38,14 +38,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingAppName => 'app name';
 
   @override
-  String get onboardingTagline =>
-      'Seamless, affordable, and reliable ride-sharing at your fingertips.';
+  String get onboardingTagline => 'Local, reliable, and affordable carpooling';
 
   @override
   String get onboardingSafeAndSecure => 'Safe and Secure';
 
   @override
-  String get onboardingJourneys => 'Journeys';
+  String get onboardingJourneys => 'Trips';
 
   @override
   String get onboardingSafetyMessage =>
@@ -308,7 +307,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get restaurantCategory => 'Restaurant';
 
   @override
-  String get yourPickUpPointLabel => 'Your pick up point';
+  String get yourPickUpPointLabel => 'Pick-up location';
 
   @override
   String get yourDestinationLabel => 'Your destination';

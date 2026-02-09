@@ -56,17 +56,6 @@ class OnboardingPageThird extends StatelessWidget{
               ),
 
               SizedBox(height: 30.h),
-               CustomFadeSlide(
-                 delay: 300,
-                 child: Text(
-                  l10n.onboardingEasyAndConvenient,
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                               ),
-               ),
               CustomFadeSlide(
                 delay: 350,
                 child: Center(
@@ -77,6 +66,17 @@ class OnboardingPageThird extends StatelessWidget{
                       fontWeight: FontWeight.bold,
                       color: AppColors.green400,
                     ),
+                  ),
+                ),
+              ),
+              CustomFadeSlide(
+                delay: 300,
+                child: Text(
+                  l10n.onboardingEasyAndConvenient,
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
                   ),
                 ),
               ),

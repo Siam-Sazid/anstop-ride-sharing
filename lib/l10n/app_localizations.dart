@@ -113,7 +113,7 @@ abstract class AppLocalizations {
   /// No description provided for @splashTagline.
   ///
   /// In en, this message translates to:
-  /// **'Seamless, affordable, and reliable ride-sharing at your fingertips.'**
+  /// **'Seamless, affordable, and reliable carpooling at your fingertips.'**
   String get splashTagline;
 
   /// No description provided for @roleWelcomeTitle.
@@ -155,7 +155,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingTagline.
   ///
   /// In en, this message translates to:
-  /// **'Seamless, affordable, and reliable ride-sharing at your fingertips.'**
+  /// **'Local, reliable, and affordable carpooling'**
   String get onboardingTagline;
 
   /// No description provided for @onboardingSafeAndSecure.
@@ -167,7 +167,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingJourneys.
   ///
   /// In en, this message translates to:
-  /// **'Journeys'**
+  /// **'Trips'**
   String get onboardingJourneys;
 
   /// No description provided for @onboardingSafetyMessage.
@@ -671,7 +671,7 @@ abstract class AppLocalizations {
   /// No description provided for @yourPickUpPointLabel.
   ///
   /// In en, this message translates to:
-  /// **'Your pick up point'**
+  /// **'Pick-up location'**
   String get yourPickUpPointLabel;
 
   /// No description provided for @yourDestinationLabel.

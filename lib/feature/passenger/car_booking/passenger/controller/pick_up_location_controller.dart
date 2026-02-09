@@ -1,4 +1,6 @@
 import 'dart:math';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
@@ -44,6 +46,35 @@ class PickUpLocationController extends GetxController {
   void onInit() {
     super.onInit();
     _initializeMap();
+     debugTestGoogleApiKey(); // Uncomment to debug Google API key issues
+  }
+
+  /// Debug method: directly calls Google Places API and logs the raw response
+  Future<void> debugTestGoogleApiKey() async {
+    const apiKey = "AIzaSyD_NVUY504HfMBsvN1gACNyfaFKAulvkVI"; // This is the api key for my client.
+  //  const apiKey = "AIzaSyBUHqcmvmiPPwuwl33JkMP3lAzKMxREenI"; // This is another key for testing purposes.
+    const testInput = "Dhaka";
+    final url = Uri.parse(
+      "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$testInput&key=$apiKey",
+    );
+
+    try {
+      final response = await http.get(url);
+      debugPrint("===== GOOGLE PLACES API DEBUG =====");
+      debugPrint("Status Code: ${response.statusCode}");
+      debugPrint("Response Body: ${response.body}");
+      debugPrint("===================================");
+
+      final decoded = jsonDecode(response.body);
+      if (decoded['status'] != 'OK') {
+        debugPrint("API Error Status: ${decoded['status']}");
+        debugPrint("Error Message: ${decoded['error_message'] ?? 'No error message'}");
+      }
+    } catch (e) {
+      debugPrint("===== GOOGLE PLACES API DEBUG ERROR =====");
+      debugPrint("Exception: $e");
+      debugPrint("==========================================");
+    }
   }
 
   Future<void> _initializeMap() async {

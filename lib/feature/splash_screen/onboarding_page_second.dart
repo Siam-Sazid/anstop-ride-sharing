@@ -52,30 +52,36 @@ class OnboardingPageSecond extends StatelessWidget {
                  ),
 
               //const SizedBox(height: 10),
-               CustomFadeSlide(
-                 delay: 300,
-                 child: Text(
-                  l10n.onboardingSafeAndSecure,
-                  style: TextStyle(
-                    fontSize: 26.sp ,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                               ),
+               Row(
+                 mainAxisAlignment: MainAxisAlignment.center,
+                 children: [
+                   CustomFadeSlide(
+                     delay: 300,
+                     child: Text(
+                      l10n.onboardingSafeAndSecure,
+                      style: TextStyle(
+                        fontSize: 26.sp ,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                                   ),
+                   ),
+                   CustomFadeSlide(
+                     delay: 450,
+                     child: Center(
+                       child: Text(
+                         l10n.onboardingJourneys,
+                         style: TextStyle(
+                           fontSize: 26.sp,
+                           fontWeight: FontWeight.bold,
+                           color: AppColors.green400,
+                         ),
+                       ),
+                     ),
+                   ),
+                 ],
                ),
-              CustomFadeSlide(
-                delay: 450,
-                child: Center(
-                  child: Text(
-                    l10n.onboardingJourneys,
-                    style: TextStyle(
-                      fontSize: 26.sp,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.green400,
-                    ),
-                  ),
-                ),
-              ),
+
                SizedBox(height: 10.h ),
                CustomFadeSlide(
                  delay: 500,

@@ -55,7 +55,7 @@ class DriverHomeScreenController extends GetxController {
   static const int _simulationIntervalMs = 50; // Timer interval in milliseconds
 
   // Google API Key from manifest
-  static const String _googleApiKey = "AIzaSyBTNR1NWw7LcTsEJTTogqVZ39tgY--eD5U";
+  static const String _googleApiKey = "AIzaSyD_NVUY504HfMBsvN1gACNyfaFKAulvkVI";
 
   // Custom markers
   BitmapDescriptor? _pickupMarkerIcon;

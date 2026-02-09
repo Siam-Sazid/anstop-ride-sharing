@@ -32,17 +32,16 @@ class AppLocalizationsFr extends AppLocalizations {
   String get driverButton => 'Conducteur';
 
   @override
-  String get onboardingWelcomeTo => 'Bienvenue à';
+  String get onboardingWelcomeTo => 'Bienvenue sur';
 
   @override
   String get onboardingAppName => 'nom de l\'application';
 
   @override
-  String get onboardingTagline =>
-      'Un covoiturage fluide, abordable et fiable au bout de vos doigts.';
+  String get onboardingTagline => 'Le covoiturage local, fiable et abordable.';
 
   @override
-  String get onboardingSafeAndSecure => 'Sûr et Sécurisé';
+  String get onboardingSafeAndSecure => 'surs et sécurisés';
 
   @override
   String get onboardingJourneys => 'Trajets';
@@ -311,7 +310,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get restaurantCategory => 'Restaurant';
 
   @override
-  String get yourPickUpPointLabel => 'Votre point de prise en charge';
+  String get yourPickUpPointLabel => 'Lieu de prise en charge';
 
   @override
   String get yourDestinationLabel => 'Votre destination';
@@ -766,7 +765,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get deleteButton => 'Supprimer';
 
   @override
-  String get googleApiKey => 'AIzaSyCOAYoZktEbWIRX4mbS9D9ypHXdyYWFpSo';
+  String get googleApiKey => 'AIzaSyD_NVUY504HfMBsvN1gACNyfaFKAulvkVI';
 
   @override
   String get yourLocationMarker => 'Votre emplacement';
