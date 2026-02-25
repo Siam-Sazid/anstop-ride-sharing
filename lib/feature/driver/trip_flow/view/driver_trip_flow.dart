@@ -55,13 +55,13 @@ class TripRequest {
     return TripRequest(
       id: rideRequest.rideId,
       riderId: rideRequest.riderId,
-      passengerName: 'Rider', // Will be fetched from API if needed
+      passengerName: rideRequest.rider.name,
       passengerImage: 'assets/images/passenger1.jpg',
-      rating: 4.5,
+      rating: rideRequest.rider.rating,
       pickupTime: 'Now',
       pickupLocation: rideRequest.pickUp.name,
       dropoffLocation: rideRequest.destination.name,
-      fare: rideRequest.preferedFare,
+      fare: rideRequest.fare,
       distance: double.tryParse(rideRequest.distance) ?? 0.0,
       vehicleType: 'Standard',
       note: rideRequest.note,
@@ -310,23 +310,12 @@ class DriverTripController extends GetxController {
 
       if (rideRequest != null) {
         final pickupLocation = rideRequest.pickUp;
-        _logger.i('Pickup location: ${pickupLocation.name}, coordinates: ${pickupLocation.coordinates}');
+        _logger.i('Pickup location: ${pickupLocation.name}, lat: ${pickupLocation.latitude}, lng: ${pickupLocation.longitude}');
 
-        // Notify DriverHomeScreenController to show polyline from current location to pickup
-        await homeController.showRouteToPickup(
-          // Static pickup location (since API returns [0,0])
-          pickupLat: 23.73439856033021,
-          pickupLng: 90.40467599770942,
-          pickupName: pickupLocation.name,
-        );
+        // Route is already shown on map from _handleRideAccepted, just transition state
+        _logger.i('Route already shown via ride-accepted handler, transitioning to tripAccepted state');
       } else {
         _logger.e('No ride request available');
-        // Still show route with default pickup name
-        await homeController.showRouteToPickup(
-          pickupLat: 23.73439856033021,
-          pickupLng: 90.40467599770942,
-          pickupName: 'Pickup Location',
-        );
       }
     } catch (e) {
       _logger.e('Error in goToMapWithPickupRoute: $e');
@@ -430,21 +419,43 @@ class DriverTripController extends GetxController {
   Future<void> confirmPickup() async {
     _logger.i('Confirming pickup - emitting pickup-rider socket event');
 
-    // Emit pickup-rider socket event with empty body
-    await SocketIoService.to.emitPickupRider();
+    final success = await SocketIoService.to.emitPickupRider();
 
-    _logger.i('pickup-rider event emitted successfully');
+    _logger.i('pickup-rider ack result - success: $success');
 
-    // Stop navigation since we've arrived at pickup
-    try {
-      final homeController = Get.find<DriverHomeScreenController>();
-      homeController.stopNavigation();
-    } catch (e) {
-      _logger.e('Error stopping navigation: $e');
+    if (!success) {
+      _logger.e('pickup-rider ack returned failure - not transitioning state');
+      return;
     }
 
-    // Note: State transition to dropOffNavigation will happen via
-    // _setupRidePickedUpListener when ride-picked-up socket event is received
+    try {
+      final homeController = Get.find<DriverHomeScreenController>();
+
+      // Stop pickup navigation (clears old polyline + pickup marker)
+      homeController.stopNavigation();
+      _logger.i('Stopped pickup navigation');
+
+      // Immediately show route from current location to destination
+      final rideRequest = currentRideRequest.value ?? homeController.currentRideRequest.value;
+      if (rideRequest != null) {
+        final destination = rideRequest.destination;
+        _logger.i('Showing route to destination: ${destination.name} [${destination.latitude}, ${destination.longitude}]');
+        await homeController.showRouteToDestination(
+          destinationLat: destination.latitude,
+          destinationLng: destination.longitude,
+          destinationName: destination.name,
+        );
+        _logger.i('Destination route shown successfully');
+      } else {
+        _logger.e('No ride request found - cannot show destination route');
+      }
+    } catch (e) {
+      _logger.e('Error showing destination route after pickup: $e');
+    }
+
+    // Ack success - remove TripAcceptedBottomSheet and show DropOffArrivedBottomSheet
+    _logger.i('Transitioning to DropOffArrivedBottomSheet');
+    currentState.value = TripState.dropOffArrived;
   }
 
 
@@ -543,11 +554,13 @@ class TripRequestCard extends StatelessWidget {
     required this.onTap,
   }) : super(key: key);
 
+  static final Logger _logger = Logger();
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Container(
-     // height: MediaQuery.of(context).size.height * 0.8,
+    //  height: MediaQuery.of(context).size.height ,
       margin: EdgeInsets.only(bottom: 16.h),
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
@@ -799,7 +812,12 @@ class TripRequestCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: onTap,
+                    onPressed: () async {
+                      _logger.i('Accept button tapped - rideId: ${trip.id}');
+                      await SocketIoService.to.emitNewOffer(rideId: trip.id);
+                      _logger.i('new-offer emitted for rideId: ${trip.id}');
+                      onTap();
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryColor,
                       padding: EdgeInsets.symmetric(vertical: 12.h),
@@ -2079,7 +2097,8 @@ class DropOffNavigationBottomSheet extends StatelessWidget {
             ),
           SizedBox(height: 10.h,),
             Expanded(
-              child: Padding(
+              child: SingleChildScrollView(
+                child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.w),
                 child: Column(
                   children: [
@@ -2152,7 +2171,7 @@ class DropOffNavigationBottomSheet extends StatelessWidget {
                               ),
 
                               Text(
-                                'Block B, Banasree, Dhaka',
+                                trip.pickupLocation,
                                 style: TextStyle(
                                   fontSize: 14.sp,
                                   color: AppColors.tesxtColor,
@@ -2163,26 +2182,30 @@ class DropOffNavigationBottomSheet extends StatelessWidget {
                           ),
                         ),
 
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              l10n.dropOff,
-                              style: TextStyle(
-                                fontSize: 12.sp,
-                                color: Colors.grey[600],
-                                fontWeight: FontWeight.w500,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                l10n.dropOff,
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  color: Colors.grey[600],
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
-                            ),
-                            Text(
-                              'Dhanmondi, Dhaka',
-                              style: TextStyle(
-                                fontSize: 14.sp,
-                                color: AppColors.tesxtColor,
-                                fontWeight: FontWeight.w500,
+                              Text(
+                                trip.dropoffLocation,
+                                style: TextStyle(
+                                  fontSize: 14.sp,
+                                  color: AppColors.tesxtColor,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -2263,7 +2286,7 @@ class DropOffNavigationBottomSheet extends StatelessWidget {
 
                     SizedBox(height: 20.h),
 
-                    // Drop Off Button - emits drop-off-rider socket event
+                    // Complete Trip Button - emits drop-off-rider and shows payment dialog
                     Padding(
                       padding:  EdgeInsets.symmetric(horizontal:  16.sp),
                       child: SizedBox(
@@ -2294,54 +2317,55 @@ class DropOffNavigationBottomSheet extends StatelessWidget {
                     CustomHorizontalLine(thickness: 2,),
                     SizedBox(height: 20.h),
                     // Navigation directions
-                    Expanded(
-                      child: ListView(
-                        children: [
-                          NavigationStep(
-                            icon: Icons.straight,
-                            instruction: 'Head west on Road No. 3',
-                            distance: '240 m',
-                          ),
-                          NavigationStep(
-                            icon: Icons.turn_left,
-                            instruction: 'Turn left onto Ave 3',
-                            distance: '80 m',
-                          ),
-                          NavigationStep(
-                            icon: Icons.turn_right,
-                            instruction: 'Turn right onto Road No. 5',
-                            distance: '400 m',
-                          ),
-                          NavigationStep(
-                            icon: Icons.turn_left,
-                            instruction: 'Turn left',
-                            distance: '110 m',
-                          ),
-                          NavigationStep(
-                            icon: Icons.turn_right,
-                            instruction: 'Turn right at Titas Gas Rd',
-                            distance: '160 m',
-                          ),
-                          NavigationStep(
-                            icon: Icons.turn_left,
-                            instruction: 'Turn left',
-                            distance: '130 m',
-                          ),
-                          NavigationStep(
-                            icon: Icons.turn_right,
-                            instruction: 'Turn right at Rampura',
-                            distance: '160 m',
-                          ),
-                          NavigationStep(
-                            icon: Icons.turn_right,
-                            instruction: 'Turn right',
-                            distance: '400 m',
-                          ),
-                        ],
-                      ),
+                    ListView(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: [
+                        NavigationStep(
+                          icon: Icons.straight,
+                          instruction: 'Head west on Road No. 3',
+                          distance: '240 m',
+                        ),
+                        NavigationStep(
+                          icon: Icons.turn_left,
+                          instruction: 'Turn left onto Ave 3',
+                          distance: '80 m',
+                        ),
+                        NavigationStep(
+                          icon: Icons.turn_right,
+                          instruction: 'Turn right onto Road No. 5',
+                          distance: '400 m',
+                        ),
+                        NavigationStep(
+                          icon: Icons.turn_left,
+                          instruction: 'Turn left',
+                          distance: '110 m',
+                        ),
+                        NavigationStep(
+                          icon: Icons.turn_right,
+                          instruction: 'Turn right at Titas Gas Rd',
+                          distance: '160 m',
+                        ),
+                        NavigationStep(
+                          icon: Icons.turn_left,
+                          instruction: 'Turn left',
+                          distance: '130 m',
+                        ),
+                        NavigationStep(
+                          icon: Icons.turn_right,
+                          instruction: 'Turn right at Rampura',
+                          distance: '160 m',
+                        ),
+                        NavigationStep(
+                          icon: Icons.turn_right,
+                          instruction: 'Turn right',
+                          distance: '400 m',
+                        ),
+                      ],
                     ),
                   ],
                 ),
+              ),
               ),
             ),
           ],
@@ -2359,6 +2383,7 @@ class DropOffArrivedBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final controller = Get.find<DriverTripController>();
+    final homeController = Get.find<DriverHomeScreenController>();
     final trip = controller.selectedTrip.value ??
         (controller.pendingTrips.isNotEmpty ? controller.pendingTrips.first : null);
 
@@ -2390,14 +2415,23 @@ class DropOffArrivedBottomSheet extends StatelessWidget {
                   ),
                   SizedBox(width: 12.w),
                   Expanded(
-                    child: Text(
-                      '200 m    Turn right at block b, road no 18',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+                    child: Obx(() {
+                      final distance = homeController.currentStepDistance.value;
+                      final instruction = homeController.currentStepInstruction.value;
+                      final text = distance.isNotEmpty
+                          ? '$distance    $instruction'
+                          : instruction;
+                      return Text(
+                        text,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      );
+                    }),
                   ),
                 ],
               ),
@@ -2487,7 +2521,7 @@ class DropOffArrivedBottomSheet extends StatelessWidget {
                                       ),
                                     ),
                                     Text(
-                                      'Block B, Banasree, Dhaka',
+                                      trip.pickupLocation,
                                       style: TextStyle(
                                         fontSize: 14.sp,
                                         color: AppColors.tesxtColor,
@@ -2510,7 +2544,7 @@ class DropOffArrivedBottomSheet extends StatelessWidget {
                                       ),
                                     ),
                                     Text(
-                                      'Dhanmondi, Dhaka',
+                                      trip.dropoffLocation,
                                       style: TextStyle(
                                         fontSize: 14.sp,
                                         color: AppColors.tesxtColor,
@@ -2597,11 +2631,11 @@ class DropOffArrivedBottomSheet extends StatelessWidget {
                           ),
                           SizedBox(height: 20.h),
 
-                          // Drop Off Button
+                          // Navigate to Destination Button
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
-                              onPressed: () => controller.completeTrip(),
+                              onPressed: () => controller.startDropOff(),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.primaryColor,
                                 padding: EdgeInsets.symmetric(vertical: 16.h),

@@ -125,11 +125,13 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                 });
 
                 _animationController.forward();
+               // _homeController.startLocationUpdates();
               } else {
                 _animationController.stop();
                 // Immediately hide pulse when going offline
                 _showPulseIndicator = false;
                 _pulseTimer?.cancel();
+              //  _homeController.stopLocationUpdates();
               }
             });
           },
@@ -265,7 +267,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                       _isOnline = true;
                                       _animationController.forward();
                                     });
-                                    // Bottom sheet will only show when ride-request socket event is received
+                                    _homeController.startLocationUpdates();
                                   },
                                   child: Text(
                                     l10n.driverGoOnlineButton,

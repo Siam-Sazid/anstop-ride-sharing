@@ -1,34 +1,43 @@
 class RideRequestModel {
   final String rideId;
   final String riderId;
+  final Rider rider;
   final LocationData pickUp;
   final LocationData destination;
   final String distance;
-  final double preferedFare;
+  final double fare;
   final String note;
   final List<String> rideNeeds;
+  final String riderNumber;
+  final String rideFor;
 
   RideRequestModel({
     required this.rideId,
     required this.riderId,
+    required this.rider,
     required this.pickUp,
     required this.destination,
     required this.distance,
-    required this.preferedFare,
+    required this.fare,
     required this.note,
     required this.rideNeeds,
+    required this.riderNumber,
+    required this.rideFor,
   });
 
   factory RideRequestModel.fromJson(Map<String, dynamic> json) {
     return RideRequestModel(
       rideId: json['rideId'] ?? '',
       riderId: json['riderId'] ?? '',
+      rider: Rider.fromJson(json['rider'] ?? {}),
       pickUp: LocationData.fromJson(json['pickUp'] ?? {}),
       destination: LocationData.fromJson(json['destination'] ?? {}),
       distance: json['distance']?.toString() ?? '0',
-      preferedFare: (json['preferedFare'] ?? 0).toDouble(),
+      fare: (json['fare'] ?? 0).toDouble(),
       note: json['note'] ?? '',
       rideNeeds: List<String>.from(json['rideNeeds'] ?? []),
+      riderNumber: json['riderNumber'] ?? '',
+      rideFor: json['rideFor'] ?? '',
     );
   }
 
@@ -36,12 +45,47 @@ class RideRequestModel {
     return {
       'rideId': rideId,
       'riderId': riderId,
+      'rider': rider.toJson(),
       'pickUp': pickUp.toJson(),
       'destination': destination.toJson(),
       'distance': distance,
-      'preferedFare': preferedFare,
+      'fare': fare,
       'note': note,
       'rideNeeds': rideNeeds,
+      'riderNumber': riderNumber,
+      'rideFor': rideFor,
+    };
+  }
+}
+
+class Rider {
+  final String id;
+  final String name;
+  final double rating;
+  final int totalReviews;
+
+  Rider({
+    required this.id,
+    required this.name,
+    required this.rating,
+    required this.totalReviews,
+  });
+
+  factory Rider.fromJson(Map<String, dynamic> json) {
+    return Rider(
+      id: json['_id'] ?? '',
+      name: json['name'] ?? '',
+      rating: (json['rating'] ?? 0).toDouble(),
+      totalReviews: (json['totalReviews'] ?? 0) as int,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'name': name,
+      'rating': rating,
+      'totalReviews': totalReviews,
     };
   }
 }

@@ -8,9 +8,11 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:ride_sharing/feature/driver/homepage/service/driver_location_service.dart';
 import 'package:ride_sharing/feature/driver/trip_flow/model/ride_request_model.dart';
 import 'package:ride_sharing/services/socket_services.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DriverHomeScreenController extends GetxController {
   final Logger _logger = Logger();
@@ -45,6 +47,17 @@ class DriverHomeScreenController extends GetxController {
   List<LatLng> _currentRoutePoints = [];
   double _currentBearing = 0.0;
   int _currentRouteSegmentIndex = 0;
+
+  // Turn-by-turn navigation
+  final RxString currentStepInstruction = 'Navigating...'.obs;
+  final RxString currentStepDistance = ''.obs;
+  List<Map<String, dynamic>> _routeSteps = [];
+  int _currentStepIndex = 0;
+
+  // Location update service & timer (when driver is online)
+  final DriverLocationService _locationService = DriverLocationService();
+  Timer? _locationUpdateTimer;
+  static const Duration _locationUpdateInterval = Duration(seconds: 20);
 
   // Simulation mode for testing/demo
   final RxBool isSimulationMode = false.obs;
@@ -346,7 +359,7 @@ class DriverHomeScreenController extends GetxController {
     }
   }
 
-  void _handleRideAccepted(dynamic data) {
+  Future<void> _handleRideAccepted(dynamic data) async {
     try {
       if (data != null && data is Map<String, dynamic>) {
         acceptedRideId.value = data['rideId'] ?? '';
@@ -354,6 +367,20 @@ class DriverHomeScreenController extends GetxController {
         isRideAccepted.value = true;
 
         _logger.i('Ride accepted - rideId: ${acceptedRideId.value}, riderId: ${acceptedRiderId.value}');
+
+        // Immediately show route from driver's current location to pickup
+        final rideRequest = currentRideRequest.value;
+        if (rideRequest != null) {
+          _logger.i('Showing route to pickup on ride-accepted: ${rideRequest.pickUp.name} [${rideRequest.pickUp.latitude}, ${rideRequest.pickUp.longitude}]');
+          await showRouteToPickup(
+            pickupLat: rideRequest.pickUp.latitude,
+            pickupLng: rideRequest.pickUp.longitude,
+            pickupName: rideRequest.pickUp.name,
+          );
+        } else {
+          _logger.e('No stored ride request - cannot show pickup route');
+        }
+
         update();
       }
     } catch (e) {
@@ -401,24 +428,9 @@ class DriverHomeScreenController extends GetxController {
 
   Future<void> _handleRidePickedUp(dynamic data) async {
     try {
-      _logger.i('Handling ride-picked-up event');
-
-      // Set ride picked up state - this will trigger DriverTripController to show DropOffNavigationBottomSheet
+      _logger.i('Handling ride-picked-up event - setting isRidePickedUp for state transition');
+      // Route to destination is already shown from confirmPickup() in DriverTripController
       isRidePickedUp.value = true;
-
-      // Use stored destination location (stored when ride-request was received)
-      if (destinationLocation != null && destinationName != null) {
-        _logger.i('Using stored destination: $destinationName at [${destinationLocation!.longitude}, ${destinationLocation!.latitude}]');
-
-        // Show route from pickup to destination - AWAIT this
-        await showRouteToDestination(
-          destinationLat: destinationLocation!.latitude,
-          destinationLng: destinationLocation!.longitude,
-          destinationName: destinationName!,
-        );
-      } else {
-        _logger.e('No destination location stored - cannot show route');
-      }
     } catch (e) {
       _logger.e('Error handling ride picked up: $e');
     }
@@ -432,11 +444,9 @@ class DriverHomeScreenController extends GetxController {
   }) async {
     _logger.i('showRouteToDestination called - destinationLat: $destinationLat, destinationLng: $destinationLng, destinationName: $destinationName');
 
-    // Use the static pickup location that was used earlier
-    if (pickupLocation == null) {
-      _logger.e('No pickup location set - cannot show route to destination');
-      // Set default pickup location
-      pickupLocation = const LatLng(23.73439856033021, 90.40467599770942);
+    if (currentPosition == null) {
+      _logger.e('No current position - cannot show route to destination');
+      return;
     }
 
     destinationLocation = LatLng(destinationLat, destinationLng);
@@ -445,6 +455,12 @@ class DriverHomeScreenController extends GetxController {
     // Reset route tracking for new route
     _currentRoutePoints = [];
     _currentRouteSegmentIndex = 0;
+
+    // Reset turn-by-turn navigation
+    _routeSteps = [];
+    _currentStepIndex = 0;
+    currentStepInstruction.value = 'Navigating...';
+    currentStepDistance.value = '';
 
     // Add destination marker
     markers.removeWhere((m) => m.markerId.value == 'destination_location');
@@ -515,13 +531,13 @@ class DriverHomeScreenController extends GetxController {
   }
 
   Future<void> _getRoutePickupToDestination() async {
-    if (pickupLocation == null || destinationLocation == null) {
-      _logger.e('Cannot get route - missing pickup or destination location');
+    if (currentPosition == null || destinationLocation == null) {
+      _logger.e('Cannot get route - missing current position or destination location');
       return;
     }
 
     try {
-      final origin = '${pickupLocation!.latitude},${pickupLocation!.longitude}';
+      final origin = '${currentPosition!.latitude},${currentPosition!.longitude}';
       final destination = '${destinationLocation!.latitude},${destinationLocation!.longitude}';
 
       final url = Uri.parse(
@@ -550,6 +566,19 @@ class DriverHomeScreenController extends GetxController {
           // Store route points for snap-to-route and bearing calculation
           _currentRoutePoints = polylinePoints;
           _currentRouteSegmentIndex = 0;
+
+          // Parse turn-by-turn navigation steps
+          _routeSteps = [];
+          _currentStepIndex = 0;
+          final legs = data['routes'][0]['legs'] as List?;
+          if (legs != null && legs.isNotEmpty) {
+            final steps = legs[0]['steps'] as List?;
+            if (steps != null) {
+              _routeSteps = steps.map((s) => Map<String, dynamic>.from(s as Map)).toList();
+              _logger.i('Parsed ${_routeSteps.length} navigation steps');
+            }
+          }
+          _updateCurrentStep();
 
           polylines.value = {
             Polyline(
@@ -687,6 +716,45 @@ class DriverHomeScreenController extends GetxController {
     return points;
   }
 
+  // Strip HTML tags from Google's html_instructions
+  String _stripHtml(String html) {
+    return html
+        .replaceAll(RegExp(r'<[^>]*>'), ' ')
+        .replaceAll('&nbsp;', ' ')
+        .replaceAll('&amp;', '&')
+        .replaceAll('&lt;', '<')
+        .replaceAll('&gt;', '>')
+        .replaceAll(RegExp(r'\s+'), ' ')
+        .trim();
+  }
+
+  // Update reactive navigation step fields from current step index
+  void _updateCurrentStep() {
+    if (_routeSteps.isEmpty) {
+      currentStepInstruction.value = 'Navigating...';
+      currentStepDistance.value = '';
+      return;
+    }
+
+    if (_currentStepIndex >= _routeSteps.length) {
+      currentStepInstruction.value = 'Arriving at destination';
+      currentStepDistance.value = '';
+      return;
+    }
+
+    final step = _routeSteps[_currentStepIndex];
+    final rawInstruction = step['html_instructions'] as String? ?? '';
+    final instruction = _stripHtml(rawInstruction);
+
+    final distanceMap = step['distance'] as Map?;
+    final distanceText = distanceMap?['text'] as String? ?? '';
+
+    currentStepInstruction.value = instruction;
+    currentStepDistance.value = distanceText;
+
+    _logger.i('Nav step $_currentStepIndex/${_routeSteps.length}: $distanceText - $instruction');
+  }
+
   // Fallback: draw straight line if API fails
   void _drawStraightLine() {
     _logger.i('_drawStraightLine called - currentPosition: $currentPosition, pickupLocation: $pickupLocation');
@@ -717,11 +785,11 @@ class DriverHomeScreenController extends GetxController {
     update();
   }
 
-  // Fallback: draw straight line from pickup to destination if API fails
+  // Fallback: draw straight line from current position to destination if API fails
   void _drawStraightLinePickupToDestination() {
-    if (pickupLocation == null || destinationLocation == null) return;
+    if (currentPosition == null || destinationLocation == null) return;
 
-    final startPoint = pickupLocation!;
+    final startPoint = LatLng(currentPosition!.latitude, currentPosition!.longitude);
     final endPoint = destinationLocation!;
 
     // Set route points for fallback (straight line has just 2 points)
@@ -777,7 +845,7 @@ class DriverHomeScreenController extends GetxController {
     _locationSubscription = Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
         accuracy: LocationAccuracy.high,
-        distanceFilter: 10, // Update every 10 meters
+        distanceFilter: 10,
       ),
     ).listen((Position position) async {
       _logger.i('Location updated: ${position.latitude}, ${position.longitude}');
@@ -785,25 +853,46 @@ class DriverHomeScreenController extends GetxController {
 
       currentPosition = position;
 
+      // Emit update-location socket event with current GPS position
+      await SocketIoService.to.emitUpdateLocation(
+        locationName: 'Current Location',
+        latitude: position.latitude,
+        longitude: position.longitude,
+      );
+
       final currentLatLng = LatLng(position.latitude, position.longitude);
 
-      // Snap to route and get bearing if we have route points
       if (_currentRoutePoints.isNotEmpty) {
         final snappedResult = _snapToRouteWithBearing(currentLatLng);
 
-        // Update current bearing and segment index
         _currentBearing = snappedResult.bearing;
         _currentRouteSegmentIndex = snappedResult.segmentIndex;
 
         _logger.i('ROTATION DEBUG - Bearing: ${snappedResult.bearing.toStringAsFixed(1)}°, Segment: ${snappedResult.segmentIndex}');
 
-        // Update driver marker with snapped position and rotated bitmap
         await _updateDriverMarkerWithRotation(snappedResult.position, snappedResult.bearing);
 
         _logger.i('Driver marker updated - snapped position: ${snappedResult.position}, bearing: ${snappedResult.bearing.toStringAsFixed(1)}°');
+
+        // Advance navigation step based on proximity to step end location
+        if (_routeSteps.isNotEmpty && _currentStepIndex < _routeSteps.length) {
+          final step = _routeSteps[_currentStepIndex];
+          final endLocation = step['end_location'] as Map?;
+          if (endLocation != null) {
+            final stepEndLat = (endLocation['lat'] as num).toDouble();
+            final stepEndLng = (endLocation['lng'] as num).toDouble();
+            final distanceToStepEnd = Geolocator.distanceBetween(
+              position.latitude, position.longitude,
+              stepEndLat, stepEndLng,
+            );
+            if (distanceToStepEnd < 30) {
+              _currentStepIndex++;
+              _updateCurrentStep();
+            }
+          }
+        }
       } else {
         _logger.w('No route points available - marker will not rotate');
-        // No route, just update marker at actual position without rotation
         markers.removeWhere((m) => m.markerId.value == 'driver_location');
         markers.add(
           Marker(
@@ -815,7 +904,6 @@ class DriverHomeScreenController extends GetxController {
         );
       }
 
-      // NOTE: Removed route re-fetch to avoid resetting route points and segment index
 
       update();
     });
@@ -959,6 +1047,59 @@ class DriverHomeScreenController extends GetxController {
     mapController!.animateCamera(CameraUpdate.newLatLngBounds(bounds, 100));
   }
 
+  // ==================== ONLINE LOCATION UPDATES ====================
+
+  /// Called when the driver goes online. Hits the API immediately then every 20 seconds.
+  Future<void> startLocationUpdates() async {
+    _logger.i('Driver went online — starting location updates every ${_locationUpdateInterval.inSeconds}s');
+    await _postCurrentLocation(); // immediate hit
+    _locationUpdateTimer?.cancel();
+    _locationUpdateTimer = Timer.periodic(_locationUpdateInterval, (_) async {
+      await _postCurrentLocation();
+    });
+  }
+
+  /// Called when the driver goes offline. Stops the periodic timer.
+  void stopLocationUpdates() {
+    _logger.i('Driver went offline — stopping location updates');
+    _locationUpdateTimer?.cancel();
+    _locationUpdateTimer = null;
+  }
+
+  Future<void> _postCurrentLocation() async {
+    if (currentPosition == null) {
+      _logger.w('Cannot post location — currentPosition is null');
+      return;
+    }
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final accessToken = prefs.getString('accessToken') ?? '';
+
+      if (accessToken.isEmpty) {
+        _logger.e('Cannot post location — no access token found');
+        return;
+      }
+
+      final response = await _locationService.updateCurrentLocation(
+        accessToken: accessToken,
+        name: 'Current Location',
+        latitude: currentPosition!.latitude,
+        longitude: currentPosition!.longitude,
+      );
+
+      if (response.isSuccess) {
+        _logger.i('Current location posted successfully: ${currentPosition!.latitude}, ${currentPosition!.longitude}');
+      } else {
+        _logger.e('Failed to post current location: ${response.errorMessage}');
+      }
+    } catch (e) {
+      _logger.e('Error posting current location: $e');
+    }
+  }
+
+  // ==================== END ONLINE LOCATION UPDATES ====================
+
   void stopNavigation() {
     _logger.i('Stopping navigation');
     isNavigatingToPickup.value = false;
@@ -973,6 +1114,12 @@ class DriverHomeScreenController extends GetxController {
     _currentRoutePoints = [];
     _currentRouteSegmentIndex = 0;
     _currentBearing = 0.0;
+
+    // Reset turn-by-turn navigation
+    _routeSteps = [];
+    _currentStepIndex = 0;
+    currentStepInstruction.value = 'Navigating...';
+    currentStepDistance.value = '';
 
     markers.removeWhere((m) => m.markerId.value == 'pickup_location');
     update();
@@ -1044,6 +1191,7 @@ class DriverHomeScreenController extends GetxController {
     mapController?.dispose();
     _locationSubscription?.cancel();
     _simulationTimer?.cancel();
+    _locationUpdateTimer?.cancel();
     // Remove socket listeners
     SocketIoService.to.offRideRequest();
     SocketIoService.to.offRideAccepted();

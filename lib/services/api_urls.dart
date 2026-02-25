@@ -51,6 +51,9 @@ class ApiUrls {
   // Withdrawal
   static const String withdrawalRequests = '$baseUrl/withdrawal-requests';
 
+  // Driver Location
+  static const String currentLocation = '$baseUrl/users/current-location';
+
   // Ride Requests
   static String calculateFare(double distance) => '$baseUrl/rides/calculate-fare?distance=$distance';
   static const String createRideRequest = '$baseUrl/ride-requests/create-ride-request';

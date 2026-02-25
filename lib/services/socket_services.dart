@@ -286,9 +286,8 @@ class SocketIoService extends GetxService {
     _socket?.off('ride-accepted');
   }
 
-  // Emit pickup rider (for drivers)
-  Future<void> emitPickupRider() async {
-    // Ensure socket is connected before emitting
+  // Emit pickup rider (for drivers) - returns true if server ack success
+  Future<bool> emitPickupRider() async {
     if (!isSocketReady) {
       _logger.i('Socket not ready, connecting before emitting pickup-rider...');
       await connect();
@@ -297,11 +296,32 @@ class SocketIoService extends GetxService {
 
     if (!isSocketReady) {
       _logger.e('Cannot emit pickup-rider - socket is not ready after connect attempt');
-      return;
+      return false;
     }
 
-    _logger.i('Emitting pickup-rider event with empty body');
-    emit('pickup-rider', {});
+    final completer = Completer<bool>();
+
+    _logger.i('Emitting pickup-rider event with ack');
+    _socket!.emitWithAck('pickup-rider', {}, ack: (data) {
+      _logger.i('pickup-rider ack received: $data');
+      try {
+        final ack = data as Map<String, dynamic>;
+        final success = ack['success'] == true;
+        _logger.i('pickup-rider ack success: $success, message: ${ack['message']}');
+        if (!completer.isCompleted) completer.complete(success);
+      } catch (e) {
+        _logger.e('Error parsing pickup-rider ack: $e');
+        if (!completer.isCompleted) completer.complete(false);
+      }
+    });
+
+    return completer.future.timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        _logger.e('pickup-rider ack timed out');
+        return false;
+      },
+    );
   }
 
   // Emit drop-off rider (for drivers)
@@ -320,6 +340,44 @@ class SocketIoService extends GetxService {
 
     _logger.i('Emitting drop-off-rider event with empty body');
     emit('drop-off-rider', {});
+  }
+
+  // Emit update-location (for drivers - continuously sends current GPS position)
+  Future<void> emitUpdateLocation({
+    required String locationName,
+    required double latitude,
+    required double longitude,
+  }) async {
+    if (!isSocketReady) {
+      _logger.w('Cannot emit update-location - socket not ready');
+      return;
+    }
+
+    final payload = {
+      'locationName': locationName,
+      'latitude': latitude,
+      'longitude': longitude,
+    };
+    _logger.i('Emitting update-location: $payload');
+    emit('update-location', payload);
+  }
+
+  // Emit new-offer (for drivers - when accepting a ride request directly)
+  Future<void> emitNewOffer({required String rideId}) async {
+    if (!isSocketReady) {
+      _logger.i('Socket not ready, connecting before emitting new-offer...');
+      await connect();
+      await Future.delayed(const Duration(milliseconds: 500));
+    }
+
+    if (!isSocketReady) {
+      _logger.e('Cannot emit new-offer - socket is not ready after connect attempt');
+      return;
+    }
+
+    final payload = {'rideId': rideId};
+    _logger.i('Emitting new-offer event: $payload');
+    emit('new-offer', payload);
   }
 
   // Listen for ride picked up (for drivers - when passenger is picked up)
