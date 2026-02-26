@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:logger/logger.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
+import 'package:ride_sharing/feature/passenger/car_booking/passenger/controller/pick_up_location_controller.dart';
+import 'package:ride_sharing/feature/passenger/homepage/controller/home_page_controller.dart';
 import 'package:ride_sharing/widgets/custom_button.dart';
 import 'package:ride_sharing/widgets/logo.dart';
 import 'package:ride_sharing/services/socket_services.dart';
@@ -163,8 +166,22 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
     super.initState();
     _initDriversData();
     _initSocketAndListen();
-    _initNewBidListener();
+    _initNewOfferListener();
     _initRideAcceptedListener();
+    _startDriverPolylineTracking();
+  }
+
+  void _startDriverPolylineTracking() {
+    try {
+      final pickUpController = Get.find<PickUpLocationController>();
+      final lat = double.tryParse(pickUpController.pickUpLatitudeController.text) ?? 0.0;
+      final lng = double.tryParse(pickUpController.pickUpLongitudeController.text) ?? 0.0;
+      if (lat == 0.0 && lng == 0.0) return;
+      Get.find<HomePageController>().startDriverLocationTracking(LatLng(lat, lng));
+      _logger.i('Driver polyline tracking started — pickup: $lat, $lng');
+    } catch (e) {
+      _logger.e('Failed to start driver polyline tracking: $e');
+    }
   }
 
   void _initDriversData() {
@@ -226,74 +243,69 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
     });
   }
 
-  Future<void> _initNewBidListener() async {
+  Future<void> _initNewOfferListener() async {
     final socketService = SocketIoService.to;
 
-    // Ensure socket is connected before setting up listener
     if (!socketService.isConnected.value) {
-      _logger.i('Socket not connected for new-bid, connecting...');
+      _logger.i('Socket not connected for new-offer, connecting...');
       await socketService.connect();
       await Future.delayed(const Duration(milliseconds: 500));
     }
 
-    _logger.i('Setting up listener for new-bid event');
+    _logger.i('Setting up listener for new-offer event');
 
-    // Listen for new bids from drivers
-    socketService.onNewBid((data) {
-      _logger.i('Received new-bid event in AcceptCarBottomSheet: $data');
+    socketService.onNewOffer((data) {
+      _logger.i('Received new-offer event in AcceptCarBottomSheet: $data');
 
       if (data != null && data is Map<String, dynamic>) {
-        final bidData = BidData.fromJson(data);
-        _logger.i('Parsed bid - driverId: ${bidData.driverId}, name: ${bidData.driverName}, amount: ${bidData.amount}');
+        final offerData = BidData.fromJson(data);
+        _logger.i('Parsed offer - driverId: ${offerData.driverId}, name: ${offerData.driverName}, amount: ${offerData.amount}');
 
         if (mounted) {
           setState(() {
-            // Store the bid amount and rideId for this driver
-            driverBids[bidData.driverId] = bidData.amount;
-            driverRideIds[bidData.driverId] = bidData.rideId;
+            // Store the offer amount and rideId for this driver
+            driverBids[offerData.driverId] = offerData.amount;
+            driverRideIds[offerData.driverId] = offerData.rideId;
 
-            // Check if driver exists in the list
+            // Check if driver already exists in the list
             bool driverExists = false;
             for (int i = 0; i < nearbyDrivers.length; i++) {
-              if (nearbyDrivers[i].id == bidData.driverId) {
-                // Replace with updated driver info from bid data
+              if (nearbyDrivers[i].id == offerData.driverId) {
                 nearbyDrivers[i] = NearbyDriver(
-                  id: bidData.driverId,
-                  name: bidData.driverName,
+                  id: offerData.driverId,
+                  name: offerData.driverName,
                   email: nearbyDrivers[i].email,
                   locationName: nearbyDrivers[i].locationName,
                   distance: nearbyDrivers[i].distance,
                   coordinates: nearbyDrivers[i].coordinates,
-                  profilePicture: bidData.profilePicture ?? nearbyDrivers[i].profilePicture,
-                  rating: bidData.rating > 0 ? bidData.rating : nearbyDrivers[i].rating,
-                  totalReviews: bidData.totalReviews > 0 ? bidData.totalReviews : nearbyDrivers[i].totalReviews,
-                  carInformation: bidData.carInformation ?? nearbyDrivers[i].carInformation,
-                  bidAmount: bidData.amount,
+                  profilePicture: offerData.profilePicture ?? nearbyDrivers[i].profilePicture,
+                  rating: offerData.rating > 0 ? offerData.rating : nearbyDrivers[i].rating,
+                  totalReviews: offerData.totalReviews > 0 ? offerData.totalReviews : nearbyDrivers[i].totalReviews,
+                  carInformation: offerData.carInformation ?? nearbyDrivers[i].carInformation,
+                  bidAmount: offerData.amount,
                 );
                 driverExists = true;
                 break;
               }
             }
 
-            // If driver doesn't exist, add them to the list
+            // If driver not in list yet, add them
             if (!driverExists) {
-              final newDriver = NearbyDriver(
-                id: bidData.driverId,
-                name: bidData.driverName,
-                profilePicture: bidData.profilePicture,
-                rating: bidData.rating,
-                totalReviews: bidData.totalReviews,
-                carInformation: bidData.carInformation,
-                bidAmount: bidData.amount,
-              );
-              nearbyDrivers.add(newDriver);
-              _logger.i('Added new driver to list: ${bidData.driverName}');
+              nearbyDrivers.add(NearbyDriver(
+                id: offerData.driverId,
+                name: offerData.driverName,
+                profilePicture: offerData.profilePicture,
+                rating: offerData.rating,
+                totalReviews: offerData.totalReviews,
+                carInformation: offerData.carInformation,
+                bidAmount: offerData.amount,
+              ));
+              _logger.i('Added new driver from offer: ${offerData.driverName}');
             }
 
-            // Mark as not loading since we have at least one driver
             isLoading = false;
           });
-          _logger.i('Updated bid for driver ${bidData.driverId}: \$${bidData.amount}, rideId: ${bidData.rideId}');
+          _logger.i('Stored offer for driver ${offerData.driverId}: \$${offerData.amount}, rideId: ${offerData.rideId}');
         }
       }
     });
@@ -316,28 +328,22 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
       _logger.i('Received ride-accepted event in AcceptCarBottomSheet: $data');
 
       if (mounted && acceptedDriver != null) {
-        // Close current bottom sheet and show BookingCarsBottomSheet with driver data
-        Navigator.pop(context);
-        showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          builder: (BuildContext context) {
-            return BookingCarsBottomSheet(
-              rideId: driverRideIds[acceptedDriver!.id] ?? '',
-              driverName: acceptedDriver!.name,
-              driverProfilePicture: acceptedDriver!.profilePicture,
-              driverRating: acceptedDriver!.rating,
-              driverTotalReviews: acceptedDriver!.totalReviews,
-              carBrand: acceptedDriver!.carInformation?.brand ?? '',
-              carModel: acceptedDriver!.carInformation?.model ?? '',
-              licensePlateNumber: acceptedDriver!.carInformation?.licensePlateNumber ?? '',
-              licensePlatePicture: acceptedDriver!.carInformation?.licensePlatePicture,
-              bidAmount: acceptedBidAmount ?? '',
-              tripDistance: widget.tripDistance,
-              pickUpAddress: widget.pickUpAddress,
-              destinationAddress: widget.destinationAddress,
-            );
-          },
+        Get.find<HomePageController>().showPassengerSheet(
+          (_) => BookingCarsBottomSheet(
+            rideId: driverRideIds[acceptedDriver!.id] ?? '',
+            driverName: acceptedDriver!.name,
+            driverProfilePicture: acceptedDriver!.profilePicture,
+            driverRating: acceptedDriver!.rating,
+            driverTotalReviews: acceptedDriver!.totalReviews,
+            carBrand: acceptedDriver!.carInformation?.brand ?? '',
+            carModel: acceptedDriver!.carInformation?.model ?? '',
+            licensePlateNumber: acceptedDriver!.carInformation?.licensePlateNumber ?? '',
+            licensePlatePicture: acceptedDriver!.carInformation?.licensePlatePicture,
+            bidAmount: acceptedBidAmount ?? '',
+            tripDistance: widget.tripDistance,
+            pickUpAddress: widget.pickUpAddress,
+            destinationAddress: widget.destinationAddress,
+          ),
         );
       }
     });
@@ -347,7 +353,7 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
   void dispose() {
     _logger.i('Disposing AcceptCarBottomSheet, removing socket listeners');
     SocketIoService.to.offNearestDrivers();
-    SocketIoService.to.offNewBid();
+    SocketIoService.to.offNewOffer();
     SocketIoService.to.offRideAccepted();
     super.dispose();
   }
@@ -386,7 +392,7 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
                     size: 24.sp,
                   ),
                   onPressed: () {
-                    Navigator.pop(context);
+                    Get.find<HomePageController>().closeCurrentSheet();
                   },
                 ),
               ),
@@ -616,19 +622,22 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
 
           SizedBox(height: 8.sp),
 
-          // Accept button (smaller size)
-          SizedBox(
-            width: double.infinity,
-            height: 40.h,
-            child: CustomButton(
+          // Accept button (smaller size, left-aligned)
+          Align(
+            alignment: Alignment.centerLeft,
+            child: SizedBox(
+              width: 100.h,
+              height: 40.h,
+              child: CustomButton(
               height: 40,
+              radius: 5,
               onPressed: (isAccepting && acceptingDriverId == driver.id)
                   ? null
                   : () async {
-                      // Check if this driver has submitted a bid
+                      // Check if this driver has submitted an offer
                       final rideId = driverRideIds[driver.id];
                       if (rideId != null && rideId.isNotEmpty) {
-                        _logger.i('Accepting bid - rideId: $rideId, driverId: ${driver.id}');
+                        _logger.i('Accepting offer - rideId: $rideId, driverId: ${driver.id}');
 
                         // Set loading state and store accepted driver data
                         setState(() {
@@ -638,16 +647,16 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
                           acceptedBidAmount = driverBids[driver.id] ?? driver.bidAmount;
                         });
 
-                        // Emit accept-bid socket event
-                        await SocketIoService.to.emitAcceptBid(
+                        // Emit accept-ride socket event
+                        await SocketIoService.to.emitAcceptRide(
                           rideId: rideId,
                           driverId: driver.id,
                         );
 
-                        _logger.i('Accept-bid emitted successfully, waiting for socket response...');
-                        // Navigation will happen when accept-bid event is received from socket
+                        _logger.i('Accept-ride emitted successfully, waiting for socket response...');
+                        // Navigation will happen when ride-accepted event is received from socket
                       } else {
-                        _logger.w('No bid found for driver ${driver.id}, cannot accept');
+                        _logger.w('No offer found for driver ${driver.id}, cannot accept');
                       }
                     },
               title: (isAccepting && acceptingDriverId == driver.id)
@@ -660,13 +669,14 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
                       ),
                     )
                   : Text(
-                      l10n.acceptButton,
+                    l10n.acceptButton,
                       style: TextStyle(
                         color: AppColors.white,
                         fontSize: 14.sp,
                       ),
                     ),
             ),
+          ),
           ),
         ],
       ),

@@ -5,11 +5,19 @@ class RideRequestService {
   final ApiClient _apiClient = ApiClient();
 
   Future<ApiResponse> calculateFare({
-    required double distance,
+    required double pickUpLat,
+    required double pickUpLng,
+    required double destinationLat,
+    required double destinationLng,
     required String accessToken,
   }) async {
     return await _apiClient.getRequest(
-      ApiUrls.calculateFare(distance),
+      ApiUrls.calculateFare(
+        pickUpLat: pickUpLat,
+        pickUpLng: pickUpLng,
+        destinationLat: destinationLat,
+        destinationLng: destinationLng,
+      ),
       accessToken: accessToken,
     );
   }

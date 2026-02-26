@@ -2,7 +2,7 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
-import 'package:ride_sharing/feature/passenger/homepage/view/home_page.dart';
+import 'package:ride_sharing/routes/app_routes.dart';
 import 'package:ride_sharing/services/stripe/stripe_config.dart';
 import 'package:ride_sharing/services/stripe/stripe_helper.dart';
 import 'package:ride_sharing/utils/user_info_section.dart';
@@ -464,7 +464,7 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
                   padding: EdgeInsets.symmetric(horizontal: 10.sp),
                   child: CustomButton(
                     onPressed: () {
-                      Get.offAll(() => HomePage());
+                      Get.offAllNamed(AppRoutes.passengerHomeScreen);
                     },
                     title: Text(AppLocalization.tr.backToHomeButton, style: TextStyle(fontSize: 20, color: AppColors.white)),
                   ),

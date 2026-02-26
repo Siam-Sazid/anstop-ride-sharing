@@ -5,6 +5,7 @@ import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/utils/car_details.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/utils/driver_status_widget.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/utils/ride_begun_bottom_sheet.dart';
+import 'package:ride_sharing/feature/passenger/homepage/controller/home_page_controller.dart';
 import 'package:ride_sharing/services/socket_services.dart';
 import 'package:ride_sharing/utils/user_info_section.dart';
 import 'package:ride_sharing/l10n/app_localizations.dart';
@@ -86,8 +87,7 @@ class _DriverArrivedBottomSheetState extends State<DriverArrivedBottomSheet> {
         final paymentMethod = data['paymentMethod'] as String? ?? '';
         _logger.i('Payment method from ride-completed: $paymentMethod');
 
-        // Close current bottom sheet and navigate to PassengerPaymentScreen
-        Navigator.pop(context);
+        Get.find<HomePageController>().closeCurrentSheet();
         Get.offAll(() => PassengerPaymentScreen(
           driverName: widget.driverName,
           driverProfilePicture: widget.driverProfilePicture,
@@ -131,7 +131,7 @@ class _DriverArrivedBottomSheetState extends State<DriverArrivedBottomSheet> {
 
 
           DriverStatusWidget(
-            statusText: l10n.driverHasArrived,
+            statusText:  l10n.driverHasArrived,
             circleColor: Colors.green,
           ),
 
@@ -159,20 +159,16 @@ class _DriverArrivedBottomSheetState extends State<DriverArrivedBottomSheet> {
             padding:  EdgeInsets.symmetric(horizontal:  16.sp),
             child: CustomButton(
               onPressed: () {
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  builder: (BuildContext context) {
-                    return RideBegunBottomSheet(
-                      driverName: widget.driverName,
-                      driverProfilePicture: widget.driverProfilePicture,
-                      driverRating: widget.driverRating,
-                      driverTotalReviews: widget.driverTotalReviews,
-                      bidAmount: widget.bidAmount,
-                      tripDistance: widget.tripDistance,
-                      destinationAddress: widget.destinationAddress,
-                    );
-                  },
+                Get.find<HomePageController>().showPassengerSheet(
+                  (_) => RideBegunBottomSheet(
+                    driverName: widget.driverName,
+                    driverProfilePicture: widget.driverProfilePicture,
+                    driverRating: widget.driverRating,
+                    driverTotalReviews: widget.driverTotalReviews,
+                    bidAmount: widget.bidAmount,
+                    tripDistance: widget.tripDistance,
+                    destinationAddress: widget.destinationAddress,
+                  ),
                 );
               },
               title: Text(

@@ -342,6 +342,25 @@ class SocketIoService extends GetxService {
     emit('drop-off-rider', {});
   }
 
+  // Listen for update-location (for passengers - receives driver's real-time GPS position)
+  void onUpdateLocation(Function(dynamic) handler) {
+    if (_socket == null) {
+      _logger.e('Cannot register update-location listener - socket is null!');
+      return;
+    }
+    _logger.i('Registering update-location listener, socket connected: ${_socket!.connected}');
+    _socket!.on('update-location', (data) {
+      _logger.i('update-location event received in service: $data');
+      handler(data);
+    });
+  }
+
+  // Stop listening for update-location
+  void offUpdateLocation() {
+    _logger.i('Removing update-location listener');
+    _socket?.off('update-location');
+  }
+
   // Emit update-location (for drivers - continuously sends current GPS position)
   Future<void> emitUpdateLocation({
     required String locationName,
@@ -378,6 +397,50 @@ class SocketIoService extends GetxService {
     final payload = {'rideId': rideId};
     _logger.i('Emitting new-offer event: $payload');
     emit('new-offer', payload);
+  }
+
+  // Listen for new-offer (for passengers - driver sends a direct offer)
+  void onNewOffer(Function(dynamic) handler) {
+    if (_socket == null) {
+      _logger.e('Cannot register new-offer listener - socket is null!');
+      return;
+    }
+    _logger.i('Registering new-offer listener, socket connected: ${_socket!.connected}');
+    _socket!.on('new-offer', (data) {
+      _logger.i('new-offer event received in service: $data');
+      handler(data);
+    });
+  }
+
+  // Stop listening for new-offer
+  void offNewOffer() {
+    _logger.i('Removing new-offer listener');
+    _socket?.off('new-offer');
+  }
+
+  // Emit accept-ride (for passengers - when accepting a driver's offer)
+  Future<void> emitAcceptRide({
+    required String rideId,
+    required String driverId,
+  }) async {
+    if (!isSocketReady) {
+      _logger.i('Socket not ready, connecting before emitting accept-ride...');
+      await connect();
+      await Future.delayed(const Duration(milliseconds: 500));
+    }
+
+    if (!isSocketReady) {
+      _logger.e('Cannot emit accept-ride - socket is not ready after connect attempt');
+      return;
+    }
+
+    final payload = {
+      'rideId': rideId,
+      'driverId': driverId,
+    };
+
+    _logger.i('Emitting accept-ride event: $payload');
+    emit('accept-ride', payload);
   }
 
   // Listen for ride picked up (for drivers - when passenger is picked up)

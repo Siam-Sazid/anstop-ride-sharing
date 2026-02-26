@@ -55,7 +55,12 @@ class ApiUrls {
   static const String currentLocation = '$baseUrl/users/current-location';
 
   // Ride Requests
-  static String calculateFare(double distance) => '$baseUrl/rides/calculate-fare?distance=$distance';
+  static String calculateFare({
+    required double pickUpLat,
+    required double pickUpLng,
+    required double destinationLat,
+    required double destinationLng,
+  }) => '$baseUrl/ride-requests/calculate-fare?pickUpLat=$pickUpLat&pickUpLng=$pickUpLng&destinationLat=$destinationLat&destinationLng=$destinationLng';
   static const String createRideRequest = '$baseUrl/ride-requests/create-ride-request';
   static const String setFcmToken = '$baseUrl/users/fcm-token';
 

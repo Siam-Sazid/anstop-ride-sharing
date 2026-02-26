@@ -147,7 +147,7 @@ class SetLocationScreen extends StatelessWidget {
                     Expanded(
                       child: GooglePlaceAutoCompleteTextField(
                         textEditingController: controller.addressController,
-                        googleAPIKey: AppLocalization.tr.googleApiKey,
+                        googleAPIKey: "AIzaSyD_NVUY504HfMBsvN1gACNyfaFKAulvkVI",
                         inputDecoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: AppLocalization.tr.whereAreYouHeadedHint,
@@ -351,7 +351,7 @@ class SetLocationScreen extends StatelessWidget {
                     Expanded(
                       child: GooglePlaceAutoCompleteTextField(
                         textEditingController: controller.addressController,
-                        googleAPIKey: AppLocalization.tr.googleApiKey,
+                        googleAPIKey: "AIzaSyD_NVUY504HfMBsvN1gACNyfaFKAulvkVI",
                         inputDecoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: AppLocalization.tr.whereAreYouHeadedHint,

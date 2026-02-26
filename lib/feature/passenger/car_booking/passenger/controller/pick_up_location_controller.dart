@@ -30,9 +30,19 @@ class PickUpLocationController extends GetxController {
   bool isCalculatingFare = false;
   Set<Marker> markers = {};
 
-  // Fare and distance
+  // Fare, distance and duration (all returned by the calculateFare API)
   double calculatedDistance = 0.0;
   double calculatedFare = 0.0;
+  double calculatedDuration = 0.0;
+
+  // Ride for
+  String rideFor = 'SELF';
+  final TextEditingController friendPhoneController = TextEditingController();
+
+  void setRideFor(String value) {
+    rideFor = value;
+    update();
+  }
 
   final RideRequestService _rideRequestService = RideRequestService();
 
@@ -194,25 +204,27 @@ class PickUpLocationController extends GetxController {
     update();
 
     try {
-      // Calculate distance
-      double pickUpLat = double.parse(pickUpLatitudeController.text);
-      double pickUpLng = double.parse(pickUpLongitudeController.text);
-      double destLat = double.parse(destinationLatitudeController.text);
-      double destLng = double.parse(destinationLongitudeController.text);
+      final double pickUpLat = double.parse(pickUpLatitudeController.text);
+      final double pickUpLng = double.parse(pickUpLongitudeController.text);
+      final double destLat = double.parse(destinationLatitudeController.text);
+      final double destLng = double.parse(destinationLongitudeController.text);
 
-      calculatedDistance = calculateDistanceInKm(pickUpLat, pickUpLng, destLat, destLng);
-
-      // Get fare from API
       final prefs = await SharedPreferences.getInstance();
       final accessToken = prefs.getString('accessToken') ?? '';
 
       final response = await _rideRequestService.calculateFare(
-        distance: calculatedDistance,
+        pickUpLat: pickUpLat,
+        pickUpLng: pickUpLng,
+        destinationLat: destLat,
+        destinationLng: destLng,
         accessToken: accessToken,
       );
 
       if (response.isSuccess && response.responseData != null) {
-        calculatedFare = (response.responseData['data']['fare'] as num).toDouble();
+        final data = response.responseData['data'];
+        calculatedFare = (data['fare'] as num).toDouble();
+        calculatedDistance = (data['distance'] as num).toDouble();
+        calculatedDuration = (data['duration'] as num).toDouble();
         isCalculatingFare = false;
         update();
         return true;
@@ -252,22 +264,24 @@ class PickUpLocationController extends GetxController {
       final body = {
         'pickUp': {
           'name': pickUpAddressController.text,
-           'latitude': 0,
-           'longitude': 0
-         // 'latitude': double.parse(pickUpLatitudeController.text),
-         // 'longitude': double.parse(pickUpLongitudeController.text),
+          // 'latitude': 0,
+          // 'longitude': 0
+          'latitude': double.parse(pickUpLatitudeController.text),
+          'longitude': double.parse(pickUpLongitudeController.text),
         },
         'destination': {
           'name': destinationAddressController.text,
           'latitude': double.parse(destinationLatitudeController.text),
           'longitude': double.parse(destinationLongitudeController.text),
         },
-        'distance': calculatedDistance.toString(),
-        'baseFare': calculatedFare,
-        'preferedFare': preferedFare,
+       // 'distance': calculatedDistance.toString(),
+       // 'baseFare': calculatedFare,
+       // 'preferedFare': preferedFare,
         'note': note,
         'rideNeeds': rideNeeds,
         'paymentMethod': paymentMethod,
+        'rideFor': rideFor,
+        if (rideFor == 'OTHER') 'riderNumber': friendPhoneController.text,
       };
 
       final response = await _rideRequestService.createRideRequest(
@@ -339,6 +353,7 @@ class PickUpLocationController extends GetxController {
     destinationAddressController.dispose();
     destinationLatitudeController.dispose();
     destinationLongitudeController.dispose();
+    friendPhoneController.dispose();
     super.onClose();
   }
 }

@@ -7,6 +7,7 @@ import 'package:ride_sharing/l10n/l10n_helper.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/utils/accept_car_bottom_sheet.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/utils/ride_needs_dropdown.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/passenger/controller/pick_up_location_controller.dart';
+import 'package:ride_sharing/feature/passenger/homepage/controller/home_page_controller.dart';
 import 'package:ride_sharing/services/socket_services.dart';
 
 import '../../../../app/utils/app_colors.dart';
@@ -18,6 +19,7 @@ class FindCarBottomSheet extends StatefulWidget {
   final String destinationAddress;
   final double distance;
   final double fare;
+  final double duration;
 
   const FindCarBottomSheet({
     Key? key,
@@ -25,6 +27,7 @@ class FindCarBottomSheet extends StatefulWidget {
     required this.destinationAddress,
     required this.distance,
     required this.fare,
+    required this.duration,
   }) : super(key: key);
 
   @override
@@ -32,7 +35,6 @@ class FindCarBottomSheet extends StatefulWidget {
 }
 
 class _FindCarBottomSheetState extends State<FindCarBottomSheet> {
-  final TextEditingController locationTEController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   final Logger _logger = Logger();
 
@@ -51,9 +53,6 @@ class _FindCarBottomSheetState extends State<FindCarBottomSheet> {
   @override
   void initState() {
     super.initState();
-    // Pre-fill the fare in the text field
-    locationTEController.text = widget.fare.toStringAsFixed(0);
-    // Connect socket early and set up listener
     _initSocketAndListener();
   }
 
@@ -100,12 +99,10 @@ class _FindCarBottomSheetState extends State<FindCarBottomSheet> {
       // Clear any previous data
       _nearbyDriversData = null;
 
-      double preferedFare = double.tryParse(locationTEController.text) ?? widget.fare;
-
       _logger.i('Creating ride request...');
 
       final success = await controller.createRideRequest(
-        preferedFare: preferedFare,
+        preferedFare: widget.fare,
         note: descriptionController.text,
         rideNeeds: _selectedRideNeeds,
         paymentMethod: _selectedPaymentMethod,
@@ -120,17 +117,12 @@ class _FindCarBottomSheetState extends State<FindCarBottomSheet> {
 
       if (success) {
         _logger.i('Ride request successful, nearby drivers data: $_nearbyDriversData');
-        Navigator.pop(context);
-        showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          builder: (BuildContext context) {
-            return AcceptCarBottomSheet(
-              pickUpAddress: widget.pickUpAddress,
-              destinationAddress: widget.destinationAddress,
-              initialDriversData: _nearbyDriversData,
-            );
-          },
+        Get.find<HomePageController>().showPassengerSheet(
+          (_) => AcceptCarBottomSheet(
+            pickUpAddress: widget.pickUpAddress,
+            destinationAddress: widget.destinationAddress,
+            initialDriversData: _nearbyDriversData,
+          ),
         );
       }
     } catch (e) {
@@ -227,13 +219,12 @@ class _FindCarBottomSheetState extends State<FindCarBottomSheet> {
                           Text(
                             AppLocalization.tr.distanceLabel,
                             style: TextStyle(
-                              fontSize: 18.sp,
+                              fontSize: 16.sp,
                               color: Colors.black,
                             ),
                           ),
-                          SizedBox(width: 5.sp),
                           Text(
-                            '${widget.distance.toStringAsFixed(1)} km',
+                            '${widget.distance} km',
                             style: TextStyle(
                               fontSize: 16.sp,
                               fontWeight: FontWeight.w600,
@@ -242,20 +233,48 @@ class _FindCarBottomSheetState extends State<FindCarBottomSheet> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 8.h),
-                      Text(
-                        'Enter Ride Price',
-                        style: TextStyle(
-                          fontSize: 18.sp,
-                          color: AppColors.appGreyColor,
-                        ),
+                      SizedBox(height: 6.h),
+                      // Duration
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Duration',
+                            style: TextStyle(
+                              fontSize: 16.sp,
+                              color: Colors.black,
+                            ),
+                          ),
+                          Text(
+                            '${widget.duration.toInt()} sec',
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              color: AppColors.appGreyColor,
+                            ),
+                          ),
+                        ],
                       ),
-                      CustomTextField(
-                        onTap: () {},
-                        borderColor: AppColors.grayShade100,
-                        borderRadio: 10,
-                        controller: locationTEController,
-                        keyboardType: TextInputType.number,
+                      SizedBox(height: 6.h),
+                      // Fare
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Fare',
+                            style: TextStyle(
+                              fontSize: 16.sp,
+                              color: Colors.black,
+                            ),
+                          ),
+                          Text(
+                            '€${widget.fare.toStringAsFixed(2)}',
+                            style: TextStyle(
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.primaryColor,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),

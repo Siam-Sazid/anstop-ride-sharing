@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:logger/logger.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/passenger/cancel_taxi.dart';
+import 'package:ride_sharing/feature/passenger/car_booking/passenger/controller/pick_up_location_controller.dart';
 import 'package:ride_sharing/feature/passenger/payment/view/passenger_payment_screen.dart';
+import 'package:ride_sharing/feature/passenger/homepage/controller/home_page_controller.dart';
 import 'package:ride_sharing/services/socket_services.dart';
 import 'package:ride_sharing/utils/cancel_driver_widget.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/utils/car_details.dart';
@@ -87,27 +90,31 @@ class _BookingCarsBottomSheetState extends State<BookingCarsBottomSheet> {
       _logger.i('Received ride-picked-up event in BookingCarsBottomSheet: $data');
 
       if (mounted) {
-        // Close current bottom sheet and show DriverArrivedBottomSheet with driver data
-        Navigator.pop(context);
-        showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          builder: (BuildContext context) {
-            return DriverArrivedBottomSheet(
-              driverName: widget.driverName,
-              driverProfilePicture: widget.driverProfilePicture,
-              driverRating: widget.driverRating,
-              driverTotalReviews: widget.driverTotalReviews,
-              carBrand: widget.carBrand,
-              carModel: widget.carModel,
-              licensePlateNumber: widget.licensePlateNumber,
-              licensePlatePicture: widget.licensePlatePicture,
-              bidAmount: widget.bidAmount,
-              tripDistance: widget.tripDistance,
-              pickUpAddress: widget.pickUpAddress,
-              destinationAddress: widget.destinationAddress,
-            );
-          },
+        // Driver has picked up passenger — switch polyline from pickup to destination
+        final pickUpController = Get.find<PickUpLocationController>();
+        final destLat = double.tryParse(pickUpController.destinationLatitudeController.text) ?? 0.0;
+        final destLng = double.tryParse(pickUpController.destinationLongitudeController.text) ?? 0.0;
+        if (destLat != 0.0 || destLng != 0.0) {
+          Get.find<HomePageController>().startRideToDestinationTracking(LatLng(destLat, destLng));
+        } else {
+          Get.find<HomePageController>().stopDriverLocationTracking();
+        }
+
+        Get.find<HomePageController>().showPassengerSheet(
+          (_) => DriverArrivedBottomSheet(
+            driverName: widget.driverName,
+            driverProfilePicture: widget.driverProfilePicture,
+            driverRating: widget.driverRating,
+            driverTotalReviews: widget.driverTotalReviews,
+            carBrand: widget.carBrand,
+            carModel: widget.carModel,
+            licensePlateNumber: widget.licensePlateNumber,
+            licensePlatePicture: widget.licensePlatePicture,
+            bidAmount: widget.bidAmount,
+            tripDistance: widget.tripDistance,
+            pickUpAddress: widget.pickUpAddress,
+            destinationAddress: widget.destinationAddress,
+          ),
         );
       }
     });

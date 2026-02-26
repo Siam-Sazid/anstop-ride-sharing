@@ -7,8 +7,8 @@ import 'package:google_places_flutter/model/prediction.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/l10n/l10n_helper.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/passenger/controller/pick_up_location_controller.dart';
+import 'package:ride_sharing/feature/passenger/car_booking/passenger/passenger_map_screen.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/passenger/set_on_map_screen.dart';
-import 'package:ride_sharing/feature/passenger/car_booking/utils/find_car_bottom_sheet.dart';
 import 'package:ride_sharing/feature/passenger/set_location/view/set_location_option_page.dart';
 import 'package:ride_sharing/widgets/custom_app_bar_title.dart';
 import 'package:ride_sharing/feature/passenger/passenger_common_utils/custom_google_map.dart';
@@ -42,7 +42,7 @@ class PickUpLocationScreen extends StatelessWidget {
                   left: 0,
                   right: 0,
                   child: Container(
-                    height: MediaQuery.of(context).size.height * 0.5,
+                    height: MediaQuery.of(context).size.height * 0.7,
                     decoration: BoxDecoration(
                       color: AppColors.white,
                       borderRadius: BorderRadius.only(
@@ -300,6 +300,100 @@ class PickUpLocationScreen extends StatelessWidget {
                                 ),
                               ),
                             ),
+                            SizedBox(height: 16),
+
+                            // Book for dropdown
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 8.sp),
+                              child: Text(
+                                'Select the car book for..',
+                                style: TextStyle(
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  width: 1,
+                                  color: AppColors.primaryColor,
+                                ),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              padding: EdgeInsets.symmetric(horizontal: 12),
+                              child: DropdownButton<String>(
+                                value: controller.rideFor == 'SELF'
+                                    ? 'Book for myself'
+                                    : 'Book for my friend',
+                                isExpanded: true,
+                                icon: Icon(
+                                  Icons.keyboard_arrow_down,
+                                  color: AppColors.darkColor,
+                                ),
+                                underline: Container(),
+                                dropdownColor: AppColors.white,
+                                onChanged: (String? newValue) {
+                                  if (newValue != null) {
+                                    controller.setRideFor(
+                                      newValue == 'Book for myself' ? 'SELF' : 'OTHER',
+                                    );
+                                  }
+                                },
+                                items: ['Book for myself', 'Book for my friend']
+                                    .map((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(
+                                      value,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: AppColors.darkColor,
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+
+                            // Friend phone field – shown only when "Book for my friend"
+                            if (controller.rideFor == 'OTHER') ...[
+                              SizedBox(height: 12),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 8.sp),
+                                child: Text(
+                                  'Friend phone no.',
+                                  style: TextStyle(
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    width: 1,
+                                    color: AppColors.primaryColor,
+                                  ),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                padding: EdgeInsets.symmetric(horizontal: 16),
+                                child: TextField(
+                                  controller: controller.friendPhoneController,
+                                  keyboardType: TextInputType.phone,
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    hintText: '+880 3899220 820202',
+                                    hintStyle: TextStyle(
+                                      color: AppColors.appGreyColor,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                             SizedBox(height: 8),
                           ],
                         ),
@@ -354,18 +448,13 @@ class PickUpLocationScreen extends StatelessWidget {
                         bool success = await controller.calculateFare();
                         if (success) {
                           Navigator.pop(context);
-                          showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            builder: (BuildContext context) {
-                              return FindCarBottomSheet(
-                                pickUpAddress: controller.pickUpAddressController.text,
-                                destinationAddress: controller.destinationAddressController.text,
-                                distance: controller.calculatedDistance,
-                                fare: controller.calculatedFare,
-                              );
-                            },
-                          );
+                          Get.to(() => PassengerMapScreen(
+                            pickUpAddress: controller.pickUpAddressController.text,
+                            destinationAddress: controller.destinationAddressController.text,
+                            distance: controller.calculatedDistance,
+                            fare: controller.calculatedFare,
+                            duration: controller.calculatedDuration,
+                          ));
                         }
                       },
                 title: controller.isCalculatingFare
