@@ -288,6 +288,9 @@ class HomePageController extends GetxController {
     _lastFetchedDriverLocation = null;
     _resetRouteState();
 
+    debugPrint('🟢 [POLYLINE DEBUG] startDriverLocationTracking called');
+    debugPrint('🟢 [POLYLINE DEBUG] pickupLocation = ${pickupLocation.latitude}, ${pickupLocation.longitude}');
+
     // Add pickup pin marker
     _addPinMarker('pickup_location', pickupLocation, 'Pickup');
 
@@ -299,6 +302,10 @@ class HomePageController extends GetxController {
       final locationName = data['locationName'] as String? ?? 'Driver';
       final driverLatLng = LatLng(lat, lng);
 
+      debugPrint('🟡 [POLYLINE DEBUG] update-location received → driver lat=$lat, lng=$lng');
+      debugPrint('🟡 [POLYLINE DEBUG] polyline origin (driver) = $lat, $lng');
+      debugPrint('🟡 [POLYLINE DEBUG] polyline destination (pickup) = ${pickupLocation.latitude}, ${pickupLocation.longitude}');
+
       // Only re-fetch Directions API when driver has moved ≥ 50 m
       final shouldFetch = _lastFetchedDriverLocation == null ||
           _haversineKm(
@@ -308,6 +315,8 @@ class HomePageController extends GetxController {
                 lng,
               ) >=
               0.05;
+
+      debugPrint('🟡 [POLYLINE DEBUG] shouldFetch=$shouldFetch (lastFetched=${_lastFetchedDriverLocation?.latitude}, ${_lastFetchedDriverLocation?.longitude})');
 
       if (shouldFetch) {
         _lastFetchedDriverLocation = driverLatLng;
@@ -426,6 +435,9 @@ class HomePageController extends GetxController {
   }
 
   Future<void> _fetchAndDrawRoute(LatLng origin, LatLng destination) async {
+    debugPrint('🔶 [POLYLINE DEBUG] _fetchAndDrawRoute called');
+    debugPrint('🔶 [POLYLINE DEBUG] origin (should be DRIVER) = ${origin.latitude}, ${origin.longitude}');
+    debugPrint('🔶 [POLYLINE DEBUG] destination (should be PICKUP/DEST) = ${destination.latitude}, ${destination.longitude}');
     try {
       final url = Uri.parse(
         'https://maps.googleapis.com/maps/api/directions/json?'
@@ -436,6 +448,7 @@ class HomePageController extends GetxController {
 
       final response = await http.get(url);
       final data = jsonDecode(response.body) as Map<String, dynamic>;
+      debugPrint('🔶 [POLYLINE DEBUG] Directions API status = ${data['status']}');
 
       if (data['status'] == 'OK') {
         final encoded =

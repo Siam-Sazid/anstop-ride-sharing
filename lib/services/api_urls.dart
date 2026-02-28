@@ -62,6 +62,7 @@ class ApiUrls {
     required double destinationLng,
   }) => '$baseUrl/ride-requests/calculate-fare?pickUpLat=$pickUpLat&pickUpLng=$pickUpLng&destinationLat=$destinationLat&destinationLng=$destinationLng';
   static const String createRideRequest = '$baseUrl/ride-requests/create-ride-request';
+  static const String payRideFare = '$baseUrl/ride-requests/pay-ride-fare';
   static const String setFcmToken = '$baseUrl/users/fcm-token';
 
 

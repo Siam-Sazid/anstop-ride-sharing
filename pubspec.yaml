@@ -33,6 +33,7 @@ dependencies:
   smooth_page_indicator: ^1.2.1
   carousel_slider: ^5.1.1
   socket_io_client: ^3.1.2
+  url_launcher: ^6.3.1
   connectivity_plus:
   lottie: ^3.3.1
   curved_labeled_navigation_bar: ^2.0.6

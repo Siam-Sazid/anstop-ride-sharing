@@ -1,8 +1,12 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:ride_sharing/app/helpers/prefs_helper.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/routes/app_routes.dart';
+import 'package:ride_sharing/services/api_client.dart';
+import 'package:ride_sharing/services/api_urls.dart';
+import 'package:ride_sharing/services/socket_services.dart';
 import 'package:ride_sharing/services/stripe/stripe_config.dart';
 import 'package:ride_sharing/services/stripe/stripe_helper.dart';
 import 'package:ride_sharing/utils/user_info_section.dart';
@@ -48,6 +52,47 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
   void initState() {
     super.initState();
     _initStripe();
+    _initPaymentConfirmedListener();
+  }
+
+  @override
+  void dispose() {
+    SocketIoService.to.offPaymentConfirmed();
+    super.dispose();
+  }
+
+  void _initPaymentConfirmedListener() {
+    SocketIoService.to.onPaymentConfirmed((data) {
+      if (mounted) {
+        Get.snackbar(
+          'Payment Confirmed',
+          'Your payment was given successfully',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 3),
+        );
+      }
+    });
+  }
+
+  Future<void> _payRideFare() async {
+    final accessToken = await PrefsHelper.getString('accessToken');
+    final apiClient = ApiClient();
+    final response = await apiClient.postRequest(
+      ApiUrls.payRideFare,
+      body: {},
+      accessToken: accessToken,
+    );
+    if (!response.isSuccess && mounted) {
+      Get.snackbar(
+        'Payment Error',
+        response.errorMessage,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
   }
 
   void _initStripe() {
@@ -87,8 +132,11 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
     if (_requiresStripePayment()) {
       await _processStripePayment(context);
     } else {
-      // For CASH, directly show rating dialog
-      _showRatingDialog(context);
+      // For CASH, hit the pay-ride-fare API then show rating dialog
+      await _payRideFare();
+      if (context.mounted) {
+        _showRatingDialog(context);
+      }
     }
   }
 

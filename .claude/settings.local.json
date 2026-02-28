@@ -16,7 +16,8 @@
       "Bash(dir \"C:\\\\Users\\\\Siam\\\\ride_sharing_app\\\\lib\\\\feature\\\\passenger\\\\trip_details\" /s /b)",
       "Bash(flutter pub run:*)",
       "Bash(dir \"C:\\\\Users\\\\Siam\\\\ride_sharing_app\\\\android\\\\app\\\\src\\\\main\\\\res\\\\mipmap-hdpi\\\\ic_launcher.png\")",
-      "Bash(dir \"C:\\\\Users\\\\Siam\\\\ride_sharing_app\\\\ios\\\\Runner\\\\Assets.xcassets\\\\AppIcon.appiconset\\\\Icon-App-1024x1024@1x.png\")"
+      "Bash(dir \"C:\\\\Users\\\\Siam\\\\ride_sharing_app\\\\ios\\\\Runner\\\\Assets.xcassets\\\\AppIcon.appiconset\\\\Icon-App-1024x1024@1x.png\")",
+      "Bash(xargs grep:*)"
     ]
   }
 }

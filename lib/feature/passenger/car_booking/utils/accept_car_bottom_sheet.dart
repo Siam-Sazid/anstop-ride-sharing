@@ -176,7 +176,14 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
       final pickUpController = Get.find<PickUpLocationController>();
       final lat = double.tryParse(pickUpController.pickUpLatitudeController.text) ?? 0.0;
       final lng = double.tryParse(pickUpController.pickUpLongitudeController.text) ?? 0.0;
-      if (lat == 0.0 && lng == 0.0) return;
+      debugPrint('🔵 [POLYLINE DEBUG] _startDriverPolylineTracking called');
+      debugPrint('🔵 [POLYLINE DEBUG] pickUpLatitudeController.text = "${pickUpController.pickUpLatitudeController.text}"');
+      debugPrint('🔵 [POLYLINE DEBUG] pickUpLongitudeController.text = "${pickUpController.pickUpLongitudeController.text}"');
+      debugPrint('🔵 [POLYLINE DEBUG] parsed pickup → lat=$lat, lng=$lng');
+      if (lat == 0.0 && lng == 0.0) {
+        debugPrint('🔴 [POLYLINE DEBUG] pickup coords are 0,0 — tracking NOT started');
+        return;
+      }
       Get.find<HomePageController>().startDriverLocationTracking(LatLng(lat, lng));
       _logger.i('Driver polyline tracking started — pickup: $lat, $lng');
     } catch (e) {
@@ -187,7 +194,7 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
   void _initDriversData() {
     // If initial data is provided, use it immediately
     if (widget.initialDriversData != null && widget.initialDriversData!.isNotEmpty) {
-      _logger.i('Using initial drivers data: ${widget.initialDriversData!.length} drivers');
+      _logger. i('Using initial drivers data: ${widget.initialDriversData!.length} drivers');
       nearbyDrivers = widget.initialDriversData!
           .map((driverJson) => NearbyDriver.fromJson(driverJson as Map<String, dynamic>))
           .toList();
@@ -365,10 +372,21 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
       height: MediaQuery.of(context).size.height * 0.75,
       width: double.infinity,
       color: AppColors.white,
-      padding: EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          SizedBox(
+            height: 3,
+            child: LinearProgressIndicator(
+              backgroundColor: Colors.transparent,
+              valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryColor),
+            ),
+          ),
+          Expanded(child: Padding(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
           // Header Row with Logo and Close button
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -499,6 +517,9 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
                         },
                       ),
           ),
+              ],
+            ),
+          )),
         ],
       ),
     );
@@ -622,8 +643,8 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
 
           SizedBox(height: 8.sp),
 
-          // Accept button (smaller size, left-aligned)
-          Align(
+          // Accept button — only visible after new-offer is received for this driver
+          if (driverRideIds.containsKey(driver.id)) Align(
             alignment: Alignment.centerLeft,
             child: SizedBox(
               width: 100.h,

@@ -11,6 +11,7 @@ import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 import 'package:ride_sharing/widgets/custom_horizontal_line.dart';
 import 'package:ride_sharing/widgets/custom_vertical_line.dart';
 import 'package:ride_sharing/l10n/app_localizations.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // import your app colors here
 // import '../../../../app/message_utils/app_colors.dart';
@@ -33,6 +34,7 @@ class TripRequest {
   final String vehicleType;
   final String note;
   final List<String> rideNeeds;
+  final String riderNumber;
 
   TripRequest({
     required this.id,
@@ -48,6 +50,7 @@ class TripRequest {
     required this.vehicleType,
     required this.note,
     this.rideNeeds = const [],
+    this.riderNumber = '',
   });
 
   // Factory constructor to create TripRequest from RideRequestModel
@@ -66,6 +69,7 @@ class TripRequest {
       vehicleType: 'Standard',
       note: rideRequest.note,
       rideNeeds: rideRequest.rideNeeds,
+      riderNumber: rideRequest.riderNumber,
     );
   }
 }
@@ -365,8 +369,11 @@ class DriverTripController extends GetxController {
     if (Get.context != null) {
       TripDialogs.showPaymentConfirmation(
         Get.context!,
-        onPaymentReceived: () {
-          _logger.i('Payment received - navigating to driver home');
+        onPaymentReceived: () async {
+          _logger.i('Payment received - emitting confirm-payment');
+          final rideId = currentRideRequest.value?.rideId ?? '';
+          await SocketIoService.to.emitConfirmPayment(rideId: rideId);
+          _logger.i('confirm-payment emitted, navigating to driver home');
           _finishTripAndNavigateHome();
         },
         onDifferentAmount: () {
@@ -504,6 +511,7 @@ class PendingTripsBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('🚗 [BottomSheet] PendingTripsBottomSheet appeared');
     final controller = Get.find<DriverTripController>();
 
     return Container(
@@ -771,6 +779,34 @@ class TripRequestCard extends StatelessWidget {
               ),
             ],
 
+            // Rider phone number — only shown when available
+            if (trip.riderNumber.isNotEmpty) ...[
+              SizedBox(height: 12.h),
+              GestureDetector(
+                onTap: () async {
+                  final uri = Uri(scheme: 'tel', path: trip.riderNumber);
+                  if (await canLaunchUrl(uri)) {
+                    await launchUrl(uri);
+                  }
+                },
+                child: Row(
+                  children: [
+                    Icon(Icons.phone, color: AppColors.primaryColor, size: 16.sp),
+                    SizedBox(width: 6.w),
+                    Text(
+                      trip.riderNumber,
+                      style: TextStyle(
+                        fontSize: 13.sp,
+                        color: AppColors.primaryColor,
+                        fontWeight: FontWeight.w600,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+
             // Note
             if (trip.note.isNotEmpty) ...[
               SizedBox(height: 12.h),
@@ -836,26 +872,26 @@ class TripRequestCard extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: 12.w),
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: onTap,
-                    style: OutlinedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(vertical: 12.h),
-                      side: BorderSide(color: AppColors.grayShade100),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.r),
-                      ),
-                    ),
-                    child: Text(
-                      l10n.bidButton,
-                      style: TextStyle(
-                        color: AppColors.appGreyColor,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
+                // Expanded(
+                //   child: OutlinedButton(
+                //     onPressed: onTap,
+                //     style: OutlinedButton.styleFrom(
+                //       padding: EdgeInsets.symmetric(vertical: 12.h),
+                //       side: BorderSide(color: AppColors.grayShade100),
+                //       shape: RoundedRectangleBorder(
+                //         borderRadius: BorderRadius.circular(8.r),
+                //       ),
+                //     ),
+                //     child: Text(
+                //       l10n.bidButton,
+                //       style: TextStyle(
+                //         color: AppColors.appGreyColor,
+                //         fontSize: 14.sp,
+                //         fontWeight: FontWeight.w600,
+                //       ),
+                //     ),
+                //   ),
+                // ),
                 SizedBox(width: 12.w),
                 Expanded(
                   child: OutlinedButton(
@@ -892,6 +928,7 @@ class TripDetailBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('🚗 [BottomSheet] TripDetailBottomSheet appeared');
     final l10n = AppLocalizations.of(context)!;
     final controller = Get.find<DriverTripController>();
     final trip = controller.selectedTrip.value ??
@@ -907,13 +944,27 @@ class TripDetailBottomSheet extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Handle bar
-            Container(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+            child: SizedBox(
+              height: 3.h,
+              child: LinearProgressIndicator(
+                backgroundColor: Colors.transparent,
+                valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryColor),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Handle bar
+                  Container(
               width: 40.w,
               height: 4.h,
               margin: EdgeInsets.only(top: 8.h, bottom: 16.h),
@@ -1205,34 +1256,34 @@ class TripDetailBottomSheet extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50.h,
-                    child: OutlinedButton(
-                      onPressed: () => controller.showBiddingScreen(),
-                      style: OutlinedButton.styleFrom(
-                      //  padding: EdgeInsets.symmetric(vertical: 20.h), // increased height
-                        side: BorderSide(color: AppColors.grayShade100, width: 2),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(24.r),
-                        ),
-                      ),
-                      child: Text(
-                        l10n.bidButton,
-                        style: TextStyle(
-                          color: AppColors.grayShade100,
-                          fontSize: 18.sp, // increased size
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                  ),
+                  // SizedBox(
+                  //   width: double.infinity,
+                  //   height: 50.h,
+                  //   child: OutlinedButton(
+                  //     onPressed: () => controller.showBiddingScreen(),
+                  //     style: OutlinedButton.styleFrom(
+                  //     //  padding: EdgeInsets.symmetric(vertical: 20.h), // increased height
+                  //       side: BorderSide(color: AppColors.grayShade100, width: 2),
+                  //       shape: RoundedRectangleBorder(
+                  //         borderRadius: BorderRadius.circular(24.r),
+                  //       ),
+                  //     ),
+                  //     child: Text(
+                  //       l10n.bidButton,
+                  //       style: TextStyle(
+                  //         color: AppColors.grayShade100,
+                  //         fontSize: 18.sp, // increased size
+                  //         fontWeight: FontWeight.w700,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
 
             ),
-          ],
-        ),
+          ]))
+          ) ],
       ),
     );
   }
@@ -1244,6 +1295,7 @@ class BiddingBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('🚗 [BottomSheet] BiddingBottomSheet appeared');
     final l10n = AppLocalizations.of(context)!;
     final controller = Get.find<DriverTripController>();
     final trip = controller.selectedTrip.value ??
@@ -1520,30 +1572,30 @@ class BiddingBottomSheet extends StatelessWidget {
         //  const Spacer(),
 
           // Submit button
-          Padding(
-            padding: EdgeInsets.all(16.w),
-            child: SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () => controller.submitBid(),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryColor,
-                  padding: EdgeInsets.symmetric(vertical: 16.h),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                ),
-                child: Text(
-                  l10n.submitButton,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
-          ),
+          // Padding(
+          //   padding: EdgeInsets.all(16.w),
+          //   child: SizedBox(
+          //     width: double.infinity,
+          //     child: ElevatedButton(
+          //       onPressed: () => controller.submitBid(),
+          //       style: ElevatedButton.styleFrom(
+          //         backgroundColor: AppColors.primaryColor,
+          //         padding: EdgeInsets.symmetric(vertical: 16.h),
+          //         shape: RoundedRectangleBorder(
+          //           borderRadius: BorderRadius.circular(8.r),
+          //         ),
+          //       ),
+          //       child: Text(
+          //         l10n.submitButton,
+          //         style: TextStyle(
+          //           color: Colors.white,
+          //           fontSize: 16.sp,
+          //           fontWeight: FontWeight.w600,
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
@@ -1556,6 +1608,7 @@ class TripTakenBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('🚗 [BottomSheet] TripTakenBottomSheet appeared');
     final l10n = AppLocalizations.of(context)!;
     final controller = Get.find<DriverTripController>();
 
@@ -1660,6 +1713,7 @@ class TripAcceptedBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('🚗 [BottomSheet] TripAcceptedBottomSheet appeared');
     final l10n = AppLocalizations.of(context)!;
     final controller = Get.find<DriverTripController>();
     final trip = controller.selectedTrip.value;
@@ -1771,6 +1825,7 @@ class ActiveTripBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('🚗 [BottomSheet] ActiveTripBottomSheet appeared');
     final l10n = AppLocalizations.of(context)!;
     final controller = Get.find<DriverTripController>();
     final trip = controller.selectedTrip.value ??
@@ -2066,6 +2121,7 @@ class DropOffNavigationBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('🚗 [BottomSheet] DropOffNavigationBottomSheet appeared');
     final l10n = AppLocalizations.of(context)!;
     final controller = Get.find<DriverTripController>();
     final trip = controller.selectedTrip.value ??
@@ -2381,6 +2437,7 @@ class DropOffArrivedBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('🚗 [BottomSheet] DropOffArrivedBottomSheet appeared');
     final l10n = AppLocalizations.of(context)!;
     final controller = Get.find<DriverTripController>();
     final homeController = Get.find<DriverHomeScreenController>();

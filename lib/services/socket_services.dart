@@ -481,6 +481,42 @@ class SocketIoService extends GetxService {
     _socket?.off('accept-bid');
   }
 
+  // Emit confirm-payment (for drivers - when cash payment is received)
+  Future<void> emitConfirmPayment({required String rideId}) async {
+    if (!isSocketReady) {
+      _logger.i('Socket not ready, connecting before emitting confirm-payment...');
+      await connect();
+      await Future.delayed(const Duration(milliseconds: 500));
+    }
+
+    if (!isSocketReady) {
+      _logger.e('Cannot emit confirm-payment - socket is not ready after connect attempt');
+      return;
+    }
+
+    final payload = {'rideId': rideId};
+    _logger.i('Emitting confirm-payment event: $payload');
+    emit('confirm-payment', payload);
+  }
+
+  // Listen for payment-confirmed (for passengers - when driver confirms cash payment received)
+  void onPaymentConfirmed(Function(dynamic) handler) {
+    if (_socket == null) {
+      _logger.e('Cannot register payment-confirmed listener - socket is null!');
+      return;
+    }
+    _logger.i('Registering payment-confirmed listener, socket connected: ${_socket!.connected}');
+    _socket!.on('payment-confirmed', (data) {
+      _logger.i('payment-confirmed event received in service: $data');
+      handler(data);
+    });
+  }
+
+  void offPaymentConfirmed() {
+    _logger.i('Removing payment-confirmed listener');
+    _socket?.off('payment-confirmed');
+  }
+
   // Listen for ride-completed (for passengers - when ride is completed)
   void onRideCompleted(Function(dynamic) handler) {
     if (_socket == null) {

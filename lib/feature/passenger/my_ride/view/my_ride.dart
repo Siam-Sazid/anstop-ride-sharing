@@ -61,8 +61,8 @@ class _MyRidePageState extends State<MyRidePage> {
                     return MyRideCardWidget(
                       date: formattedDate,
                       time: '',
-                      pickup: ride.pickup.name,
-                      dropoff: ride.destination.name,
+                      pickup: ride.pickup?.name ?? '',
+                      dropoff: ride.destination?.name ?? '',
                       imageUrl: ride.driver.profilePicture!,
                       onViewDetails: () {
                         if (controller.isOngoing.value) {

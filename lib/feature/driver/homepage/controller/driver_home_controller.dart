@@ -14,7 +14,7 @@ import 'package:ride_sharing/services/socket_services.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-class DriverHomeScreenController extends GetxController {
+class DriverHomeScreenController extends GetxController with WidgetsBindingObserver {
   final Logger _logger = Logger();
   final TextEditingController locationTEController = TextEditingController();
   GoogleMapController? mapController;
@@ -86,9 +86,31 @@ class DriverHomeScreenController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    WidgetsBinding.instance.addObserver(this);
     _loadCustomMarkers();
     _initializeMap();
     _setupSocketListeners();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _logger.i('App resumed — checking socket connection');
+      _reconnectSocketIfNeeded();
+    }
+  }
+
+  Future<void> _reconnectSocketIfNeeded() async {
+    final socketService = SocketIoService.to;
+    if (!socketService.isSocketReady) {
+      _logger.i('Socket disconnected after background — reconnecting...');
+      await socketService.connect();
+      await Future.delayed(const Duration(milliseconds: 500));
+      await _setupSocketListeners();
+      _logger.i('Socket reconnected and listeners re-registered');
+    } else {
+      _logger.i('Socket still connected after resume — no action needed');
+    }
   }
 
   Future<void> _loadCustomMarkers() async {
@@ -1188,6 +1210,7 @@ class DriverHomeScreenController extends GetxController {
 
   @override
   void onClose() {
+    WidgetsBinding.instance.removeObserver(this);
     mapController?.dispose();
     _locationSubscription?.cancel();
     _simulationTimer?.cancel();
