@@ -182,8 +182,11 @@ class LoginController extends GetxController {
       if (userId != null && userId.isNotEmpty) {
         await prefs.setString('userId', userId);
       }
-      if (data.name != null && data.name!.isNotEmpty) {
-        await prefs.setString('name', data.name!);
+      if (data.firstName != null && data.firstName!.isNotEmpty) {
+        await prefs.setString('firstName', data.firstName!);
+      }
+      if (data.lastName != null && data.lastName!.isNotEmpty) {
+        await prefs.setString('lastName', data.lastName!);
       }
       if (data.profilePicture != null && data.profilePicture!.isNotEmpty) {
         await prefs.setString('profilePicture', data.profilePicture!);
@@ -193,7 +196,8 @@ class LoginController extends GetxController {
       print('💾 Saved Access Token: ${data.accessToken}');
       print('💾 Saved User Role: ${data.role}');
       print('💾 Saved User ID: $userId');
-      print('💾 Saved User Name: ${data.name}');
+      print('💾 Saved First Name: ${data.firstName}');
+      print('💾 Saved Last Name: ${data.lastName}');
 
       // Verify it was saved
       final savedToken = prefs.getString('accessToken');

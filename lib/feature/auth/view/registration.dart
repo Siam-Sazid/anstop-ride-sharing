@@ -55,16 +55,36 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   key: _controller.formKey,
                   child: Column(
                     children: [
-                      CustomTextField(
-                        controller: _controller.nameTEController,
-                        prefixIcon: Icon(
-                          Icons.person,
-                          color: Color(0XFF8A8A8A),
-                          size: 24.sp,
-                        ),
-                        hintText: AppLocalization.tr.nameHintText,
-                        hintextSize: 14.sp,
-                        hintextColor: Color(0XFF8A8A8A),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: CustomTextField(
+                              controller: _controller.firstNameTEController,
+                              prefixIcon: Icon(
+                                Icons.person,
+                                color: Color(0XFF8A8A8A),
+                                size: 24.sp,
+                              ),
+                              hintText: 'First Name',
+                              hintextSize: 14.sp,
+                              hintextColor: Color(0XFF8A8A8A),
+                            ),
+                          ),
+                          SizedBox(width: 12.w),
+                          Expanded(
+                            child: CustomTextField(
+                              controller: _controller.lastNameTEController,
+                              prefixIcon: Icon(
+                                Icons.person_outline,
+                                color: Color(0XFF8A8A8A),
+                                size: 24.sp,
+                              ),
+                              hintText: 'Last Name',
+                              hintextSize: 14.sp,
+                              hintextColor: Color(0XFF8A8A8A),
+                            ),
+                          ),
+                        ],
                       ),
                       SizedBox(height: 12.h),
                       CustomTextField(

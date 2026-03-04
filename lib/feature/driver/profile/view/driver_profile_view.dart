@@ -104,7 +104,7 @@ class DriverProfileView extends StatelessWidget {
                           _buildProfileField(
                             icon: Icons.person,
                             label: AppLocalization.tr.nameLabel,
-                            value: profile?.name ?? '',
+                            value: '${profile?.firstName ?? ''} ${profile?.lastName ?? ''}'.trim(),
                           ),
                           SizedBox(height: 12.h),
                           // Email Field

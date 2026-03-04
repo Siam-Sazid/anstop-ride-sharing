@@ -17,7 +17,8 @@ class DriverRegistration extends StatefulWidget {
 
 class _DriverRegistrationState extends State<DriverRegistration> {
   /// Controller are define here
-  final TextEditingController _nameTEController = TextEditingController();
+  final TextEditingController _firstNameTEController = TextEditingController();
+  final TextEditingController _lastNameTEController = TextEditingController();
   final TextEditingController _passwordTEController = TextEditingController();
   final TextEditingController _confirmPasswordTEController = TextEditingController();
   final TextEditingController _emailTEController = TextEditingController();

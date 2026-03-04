@@ -30,6 +30,7 @@ class AppImage {
   static String wallet = "$baseUrl/Wallet.png";
   static String walletDrawer = "$baseUrl/Wallet_drawer.png";
   static String davidLogo = "$baseUrl/david_icon.png";
+  static String davidLauncherIcon = "$baseUrl/david_launcher_icon.png";
   static String logoAnstop = "$baseUrl/logo_anstop.png";
   static String textLogo = "$baseUrl/anstop_text_logo.png";
   static String anstopIcon = "$baseUrl/anstopIcon.svg";

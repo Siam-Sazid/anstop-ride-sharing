@@ -3,7 +3,8 @@ import 'package:get/get.dart';
 
 class DriverRegistrationController extends GetxController {
   // ==================== Text Controllers ====================
-  final TextEditingController nameTEController = TextEditingController();
+  final TextEditingController firstNameTEController = TextEditingController();
+  final TextEditingController lastNameTEController = TextEditingController();
   final TextEditingController emailTEController = TextEditingController();
   final TextEditingController phoneTEController = TextEditingController();
   final TextEditingController passwordTEController = TextEditingController();
@@ -26,7 +27,8 @@ class DriverRegistrationController extends GetxController {
 
   @override
   void onClose() {
-    nameTEController.dispose();
+    firstNameTEController.dispose();
+    lastNameTEController.dispose();
     emailTEController.dispose();
     phoneTEController.dispose();
     passwordTEController.dispose();
@@ -95,9 +97,16 @@ class DriverRegistrationController extends GetxController {
     return formKey.currentState?.validate() ?? false;
   }
 
-  String? validateName(String? value) {
+  String? validateFirstName(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Name is required';
+      return 'First name is required';
+    }
+    return null;
+  }
+
+  String? validateLastName(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Last name is required';
     }
     return null;
   }

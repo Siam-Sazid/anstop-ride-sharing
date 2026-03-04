@@ -15,7 +15,8 @@ class EditDriverProfileController extends GetxController {
   final AuthService _authService = AuthService();
 
   // ==================== Text Controllers ====================
-  final TextEditingController nameTEController = TextEditingController();
+  final TextEditingController firstNameTEController = TextEditingController();
+  final TextEditingController lastNameTEController = TextEditingController();
   final TextEditingController emailTEController = TextEditingController();
   final TextEditingController addressTEController = TextEditingController();
   DriverProfileController profileController = Get.put(DriverProfileController());
@@ -38,7 +39,8 @@ class EditDriverProfileController extends GetxController {
 
   @override
   void onClose() {
-    nameTEController.dispose();
+    firstNameTEController.dispose();
+    lastNameTEController.dispose();
     emailTEController.dispose();
     addressTEController.dispose();
     super.onClose();
@@ -48,7 +50,8 @@ class EditDriverProfileController extends GetxController {
   void _loadInitialData() {
     final args = Get.arguments as UserProfileData?;
     if (args != null) {
-      nameTEController.text = args.name;
+      firstNameTEController.text = args.firstName;
+      lastNameTEController.text = args.lastName;
       emailTEController.text = args.email;
       addressTEController.text = args.address ?? '';
       profilePictureUrl.value = args.profilePicture ?? '';
@@ -117,8 +120,11 @@ class EditDriverProfileController extends GetxController {
       // Build request body with only changed fields
       final Map<String, dynamic> body = {};
 
-      if (nameTEController.text.isNotEmpty) {
-        body['name'] = nameTEController.text.trim();
+      if (firstNameTEController.text.isNotEmpty) {
+        body['firstName'] = firstNameTEController.text.trim();
+      }
+      if (lastNameTEController.text.isNotEmpty) {
+        body['lastName'] = lastNameTEController.text.trim();
       }
       if (emailTEController.text.isNotEmpty) {
         body['email'] = emailTEController.text.trim();

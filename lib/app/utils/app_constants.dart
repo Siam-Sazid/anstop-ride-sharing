@@ -5,7 +5,8 @@ class AppConstants{
   static const String completed = "completed";
   static const String email = "email";
   static const String phone = "phone";
-  static const String name = "name";
+  static const String firstName = "firstName";
+  static const String lastName = "lastName";
   static const String image = "image";
   static const String role = "role";
   static const String userId = "userId";

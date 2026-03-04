@@ -20,14 +20,16 @@ class UserProfileResponse {
 
 class UserProfileData {
   final String id;
-  final String name;
+  final String firstName;
+  final String lastName;
   final String email;
   final String? address;
   final String? profilePicture;
 
   UserProfileData({
     required this.id,
-    required this.name,
+    required this.firstName,
+    required this.lastName,
     required this.email,
     this.address,
     this.profilePicture,
@@ -36,7 +38,8 @@ class UserProfileData {
   factory UserProfileData.fromJson(Map<String, dynamic> json) {
     return UserProfileData(
       id: json['_id'] ?? '',
-      name: json['name'] ?? '',
+      firstName: json['firstName'] ?? '',
+      lastName: json['lastName'] ?? '',
       email: json['email'] ?? '',
       address: json['address'],
       profilePicture: json['profilePicture'],

@@ -54,7 +54,7 @@ class MessageService {
       final prefs = await SharedPreferences.getInstance();
       return {
         'userId': prefs.getString('userId'),
-        'userName': prefs.getString('name'),
+        'userName': '${prefs.getString('firstName') ?? ''} ${prefs.getString('lastName') ?? ''}'.trim(),
         'profilePicture': prefs.getString('profilePicture'),
       };
     } catch (e) {

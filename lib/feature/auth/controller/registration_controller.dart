@@ -7,7 +7,8 @@ import 'package:ride_sharing/routes/app_routes.dart';
 
 class RegistrationController extends GetxController {
   // ==================== Text Controllers ====================
-  final TextEditingController nameTEController = TextEditingController();
+  final TextEditingController firstNameTEController = TextEditingController();
+  final TextEditingController lastNameTEController = TextEditingController();
   final TextEditingController emailTEController = TextEditingController();
   final TextEditingController phoneTEController = TextEditingController();
   final TextEditingController passwordTEController = TextEditingController();
@@ -33,7 +34,8 @@ class RegistrationController extends GetxController {
 
   @override
   void onClose() {
-    nameTEController.dispose();
+    firstNameTEController.dispose();
+    lastNameTEController.dispose();
     emailTEController.dispose();
     phoneTEController.dispose();
     passwordTEController.dispose();
@@ -82,7 +84,8 @@ class RegistrationController extends GetxController {
 
       // Create signup request model
       final signUpRequest = SignUpRequestModel(
-        name: nameTEController.text.trim(),
+        firstName: firstNameTEController.text.trim(),
+        lastName: lastNameTEController.text.trim(),
         email: emailTEController.text.trim(),
         password: passwordTEController.text.trim(),
         role: userRole.value,

@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:flutter/material.dart';
 import 'package:ride_sharing/l10n/l10n_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -126,6 +127,30 @@ class PickUpLocationController extends GetxController {
       currentPosition = position;
       isLoading = false;
 
+      // Pre-fill pickup with current GPS location as default
+      pickUpLatitudeController.text = position.latitude.toString();
+      pickUpLongitudeController.text = position.longitude.toString();
+
+      try {
+        final placemarks = await placemarkFromCoordinates(
+          position.latitude,
+          position.longitude,
+        );
+        if (placemarks.isNotEmpty) {
+          final p = placemarks.first;
+          final parts = [p.name, p.street, p.locality]
+              .where((s) => s != null && s.isNotEmpty)
+              .toSet()
+              .toList();
+          pickUpAddressController.text = parts.isNotEmpty
+              ? parts.join(', ')
+              : 'Current Location';
+        } else {
+          pickUpAddressController.text = 'Current Location';
+        }
+      } catch (_) {
+        pickUpAddressController.text = 'Current Location';
+      }
 
       final l10n = AppLocalizations.of(Get.context!)!;
       markers.add(

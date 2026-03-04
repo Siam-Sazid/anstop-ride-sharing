@@ -85,7 +85,8 @@ class LogoutDialog extends StatelessWidget {
                       await prefs.remove('refreshToken');
                       await prefs.remove('userRole');
                       await prefs.remove('userId');
-                      await prefs.remove('name');
+                      await prefs.remove('firstName');
+                      await prefs.remove('lastName');
                       await prefs.remove('profilePicture');
                       await prefs.remove('needsVerification');
 

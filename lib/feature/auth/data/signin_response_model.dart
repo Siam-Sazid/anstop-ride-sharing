@@ -24,7 +24,8 @@ class SignInData {
   final List<String> role;
   final bool needsVerification;
   final String? userId;
-  final String? name;
+  final String? firstName;
+  final String? lastName;
   final String? profilePicture;
 
   SignInData({
@@ -33,7 +34,8 @@ class SignInData {
     required this.role,
     required this.needsVerification,
     this.userId,
-    this.name,
+    this.firstName,
+    this.lastName,
     this.profilePicture,
   });
 
@@ -48,7 +50,8 @@ class SignInData {
           : [],
       needsVerification: json['needsVerification'] ?? false,
       userId: user?['_id'] ?? json['userId'] ?? json['_id'],
-      name: user?['name'] ?? json['name'],
+      firstName: user?['firstName'] ?? json['firstName'],
+      lastName: user?['lastName'] ?? json['lastName'],
       profilePicture: user?['profilePicture'] ?? json['profilePicture'],
     );
   }
@@ -60,7 +63,8 @@ class SignInData {
       'role': role,
       'needsVerification': needsVerification,
       'userId': userId,
-      'name': name,
+      'firstName': firstName,
+      'lastName': lastName,
       'profilePicture': profilePicture,
     };
   }

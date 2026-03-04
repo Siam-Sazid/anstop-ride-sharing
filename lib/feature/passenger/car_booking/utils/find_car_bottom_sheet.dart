@@ -39,7 +39,7 @@ class _FindCarBottomSheetState extends State<FindCarBottomSheet> {
   final Logger _logger = Logger();
 
   int childrenCount = 0;
-  String _selectedPaymentMethod = 'CASH';
+  String _selectedPaymentMethod = 'WALLET';
   List<String> _selectedRideNeeds = [];
   bool _isLoading = false;
   List<dynamic>? _nearbyDriversData;
@@ -47,7 +47,6 @@ class _FindCarBottomSheetState extends State<FindCarBottomSheet> {
   final Map<String, String> _paymentMethodMapping = {
     'Wallet': 'WALLET',
     'By Cards': 'CARD',
-    'By Cash': 'CASH',
   };
 
   @override
@@ -307,7 +306,7 @@ class _FindCarBottomSheetState extends State<FindCarBottomSheet> {
                 },
                 underline: Container(),
                 dropdownColor: AppColors.white,
-                items: <String>['Wallet', 'By Cards', 'By Cash']
+                items: <String>['Wallet', 'By Cards']
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,

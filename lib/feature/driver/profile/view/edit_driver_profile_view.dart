@@ -72,17 +72,37 @@ class EditDriverProfileView extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Column(
                       children: [
-                        // Name Field
-                        CustomTextField(
-                          controller: controller.nameTEController,
-                          prefixIcon: Icon(
-                            Icons.person,
-                            color: const Color(0XFF8A8A8A),
-                            size: 24.sp,
-                          ),
-                          hintText: AppLocalization.tr.nameLabel,
-                          hintextSize: 14.sp,
-                          hintextColor: const Color(0XFF8A8A8A),
+                        // Name Fields
+                        Row(
+                          children: [
+                            Expanded(
+                              child: CustomTextField(
+                                controller: controller.firstNameTEController,
+                                prefixIcon: Icon(
+                                  Icons.person,
+                                  color: const Color(0XFF8A8A8A),
+                                  size: 24.sp,
+                                ),
+                                hintText: 'First Name',
+                                hintextSize: 14.sp,
+                                hintextColor: const Color(0XFF8A8A8A),
+                              ),
+                            ),
+                            SizedBox(width: 12.w),
+                            Expanded(
+                              child: CustomTextField(
+                                controller: controller.lastNameTEController,
+                                prefixIcon: Icon(
+                                  Icons.person_outline,
+                                  color: const Color(0XFF8A8A8A),
+                                  size: 24.sp,
+                                ),
+                                hintText: 'Last Name',
+                                hintextSize: 14.sp,
+                                hintextColor: const Color(0XFF8A8A8A),
+                              ),
+                            ),
+                          ],
                         ),
                         SizedBox(height: 12.h),
                         // Email Field

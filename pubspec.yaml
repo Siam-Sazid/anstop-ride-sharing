@@ -75,9 +75,9 @@ flutter_launcher_icons:
   android: true
   ios: true
   remove_alpha_ios: true
-  image_path: "assets/images/david_icon.png"
+  image_path: "assets/images/david_launcher_icon.png"
   adaptive_icon_background: "#1B4332"
-  adaptive_icon_foreground: "assets/images/david_icon.png"
+  adaptive_icon_foreground: "assets/images/david_launcher_icon.png"
 
 flutter:
   generate: true

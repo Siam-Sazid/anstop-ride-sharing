@@ -41,10 +41,10 @@ class PassengerCustomDrawer extends StatelessWidget {
 
               ),
               child: CustomUserRating(
-                name: "Siam",
-               // name: driverProfileController.profileData.value!.name ,
-             //  imageUrl:    driverProfileController.profileData.value!.profilePicture ?? "https://picsum.photos/250?image=9"
-                imageUrl: "https://picsum.photos/250?image=9",
+              //  name: "Siam",
+                name: driverProfileController.profileData.value!.firstName ,
+               imageUrl:    driverProfileController.profileData.value!.profilePicture ?? "https://picsum.photos/250?image=9"
+              //  imageUrl: "https://picsum.photos/250?image=9",
               //  price: 24,
              //   distance: 28,
               ),

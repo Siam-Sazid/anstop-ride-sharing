@@ -1,5 +1,6 @@
 class SignUpRequestModel {
-  final String name;
+  final String firstName;
+  final String lastName;
   final String email;
   final String password;
   final String role;
@@ -8,7 +9,8 @@ class SignUpRequestModel {
   final String? dateOfBirth;
 
   SignUpRequestModel({
-    required this.name,
+    required this.firstName,
+    required this.lastName,
     required this.email,
     required this.password,
     required this.role,
@@ -19,7 +21,8 @@ class SignUpRequestModel {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {
-      'name': name,
+      'firstName': firstName,
+      'lastName': lastName,
       'email': email,
       'password': password,
       'role': role,
