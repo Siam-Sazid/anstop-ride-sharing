@@ -1,5 +1,4 @@
-﻿import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/app/helpers/prefs_helper.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
@@ -7,14 +6,13 @@ import 'package:ride_sharing/routes/app_routes.dart';
 import 'package:ride_sharing/services/api_client.dart';
 import 'package:ride_sharing/services/api_urls.dart';
 import 'package:ride_sharing/services/socket_services.dart';
-import 'package:ride_sharing/services/stripe/stripe_config.dart';
-import 'package:ride_sharing/services/stripe/stripe_helper.dart';
 import 'package:ride_sharing/utils/user_info_section.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 import 'package:ride_sharing/widgets/custom_horizontal_line.dart';
 import 'package:ride_sharing/widgets/custom_vertical_line.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PassengerPaymentScreen extends StatefulWidget {
   final String driverName;
@@ -26,6 +24,7 @@ class PassengerPaymentScreen extends StatefulWidget {
   final String pickUpAddress;
   final String destinationAddress;
   final String paymentMethod; // WALLET, CASH, CARD from socket
+  final String rideId;
 
   const PassengerPaymentScreen({
     super.key,
@@ -38,6 +37,7 @@ class PassengerPaymentScreen extends StatefulWidget {
     this.pickUpAddress = '',
     this.destinationAddress = '',
     this.paymentMethod = '',
+    this.rideId = '',
   });
 
   @override
@@ -45,13 +45,11 @@ class PassengerPaymentScreen extends StatefulWidget {
 }
 
 class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
-  late StripePaymentHelper _stripeHelper;
   bool _isProcessingPayment = false;
 
   @override
   void initState() {
     super.initState();
-    _initStripe();
     _initPaymentConfirmedListener();
   }
 
@@ -66,152 +64,101 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
       if (mounted) {
         Get.snackbar(
           'Payment Confirmed',
-          'Your payment was given successfully',
+          'Your payment was confirmed successfully',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.green,
           colorText: Colors.white,
           duration: const Duration(seconds: 3),
         );
+        _showRatingDialog(context);
       }
     });
   }
 
-  Future<void> _payRideFare() async {
+  bool _requiresOnlinePayment() {
+    final method = widget.paymentMethod.toUpperCase();
+    return method == 'WALLET' || method == 'CARD';
+  }
+
+  // Calls POST /ride-requests/pay-ride-fare/{rideId}
+  // For CARD/WALLET: returns the Stripe Checkout URL from response
+  // For CASH: notifies the server and returns null
+  Future<String?> _callPayRideFareApi() async {
     final accessToken = await PrefsHelper.getString('accessToken');
     final apiClient = ApiClient();
     final response = await apiClient.postRequest(
-      ApiUrls.payRideFare,
+      ApiUrls.payRideFare(widget.rideId),
       body: {},
       accessToken: accessToken,
     );
-    if (!response.isSuccess && mounted) {
-      Get.snackbar(
-        'Payment Error',
-        response.errorMessage,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+
+    if (!response.isSuccess) {
+      if (mounted) {
+        Get.snackbar(
+          'Payment Error',
+          response.errorMessage,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+      return null;
+    }
+
+    // Extract checkout URL from response data
+    final data = response.responseData?['data'];
+    if (data != null && data is Map<String, dynamic>) {
+      return data['url'] as String?;
+    }
+    return null;
+  }
+
+  Future<void> _handleConfirmPayment(BuildContext context) async {
+    if (_isProcessingPayment) return;
+
+    setState(() => _isProcessingPayment = true);
+
+    try {
+      if (_requiresOnlinePayment()) {
+        // CARD / WALLET: call API → get Stripe Checkout URL → open in browser
+        final checkoutUrl = await _callPayRideFareApi();
+        if (checkoutUrl != null && checkoutUrl.isNotEmpty) {
+          final uri = Uri.parse(checkoutUrl);
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri, mode: LaunchMode.externalApplication);
+          } else {
+            if (mounted) {
+              Get.snackbar(
+                'Error',
+                'Could not open payment link',
+                snackPosition: SnackPosition.BOTTOM,
+                backgroundColor: Colors.red,
+                colorText: Colors.white,
+              );
+            }
+          }
+        }
+      } else {
+        // CASH: notify server then show rating dialog immediately
+        await _callPayRideFareApi();
+        if (context.mounted) {
+          _showRatingDialog(context);
+        }
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isProcessingPayment = false);
+      }
     }
   }
 
-  void _initStripe() {
-    final stripeSecretKey = dotenv.env['STRIPE_SECRET_KEY'] ?? '';
-
-    _stripeHelper = StripePaymentHelper(
-      config: StripeConfig(
-        secretKey: stripeSecretKey,
-        merchantDisplayName: 'Ride Sharing App',
-      ),
-      onPaymentSuccess: (result) {
-        print('Payment successful: ${result.paymentData}');
-      },
-      onPaymentFailure: (result) {
-        print('Payment failed: ${result.message}');
-      },
-      onLog: (message) {
-        print('[Stripe] $message');
-      },
-    );
-  }
-
-  // Helper to format payment method: WALLET -> Wallet, CASH -> Cash, CARD -> Card
   String _formatPaymentMethod(String method) {
     if (method.isEmpty) return 'Wallet';
     return method[0].toUpperCase() + method.substring(1).toLowerCase();
   }
 
-  // Check if payment method requires Stripe (WALLET or CARD)
-  bool _requiresStripePayment() {
-    final method = widget.paymentMethod.toUpperCase();
-    return method == 'WALLET' || method == 'CARD';
-  }
-
-  // Process payment based on payment method
-  Future<void> _handleConfirmPayment(BuildContext context) async {
-    if (_requiresStripePayment()) {
-      await _processStripePayment(context);
-    } else {
-      // For CASH, hit the pay-ride-fare API then show rating dialog
-      await _payRideFare();
-      if (context.mounted) {
-        _showRatingDialog(context);
-      }
-    }
-  }
-
-  // Process Stripe payment for WALLET or CARD
-  Future<void> _processStripePayment(BuildContext context) async {
-    if (_isProcessingPayment) return;
-
-    setState(() {
-      _isProcessingPayment = true;
-    });
-
-    try {
-      // Parse the bid amount
-      final amount = double.tryParse(widget.bidAmount) ?? 0;
-
-      if (amount <= 0) {
-        Get.snackbar(
-          'Error',
-          'Invalid payment amount',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
-        return;
-      }
-
-      // Process Stripe payment
-      final paymentResult = await _stripeHelper.processPayment(
-        context: context,
-        amount: amount,
-        currency: 'USD',
-        description: 'Ride Payment - ${widget.pickUpAddress} to ${widget.destinationAddress}',
-        showSuccessDialog: false,
-      );
-
-      if (paymentResult.isSuccess) {
-        Get.snackbar(
-          'Success',
-          'Payment completed successfully',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
-
-        // Show rating dialog after successful payment
-        if (context.mounted) {
-          _showRatingDialog(context);
-        }
-      } else {
-        Get.snackbar(
-          'Payment Failed',
-          paymentResult.message ?? 'Payment could not be processed',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
-      }
-    } catch (e) {
-      Get.snackbar(
-        'Error',
-        e.toString(),
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-    } finally {
-      setState(() {
-        _isProcessingPayment = false;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    // Use dynamic data or fallback to static
     final displayName = widget.driverName.isNotEmpty ? widget.driverName : 'John Doe';
     final displayImageUrl = widget.driverProfilePicture ?? 'https://picsum.photos/250?image=9';
     final displayRating = widget.driverRating > 0 ? widget.driverRating : 3.54;
@@ -227,32 +174,26 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
     final displayPaymentMethod = 'Pay via ${_formatPaymentMethod(widget.paymentMethod)}';
 
     return Scaffold(
-     // backgroundColor: AppColors.white,
-      backgroundColor: Color(0xFFEEEEEE),
+      backgroundColor: const Color(0xFFEEEEEE),
       appBar: AppBar(
         leading: Container(
-         margin: EdgeInsets.symmetric(horizontal: 8),
-          decoration: BoxDecoration(
+          margin: const EdgeInsets.symmetric(horizontal: 8),
+          decoration: const BoxDecoration(
             color: AppColors.white,
-           shape:  BoxShape.circle,
+            shape: BoxShape.circle,
           ),
           child: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pop(context);
-            },
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => Navigator.pop(context),
           ),
         ),
-        backgroundColor: Color(0xFFEEEEEE),
+        backgroundColor: const Color(0xFFEEEEEE),
         elevation: 0,
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children:[
-          Container(
-            height: 50,
-            color: Colors.transparent,
-          ),
+        children: [
+          Container(height: 50, color: Colors.transparent),
           Container(
             color: AppColors.white,
             child: UserInfoSection(
@@ -265,25 +206,23 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
               distance: displayDistance,
             ),
           ),
-        SizedBox(height: 8.sp,),
-        CustomHorizontalLine(
-          thickness: 20.sp,
-        ),
+          SizedBox(height: 8.sp),
+          CustomHorizontalLine(thickness: 20.sp),
           Container(
             color: AppColors.white,
-           // elevation: 0,
             child: Padding(
-              padding:  EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(AppLocalization.tr.yourTripLabel,style: TextStyle(fontSize: 18.sp,fontWeight: FontWeight.bold),),
-                  SizedBox(height: 8.sp,),
+                  Text(
+                    AppLocalization.tr.yourTripLabel,
+                    style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 8.sp),
                   Row(children: [
-                    Container(
-                      child: Image.asset(AppImage.greetings),
-                    ),
-                    SizedBox(width: 5.sp,),
+                    Image.asset(AppImage.greetings),
+                    SizedBox(width: 5.sp),
                     Expanded(
                       child: Text(
                         displayPickup,
@@ -291,14 +230,11 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-
-                  ],),
+                  ]),
                   CustomVerticalLine(height: 20.h, color: Colors.black),
                   Row(children: [
-                    Container(
-                      child: Icon(Icons.location_on,color: AppColors.green300,),
-                    ),
-                    SizedBox(width: 5.sp,),
+                    Icon(Icons.location_on, color: AppColors.green300),
+                    SizedBox(width: 5.sp),
                     Expanded(
                       child: Text(
                         displayDestination,
@@ -306,46 +242,36 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-
-                  ],),
-                  SizedBox(height: 8.sp,),
-
+                  ]),
+                  SizedBox(height: 8.sp),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        AppLocalization.tr.distanceLabel,style: TextStyle(
-                          fontSize: 18.sp,color: Colors.black
+                        AppLocalization.tr.distanceLabel,
+                        style: TextStyle(fontSize: 18.sp, color: Colors.black),
                       ),
-                      ),
-                      SizedBox(width: 5.sp,),
-                      Text(displayDistance,),
-
-                    ],),
-                  SizedBox(height: 8.h,),
+                      SizedBox(width: 5.sp),
+                      Text(displayDistance),
+                    ],
+                  ),
+                  SizedBox(height: 8.h),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         AppLocalization.tr.timeExample,
-                        style: TextStyle(
-                          fontSize: 18.sp,color: Colors.black
+                        style: TextStyle(fontSize: 18.sp, color: Colors.black),
                       ),
-                      ),
-                      SizedBox(width: 5.sp,),
+                      SizedBox(width: 5.sp),
                       Text(AppLocalization.tr.durationExample),
-
-                    ],),
-
-                  // SizedBox(height: 8.h,),
-
+                    ],
+                  ),
                 ],
               ),
             ),
           ),
-          CustomHorizontalLine(
-            thickness: 20.sp,
-          ),
+          CustomHorizontalLine(thickness: 20.sp),
           Container(
             color: AppColors.white,
             width: double.infinity,
@@ -354,26 +280,21 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
               child: Row(
                 children: [
                   Image.asset(AppImage.wallet),
-                  SizedBox(width: 2.sp,),
-                  Text(displayPaymentMethod,style: TextStyle(fontSize: 20.sp),),
-                  Spacer(),
-                  Text(displayPrice,style: TextStyle(fontSize: 20.sp),),
+                  SizedBox(width: 2.sp),
+                  Text(displayPaymentMethod, style: TextStyle(fontSize: 20.sp)),
+                  const Spacer(),
+                  Text(displayPrice, style: TextStyle(fontSize: 20.sp)),
                 ],
               ),
             ),
           ),
-       
-
-
-        ]
+        ],
       ),
       bottomNavigationBar: BottomAppBar(
         child: CustomButton(
           onPressed: _isProcessingPayment
               ? null
-              : () {
-                  _handleConfirmPayment(context);
-                },
+              : () => _handleConfirmPayment(context),
           title: _isProcessingPayment
               ? SizedBox(
                   width: 20.w,
@@ -385,7 +306,7 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
                 )
               : Text(
                   AppLocalization.tr.confirmPaymentTitle,
-                  style: TextStyle(color: AppColors.white),
+                  style: const TextStyle(color: AppColors.white),
                 ),
         ),
       ),
@@ -406,16 +327,16 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                padding: EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 10),
+                padding: const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 10),
                 child: Stack(
                   children: [
                     Center(
                       child: Padding(
-                        padding: EdgeInsets.only(top: 8),
+                        padding: const EdgeInsets.only(top: 8),
                         child: Text(
                           'Give your ratings',
                           textAlign: TextAlign.center,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
                           ),
@@ -426,7 +347,7 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   children: [
                     RatingBar.builder(
@@ -436,8 +357,8 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
                       allowHalfRating: true,
                       itemCount: 5,
                       itemSize: 30.0,
-                      itemPadding: EdgeInsets.symmetric(horizontal: 2.0),
-                      itemBuilder: (context, _) => Icon(
+                      itemPadding: const EdgeInsets.symmetric(horizontal: 2.0),
+                      itemBuilder: (context, _) => const Icon(
                         Icons.star,
                         color: Colors.amber,
                       ),
@@ -445,23 +366,24 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
                         print(rating);
                       },
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     TextField(
                       maxLines: 3,
                       decoration: InputDecoration(
                         hintText: AppLocalization.tr.writeCommentsHint,
-                        border: OutlineInputBorder(),
-                        contentPadding: EdgeInsets.all(10),
+                        border: const OutlineInputBorder(),
+                        contentPadding: const EdgeInsets.all(10),
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     CustomButton(
-                      onPressed: () {
-                        _showThankYouDialog(context);
-                      },
-                      title: Text('Submit', style: TextStyle(fontSize: 20, color: AppColors.white)),
+                      onPressed: () => _showThankYouDialog(context),
+                      title: const Text(
+                        'Submit',
+                        style: TextStyle(fontSize: 20, color: AppColors.white),
+                      ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                   ],
                 ),
               ),
@@ -482,39 +404,36 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
             borderRadius: BorderRadius.circular(15),
           ),
           contentPadding: EdgeInsets.zero,
-          content: Container(
+          content: SizedBox(
             height: 300,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Padding(
-                  padding: EdgeInsets.symmetric(vertical: 20),
+                  padding: const EdgeInsets.symmetric(vertical: 20),
                   child: Image.asset(
                     AppImage.thankyou,
                     height: 100,
                     width: 100,
                   ),
                 ),
-                Padding(
+                const Padding(
                   padding: EdgeInsets.all(10),
                   child: Text(
                     'Thank you for your valuable feedback and tip!',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 10.sp,
-                    ),
+                    style: TextStyle(fontSize: 10),
                   ),
                 ),
-                SizedBox(
-                  height: 10.h,
-                ),
+                const SizedBox(height: 10),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10.sp),
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: CustomButton(
-                    onPressed: () {
-                      Get.offAllNamed(AppRoutes.passengerHomeScreen);
-                    },
-                    title: Text(AppLocalization.tr.backToHomeButton, style: TextStyle(fontSize: 20, color: AppColors.white)),
+                    onPressed: () => Get.offAllNamed(AppRoutes.passengerHomeScreen),
+                    title: Text(
+                      AppLocalization.tr.backToHomeButton,
+                      style: const TextStyle(fontSize: 20, color: AppColors.white),
+                    ),
                   ),
                 ),
               ],
@@ -525,4 +444,3 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
     );
   }
 }
-

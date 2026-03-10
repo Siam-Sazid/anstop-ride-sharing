@@ -85,7 +85,8 @@ class _DriverArrivedBottomSheetState extends State<DriverArrivedBottomSheet> {
 
       if (mounted && data != null && data is Map<String, dynamic>) {
         final paymentMethod = data['paymentMethod'] as String? ?? '';
-        _logger.i('Payment method from ride-completed: $paymentMethod');
+        final rideId = data['rideId'] as String? ?? '';
+        _logger.i('Payment method from ride-completed: $paymentMethod, rideId: $rideId');
 
         Get.find<HomePageController>().closeCurrentSheet();
         Get.offAll(() => PassengerPaymentScreen(
@@ -98,6 +99,7 @@ class _DriverArrivedBottomSheetState extends State<DriverArrivedBottomSheet> {
           pickUpAddress: widget.pickUpAddress,
           destinationAddress: widget.destinationAddress,
           paymentMethod: paymentMethod,
+          rideId: rideId,
         ));
       }
     });

@@ -1,6 +1,6 @@
 class ApiUrls {
   //static const String baseUrl = "http://217.15.170.117";
-  static const String baseUrl = "https://abu-bakar7500.merinasib.shop/api/v1";
+  static const String baseUrl = "https://abu-bakar8181.merinasib.shop/api/v1";
 
 
   ///Authentication///
@@ -62,7 +62,7 @@ class ApiUrls {
     required double destinationLng,
   }) => '$baseUrl/ride-requests/calculate-fare?pickUpLat=$pickUpLat&pickUpLng=$pickUpLng&destinationLat=$destinationLat&destinationLng=$destinationLng';
   static const String createRideRequest = '$baseUrl/ride-requests/create-ride-request';
-  static const String payRideFare = '$baseUrl/ride-requests/pay-ride-fare';
+  static String payRideFare(String rideId) => '$baseUrl/ride-requests/pay-ride-fare/$rideId';
   static const String setFcmToken = '$baseUrl/users/fcm-token';
 
 

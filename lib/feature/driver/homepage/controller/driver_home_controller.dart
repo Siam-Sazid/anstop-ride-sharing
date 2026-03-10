@@ -375,7 +375,20 @@ class DriverHomeScreenController extends GetxController with WidgetsBindingObser
         _handleRidePickedUp(data);
       });
 
-      _logger.i('Socket listeners set up successfully - ride-request, ride-accepted, and ride-picked-up');
+      // Set up the payment-confirmed listener
+      socketService.onPaymentConfirmed((data) {
+        _logger.i('Payment confirmed received: $data');
+        Get.snackbar(
+          'Payment Confirmed',
+          'The passenger has completed the payment',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 3),
+        );
+      });
+
+      _logger.i('Socket listeners set up successfully - ride-request, ride-accepted, ride-picked-up, payment-confirmed');
     } catch (e) {
       _logger.e('Error setting up socket listeners: $e');
     }
