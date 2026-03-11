@@ -200,6 +200,9 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
           .toList();
       isLoading = false;
       _logger.i('Initialized with ${nearbyDrivers.length} drivers');
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Get.find<HomePageController>().showNearestDriverMarkers(widget.initialDriversData!);
+      });
     }
   }
 
@@ -245,6 +248,7 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
             isLoading = false;
           });
           _logger.i('Updated drivers list: ${nearbyDrivers.length} drivers');
+          Get.find<HomePageController>().showNearestDriverMarkers(driversList);
         }
       }
     });
@@ -362,6 +366,7 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
     SocketIoService.to.offNearestDrivers();
     SocketIoService.to.offNewOffer();
     SocketIoService.to.offRideAccepted();
+    Get.find<HomePageController>().clearNearestDriverMarkers();
     super.dispose();
   }
 
@@ -667,6 +672,9 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
                           acceptedDriver = driver;
                           acceptedBidAmount = driverBids[driver.id] ?? driver.bidAmount;
                         });
+
+                        // Remove nearest-driver markers — single driver tracking takes over
+                        Get.find<HomePageController>().clearNearestDriverMarkers();
 
                         // Emit accept-ride socket event
                         await SocketIoService.to.emitAcceptRide(

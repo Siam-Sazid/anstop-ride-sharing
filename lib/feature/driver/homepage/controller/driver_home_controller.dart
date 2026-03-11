@@ -21,6 +21,7 @@ class DriverHomeScreenController extends GetxController with WidgetsBindingObser
   Position? currentPosition;
   bool isLoading = true;
   Set<Marker> markers = {};
+  Set<Circle> circles = {};
 
   // Ride request state
   final Rx<RideRequestModel?> currentRideRequest = Rx<RideRequestModel?>(null);
@@ -378,6 +379,15 @@ class DriverHomeScreenController extends GetxController with WidgetsBindingObser
       // Set up the payment-confirmed listener
       socketService.onPaymentConfirmed((data) {
         _logger.i('Payment confirmed received: $data');
+
+        // Clear polyline, destination marker, circle and label from the map
+        polylines.clear();
+        circles = {};
+        markers.removeWhere((m) =>
+            m.markerId.value == 'destination_location' ||
+            m.markerId.value == 'destination_radius_label');
+        update();
+
         Get.snackbar(
           'Payment Confirmed',
           'The passenger has completed the payment',
@@ -508,6 +518,30 @@ class DriverHomeScreenController extends GetxController with WidgetsBindingObser
       ),
     );
     _logger.i('Destination marker added. Total markers: ${markers.length}');
+
+    // Draw 500m radius circle around destination with text label
+    circles = {
+      Circle(
+        circleId: const CircleId('destination_radius'),
+        center: LatLng(destinationLat, destinationLng),
+        radius: 500,
+        fillColor: Colors.blue.withOpacity(0.15),
+        strokeColor: Colors.blue,
+        strokeWidth: 2,
+      ),
+    };
+    final labelIcon = await _createRadiusLabelBitmap('500m radius');
+    const double offsetDeg = 0.0045; // ≈ 500 m in latitude degrees
+    markers.removeWhere((m) => m.markerId.value == 'destination_radius_label');
+    markers.add(
+      Marker(
+        markerId: const MarkerId('destination_radius_label'),
+        position: LatLng(destinationLat + offsetDeg, destinationLng),
+        icon: labelIcon,
+        anchor: const Offset(0.5, 1.0),
+        flat: true,
+      ),
+    );
 
     // Get and draw route from pickup to destination - AWAIT this!
     await _getRoutePickupToDestination();
@@ -1141,6 +1175,8 @@ class DriverHomeScreenController extends GetxController with WidgetsBindingObser
     _locationSubscription?.cancel();
     _locationSubscription = null;
     polylines.clear();
+    circles = {};
+    markers.removeWhere((m) => m.markerId.value == 'destination_radius_label');
 
     // Stop simulation if running
     stopSimulation();
@@ -1219,6 +1255,50 @@ class DriverHomeScreenController extends GetxController with WidgetsBindingObser
       isLoading = false;
       update();
     }
+  }
+
+  Future<BitmapDescriptor> _createRadiusLabelBitmap(String text) async {
+    const double fontSize = 13;
+    const double padding = 6;
+
+    final textPainter = TextPainter(
+      text: TextSpan(
+        text: text,
+        style: const TextStyle(
+          color: Colors.blue,
+          fontSize: fontSize,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+
+    final double w = textPainter.width + padding * 2;
+    final double h = textPainter.height + padding * 2;
+
+    final ui.PictureRecorder recorder = ui.PictureRecorder();
+    final Canvas canvas = Canvas(recorder, Rect.fromLTWH(0, 0, w, h));
+
+    // White rounded background
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(Rect.fromLTWH(0, 0, w, h), const Radius.circular(6)),
+      Paint()..color = Colors.white.withOpacity(0.9),
+    );
+    // Blue border
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(Rect.fromLTWH(0, 0, w, h), const Radius.circular(6)),
+      Paint()
+        ..color = Colors.blue
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.5,
+    );
+
+    textPainter.paint(canvas, Offset(padding, padding));
+
+    final ui.Picture picture = recorder.endRecording();
+    final ui.Image image = await picture.toImage(w.ceil(), h.ceil());
+    final ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+    return BitmapDescriptor.bytes(byteData!.buffer.asUint8List());
   }
 
   @override

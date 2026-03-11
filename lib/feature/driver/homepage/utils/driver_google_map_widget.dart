@@ -27,6 +27,7 @@ class DriverGoogleMapWidget extends StatelessWidget {
           zoomControlsEnabled: false,
           markers: controller.markers,
           polylines: polylines,
+          circles: controller.circles,
           onMapCreated: (GoogleMapController googleMapController) {
             _logger.i('GoogleMap onMapCreated called');
             controller.mapController = googleMapController;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:logger/logger.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/l10n/l10n_helper.dart';
@@ -70,6 +71,9 @@ class _FindCarBottomSheetState extends State<FindCarBottomSheet> {
       if (data != null) {
         _nearbyDriversData = data is List ? data : (data['data'] as List?);
         _logger.i('Stored ${_nearbyDriversData?.length} drivers');
+        if (_nearbyDriversData != null) {
+          Get.find<HomePageController>().showNearestDriverMarkers(_nearbyDriversData!);
+        }
       }
     });
   }
@@ -81,6 +85,39 @@ class _FindCarBottomSheetState extends State<FindCarBottomSheet> {
   }
 
   Future<void> _onFindCarPressed() async {
+    // Show drop-off radius confirmation dialog first
+    final accepted = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Drop-off Notice'),
+        content: const Text(
+          'The driver may drop you off within a 500m radius near your destination. Do you accept this?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('No'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Yes, Accept'),
+          ),
+        ],
+      ),
+    );
+
+    if (accepted != true) return;
+
+    // Show 500m circle on the passenger map
+    final pickUpController = Get.find<PickUpLocationController>();
+    final destLat = double.tryParse(pickUpController.destinationLatitudeController.text);
+    final destLng = double.tryParse(pickUpController.destinationLongitudeController.text);
+    if (destLat != null && destLng != null) {
+      await Get.find<HomePageController>()
+          .showDestinationRadiusCircle(LatLng(destLat, destLng));
+    }
+
     setState(() {
       _isLoading = true;
     });

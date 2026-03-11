@@ -19,7 +19,7 @@ class ApiUrls {
 
 
   //static const String socketUrl = "http://217.15.170.117";
-  static const String socketUrl = "https://abu-bakar7500.merinasib.shop";
+  static const String socketUrl = "https://abu-bakar8181.merinasib.shop";
 
   static const String myRides = '$baseUrl/rides/my-rides';
 

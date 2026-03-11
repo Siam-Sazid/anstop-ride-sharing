@@ -18,6 +18,7 @@ class HomePageController extends GetxController {
   bool isLoading = true;
   Set<Marker> markers = {};
   Set<Polyline> polylines = {};
+  Set<Circle> circles = {};
 
   // Non-modal bottom sheet support — allows map to remain touchable
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
@@ -38,11 +39,12 @@ class HomePageController extends GetxController {
   }
 
   static const String _googleApiKey = 'AIzaSyD_NVUY504HfMBsvN1gACNyfaFKAulvkVI';
-  static const int _carImageSize = 80;
+  static const int _carImageSize = 40;
 
   // Custom marker icons
   ui.Image? _carImage;
   BitmapDescriptor? _pinMarkerIcon;
+  BitmapDescriptor? _smallCarIcon;
 
   // Route state for snap-to-route bearing
   List<LatLng> _currentRoutePoints = [];
@@ -75,9 +77,13 @@ class HomePageController extends GetxController {
     try {
       _pinMarkerIcon = await _getBitmapDescriptorFromAsset(
         'assets/images/location_pin.png',
-        50,
+        40,
       );
       _carImage = await _loadCarImage('assets/images/3D_car.png', _carImageSize);
+      _smallCarIcon = await _getBitmapDescriptorFromAsset(
+        'assets/images/3D_car.png',
+        _carImageSize,
+      );
     } catch (_) {
       // Fallback to defaults if assets are missing
     }
@@ -399,16 +405,148 @@ class HomePageController extends GetxController {
     });
   }
 
+  // ─── Destination 500 m radius circle ──────────────────────────────────────
+
+  Future<void> showDestinationRadiusCircle(LatLng destination) async {
+    circles = {
+      Circle(
+        circleId: const CircleId('destination_radius'),
+        center: destination,
+        radius: 500,
+        fillColor: Colors.blue.withOpacity(0.15),
+        strokeColor: Colors.blue,
+        strokeWidth: 2,
+      ),
+    };
+
+    // Place a text label at the top edge of the circle (~500 m north)
+    final labelIcon = await _createRadiusLabelBitmap('500m radius');
+    const double offsetDeg = 0.0045; // ≈ 500 m in latitude degrees
+    markers = {
+      ...markers.where((m) => m.markerId.value != 'destination_radius_label'),
+      Marker(
+        markerId: const MarkerId('destination_radius_label'),
+        position: LatLng(destination.latitude + offsetDeg, destination.longitude),
+        icon: labelIcon,
+        anchor: const Offset(0.5, 1.0),
+        flat: true,
+      ),
+    };
+
+    update();
+  }
+
+  void clearDestinationRadiusCircle() {
+    circles = {};
+    markers = Set<Marker>.from(
+      markers.where((m) => m.markerId.value != 'destination_radius_label'),
+    );
+    update();
+  }
+
+  Future<BitmapDescriptor> _createRadiusLabelBitmap(String text) async {
+    const double fontSize = 13;
+    const double padding = 6;
+
+    final textPainter = TextPainter(
+      text: TextSpan(
+        text: text,
+        style: const TextStyle(
+          color: Colors.blue,
+          fontSize: fontSize,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+
+    final double w = textPainter.width + padding * 2;
+    final double h = textPainter.height + padding * 2;
+
+    final ui.PictureRecorder recorder = ui.PictureRecorder();
+    final Canvas canvas = Canvas(recorder, Rect.fromLTWH(0, 0, w, h));
+
+    // White rounded background
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(Rect.fromLTWH(0, 0, w, h), const Radius.circular(6)),
+      Paint()..color = Colors.white.withOpacity(0.9),
+    );
+    // Blue border
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(Rect.fromLTWH(0, 0, w, h), const Radius.circular(6)),
+      Paint()
+        ..color = Colors.blue
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.5,
+    );
+
+    textPainter.paint(canvas, Offset(padding, padding));
+
+    final ui.Picture picture = recorder.endRecording();
+    final ui.Image image = await picture.toImage(w.ceil(), h.ceil());
+    final ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+    return BitmapDescriptor.bytes(byteData!.buffer.asUint8List());
+  }
+
+  // ─── Nearest-driver markers (shown while passenger is searching) ───────────
+
+  void showNearestDriverMarkers(List<dynamic> drivers) {
+    final newMarkers = <Marker>{};
+    for (final raw in drivers) {
+      if (raw is! Map<String, dynamic>) continue;
+      final id = raw['_id'] as String? ?? '';
+      if (id.isEmpty) continue;
+
+      // GeoJSON coordinates: [longitude, latitude]
+      final coords =
+          (raw['location']?['coordinates'] as List?)
+              ?.map((e) => (e as num).toDouble())
+              .toList() ??
+          [0.0, 0.0];
+      if (coords.length < 2) continue;
+
+      final lat = coords[1];
+      final lng = coords[0];
+      final locationName = raw['locationName'] as String? ?? 'Driver';
+
+      newMarkers.add(Marker(
+        markerId: MarkerId('nearest_driver_$id'),
+        position: LatLng(lat, lng),
+        icon: _smallCarIcon ??
+            BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+        infoWindow: InfoWindow(title: locationName),
+        anchor: const Offset(0.5, 0.5),
+        flat: true,
+      ));
+    }
+
+    // Remove old nearest-driver markers, keep everything else
+    markers = {
+      ...markers.where((m) => !m.markerId.value.startsWith('nearest_driver_')),
+      ...newMarkers,
+    };
+    update();
+  }
+
+  void clearNearestDriverMarkers() {
+    markers = Set<Marker>.from(
+      markers.where((m) => !m.markerId.value.startsWith('nearest_driver_')),
+    );
+    update();
+  }
+
   void stopDriverLocationTracking() {
     SocketIoService.to.offUpdateLocation();
     _lastFetchedDriverLocation = null;
     _resetRouteState();
     polylines = {};
+    circles = {};
     markers = Set<Marker>.from(
       markers.where((m) =>
           m.markerId.value != 'driver_location' &&
           m.markerId.value != 'pickup_location' &&
-          m.markerId.value != 'destination_location'),
+          m.markerId.value != 'destination_location' &&
+          m.markerId.value != 'destination_radius_label'),
     );
     update();
   }

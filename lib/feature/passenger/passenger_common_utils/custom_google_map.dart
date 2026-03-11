@@ -23,6 +23,7 @@ class _PassengerGoogleMapWidgetState extends State<PassengerGoogleMapWidget> {
           zoomControlsEnabled: false,
           markers: controller.markers,
           polylines: controller.polylines,
+          circles: controller.circles,
           onMapCreated: (GoogleMapController googleMapController) {
             controller.mapController = googleMapController;
             if (controller.currentPosition != null) {
