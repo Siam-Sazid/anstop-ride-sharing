@@ -9,6 +9,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:ride_sharing/l10n/app_localizations.dart';
+import 'package:ride_sharing/feature/passenger/payment/view/passenger_payment_screen.dart';
 import 'package:ride_sharing/services/socket_services.dart';
 
 class HomePageController extends GetxController {
@@ -63,7 +64,46 @@ class HomePageController extends GetxController {
   void onInit() {
     super.onInit();
     _initializeMap();
+    _setupIncompletedRideListener();
   }
+
+  Future<void> _setupIncompletedRideListener() async {
+    final socketService = SocketIoService.to;
+    if (!socketService.isSocketReady) {
+      await socketService.connect();
+    }
+    if (!socketService.isSocketReady) return;
+
+    socketService.onIncompletedRide((data) {
+      if (data == null || data is! Map<String, dynamic>) return;
+
+      final status = data['status'] as String? ?? '';
+      final isPaymentCompleted = data['isPaymentCompleted'] as bool? ?? true;
+
+      if (status != 'COMPLETED' || isPaymentCompleted) return;
+
+      final rideId = data['_id'] as String? ?? '';
+      final paymentMethod = data['paymentMethod'] as String? ?? '';
+      final pickUp = data['pickUp'] as Map<String, dynamic>?;
+      final destination = data['destination'] as Map<String, dynamic>?;
+
+      Get.offAll(() => PassengerPaymentScreen(
+        rideId: rideId,
+        paymentMethod: paymentMethod,
+        driverId: data['driverId'] as String? ?? '',
+        bidAmount: data['fare']?.toString() ?? '',
+        tripDistance: data['distance']?.toString() ?? '',
+        pickUpAddress: pickUp?['name'] as String? ?? '',
+        destinationAddress: destination?['name'] as String? ?? '',
+      ));
+    });
+  }
+
+  // @override
+  // void onClose() {
+  //   SocketIoService.to.offIncompletedRide();
+  //   super.onClose();
+  // }
 
   Future<void> _initializeMap() async {
     await _loadIcons();
@@ -678,6 +718,8 @@ class HomePageController extends GetxController {
   @override
   void onClose() {
     mapController?.dispose();
+    SocketIoService.to.offIncompletedRide();
+
     super.onClose();
   }
 }

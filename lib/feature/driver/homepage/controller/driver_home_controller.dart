@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:ride_sharing/feature/driver/homepage/service/driver_location_service.dart';
 import 'package:ride_sharing/feature/driver/trip_flow/model/ride_request_model.dart';
+import 'package:ride_sharing/feature/driver/trip_flow/view/trip_completion_payment_dialogs.dart';
 import 'package:ride_sharing/services/socket_services.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -398,7 +399,13 @@ class DriverHomeScreenController extends GetxController with WidgetsBindingObser
         );
       });
 
-      _logger.i('Socket listeners set up successfully - ride-request, ride-accepted, ride-picked-up, payment-confirmed');
+      // Set up the incompleted-ride listener (fires on reconnect when a ride is still incomplete)
+      socketService.onIncompletedRide((data) {
+        _logger.i('incompleted-ride received: $data');
+        _handleIncompletedRide(data);
+      });
+
+      _logger.i('Socket listeners set up successfully - ride-request, ride-accepted, ride-picked-up, payment-confirmed, incompleted-ride');
     } catch (e) {
       _logger.e('Error setting up socket listeners: $e');
     }
@@ -478,6 +485,46 @@ class DriverHomeScreenController extends GetxController with WidgetsBindingObser
       isRidePickedUp.value = true;
     } catch (e) {
       _logger.e('Error handling ride picked up: $e');
+    }
+  }
+
+  void _handleIncompletedRide(dynamic data) {
+    try {
+      if (data == null || data is! Map<String, dynamic>) return;
+
+      final status = data['status'] as String? ?? '';
+      final isPaymentCompleted = data['isPaymentCompleted'] as bool? ?? true;
+
+      if (status != 'COMPLETED' || isPaymentCompleted) return;
+
+      final rideId = data['_id'] as String? ?? '';
+      _logger.i('Incompleted ride detected on reconnect — status: $status, rideId: $rideId. Showing PaymentConfirmationDialog.');
+
+      final context = Get.context;
+      if (context == null) return;
+
+      TripDialogs.showPaymentConfirmation(
+        context,
+        onPaymentReceived: () async {
+          Get.back(); // close dialog
+          await SocketIoService.to.emitConfirmPayment(rideId: rideId);
+          _logger.i('confirm-payment emitted after reconnect for rideId: $rideId');
+          TripDialogs.showTripCompletion(
+            Get.context!,
+            onBackToHome: () {
+              Get.back(); // close trip completion dialog
+              TripDialogs.showStayOnline(
+                Get.context!,
+                onGoOffline: () => Get.back(),
+                onStayOnline: () => Get.back(),
+              );
+            },
+          );
+        },
+        onDifferentAmount: () => Get.back(),
+      );
+    } catch (e) {
+      _logger.e('Error handling incompleted-ride: $e');
     }
   }
 
@@ -914,7 +961,7 @@ class DriverHomeScreenController extends GetxController with WidgetsBindingObser
     _locationSubscription = Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
         accuracy: LocationAccuracy.high,
-        distanceFilter: 10,
+        distanceFilter: 1,
       ),
     ).listen((Position position) async {
       _logger.i('Location updated: ${position.latitude}, ${position.longitude}');

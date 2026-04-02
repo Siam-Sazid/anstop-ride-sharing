@@ -8,8 +8,6 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 import 'package:ride_sharing/app.dart';
 import 'package:ride_sharing/services/socket_services.dart';
 import 'package:firebase_core/firebase_core.dart';
-
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 

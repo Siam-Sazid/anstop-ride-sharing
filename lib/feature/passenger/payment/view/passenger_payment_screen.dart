@@ -25,6 +25,7 @@ class PassengerPaymentScreen extends StatefulWidget {
   final String destinationAddress;
   final String paymentMethod; // WALLET, CASH, CARD from socket
   final String rideId;
+  final String driverId;
 
   const PassengerPaymentScreen({
     super.key,
@@ -38,6 +39,7 @@ class PassengerPaymentScreen extends StatefulWidget {
     this.destinationAddress = '',
     this.paymentMethod = '',
     this.rideId = '',
+    this.driverId = '',
   });
 
   @override
@@ -46,6 +48,9 @@ class PassengerPaymentScreen extends StatefulWidget {
 
 class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
   bool _isProcessingPayment = false;
+  double _selectedRating = 4.0;
+  final TextEditingController _commentController = TextEditingController();
+  bool _isSubmittingRating = false;
 
   @override
   void initState() {
@@ -56,7 +61,53 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
   @override
   void dispose() {
     SocketIoService.to.offPaymentConfirmed();
+    _commentController.dispose();
     super.dispose();
+  }
+
+  Future<void> _submitRating(BuildContext dialogContext) async {
+    if (_isSubmittingRating) return;
+    setState(() => _isSubmittingRating = true);
+
+    try {
+      final accessToken = await PrefsHelper.getString('accessToken');
+      final response = await ApiClient().postRequest(
+        ApiUrls.createReview,
+        body: {
+          'rideId': widget.rideId,
+          'revieweeId': widget.driverId,
+          'rating': _selectedRating,
+          'comment': _commentController.text.trim(),
+        },
+        accessToken: accessToken,
+      );
+
+      if (!mounted) return;
+
+      if (response.isSuccess) {
+        _showThankYouDialog(dialogContext);
+      } else {
+        Get.snackbar(
+          'Error',
+          response.errorMessage,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        Get.snackbar(
+          'Error',
+          'Failed to submit rating. Please try again.',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isSubmittingRating = false);
+    }
   }
 
   void _initPaymentConfirmedListener() {
@@ -318,7 +369,9 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
       context: context,
       barrierDismissible: true,
       builder: (BuildContext context) {
-        return AlertDialog(
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
           ),
@@ -351,7 +404,7 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
                 child: Column(
                   children: [
                     RatingBar.builder(
-                      initialRating: 4.0,
+                      initialRating: _selectedRating,
                       minRating: 1,
                       direction: Axis.horizontal,
                       allowHalfRating: true,
@@ -363,11 +416,12 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
                         color: Colors.amber,
                       ),
                       onRatingUpdate: (rating) {
-                        print(rating);
+                        setDialogState(() => _selectedRating = rating);
                       },
                     ),
                     const SizedBox(height: 20),
                     TextField(
+                      controller: _commentController,
                       maxLines: 3,
                       decoration: InputDecoration(
                         hintText: AppLocalization.tr.writeCommentsHint,
@@ -377,11 +431,22 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
                     ),
                     const SizedBox(height: 20),
                     CustomButton(
-                      onPressed: () => _showThankYouDialog(context),
-                      title: const Text(
-                        'Submit',
-                        style: TextStyle(fontSize: 20, color: AppColors.white),
-                      ),
+                      onPressed: _isSubmittingRating
+                          ? null
+                          : () => _submitRating(context),
+                      title: _isSubmittingRating
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                color: AppColors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : const Text(
+                              'Submit',
+                              style: TextStyle(fontSize: 20, color: AppColors.white),
+                            ),
                     ),
                     const SizedBox(height: 20),
                   ],
@@ -389,6 +454,8 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
               ),
             ],
           ),
+        );
+          },
         );
       },
     );

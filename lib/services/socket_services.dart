@@ -10,6 +10,11 @@ class SocketIoService extends GetxService {
   IO.Socket? _socket;
   final RxBool isConnected = false.obs;
 
+  // Buffer for incompleted-ride — server sends it at the instant of connection,
+  // before any listener can be registered. Store it here and replay on registration.
+  dynamic _incompletedRideBuffer;
+  Function(dynamic)? _incompletedRideHandler;
+
   static SocketIoService get to => Get.find<SocketIoService>();
 
   Future<SocketIoService> init() async {
@@ -34,11 +39,21 @@ class SocketIoService extends GetxService {
 
     final completer = Completer<void>();
 
+    _incompletedRideBuffer = null;
+
     _socket = IO.io(ApiUrls.socketUrl, <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': true,
       'forceNew': true,
       'auth': {'token': token},
+    });
+
+    // Register early — server sends incompleted-ride at the moment of connection,
+    // before onConnect fires. Buffer it and forward to any registered handler.
+    _socket!.on('incompleted-ride', (data) {
+      _logger.i('incompleted-ride buffered on connect: $data');
+      _incompletedRideBuffer = data;
+      _incompletedRideHandler?.call(data);
     });
 
     _socket!.onConnect((_) {
@@ -52,6 +67,7 @@ class SocketIoService extends GetxService {
     _socket!.onDisconnect((_) {
       _logger.w('Socket disconnected');
       isConnected.value = false;
+      _incompletedRideBuffer = null;
     });
 
     _socket!.onConnectError((data) {
@@ -534,6 +550,27 @@ class SocketIoService extends GetxService {
   void offRideCompleted() {
     _logger.i('Removing ride-completed listener');
     _socket?.off('ride-completed');
+  }
+
+  // Listen for incompleted-ride (sent by server at the instant of connection).
+  // Because the event arrives before onConnect fires, it is buffered internally
+  // in connect(). Registering here replays the buffer immediately if already received.
+  void onIncompletedRide(Function(dynamic) handler) {
+    _incompletedRideHandler = handler;
+    if (_incompletedRideBuffer != null) {
+      _logger.i('Replaying buffered incompleted-ride event');
+      handler(_incompletedRideBuffer);
+      _incompletedRideBuffer = null;
+    } else {
+      _logger.i('incompleted-ride handler registered, waiting for event');
+    }
+  }
+
+  // Stop listening for incompleted-ride
+  void offIncompletedRide() {
+    _logger.i('Removing incompleted-ride listener');
+    _incompletedRideHandler = null;
+    _incompletedRideBuffer = null;
   }
 }
 
