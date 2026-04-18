@@ -879,4 +879,14 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get dropOffButton => 'Déposer';
+
+  @override
+  String get accountInactiveTitle => 'Compte non actif';
+
+  @override
+  String get accountInactiveMessage =>
+      'Vous ne pouvez pas utiliser l\'application en tant que conducteur. Veuillez attendre l\'approbation de l\'administrateur.';
+
+  @override
+  String get accountInactiveButton => 'OK';
 }

@@ -33,8 +33,8 @@ class LoginController extends GetxController {
 
   @override
   void onClose() {
-    emailTEController.dispose();
-    passwordTEController.dispose();
+    emailTEController.clear();
+    passwordTEController.clear();
     super.onClose();
   }
 
@@ -60,8 +60,6 @@ class LoginController extends GetxController {
 
       // Call signin API
       final response = await _authService.signIn(signInRequest);
-      print("response.statusCode");
-      print(response.statusCode);
       if (response.isSuccess) {
         // Parse the response data
         final signInResponse = SignInResponseModel.fromJson(response.responseData);
@@ -192,18 +190,8 @@ class LoginController extends GetxController {
         await prefs.setString('profilePicture', data.profilePicture!);
       }
 
-      // Debug logging
-      print('💾 Saved Access Token: ${data.accessToken}');
-      print('💾 Saved User Role: ${data.role}');
-      print('💾 Saved User ID: $userId');
-      print('💾 Saved First Name: ${data.firstName}');
-      print('💾 Saved Last Name: ${data.lastName}');
-
-      // Verify it was saved
-      final savedToken = prefs.getString('accessToken');
-      print('✅ Verified Saved Token: $savedToken');
     } catch (e) {
-      print('Error saving user data: $e');
+      debugPrint('Error saving user data: $e');
     }
   }
 

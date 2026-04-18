@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/feature/driver/homepage/controller/driver_home_controller.dart';
+import 'package:ride_sharing/feature/driver/profile/controller/driver_profile_controller.dart';
 import 'package:ride_sharing/feature/driver/trip_flow/view/driver_trip_flow.dart';
 import 'package:ride_sharing/utils/driver/driver_custom_drawer.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
@@ -43,6 +44,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
     _rippleAnimation = Tween<double>(begin: 80, end: 120).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
     );
+
+    // Ensure profile controller is available before body builds
+    Get.put(DriverProfileController());
 
     // Initialize controller and set up ride request listener
     _homeController = Get.find<DriverHomeScreenController>();
@@ -289,6 +293,50 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                     ),
                   ),
                 ),
+
+              // Account inactive overlay — non-modal, AppBar/drawer stay active
+              Obx(() {
+                final driverProfileController = Get.find<DriverProfileController>();
+                if (!driverProfileController.isAccountInactive.value) return const SizedBox.shrink();
+                final l10n = AppLocalizations.of(context)!;
+                return Positioned.fill(
+                  child: Container(
+                    color: Colors.black54,
+                    child: Center(
+                      child: Card(
+                        margin: EdgeInsets.symmetric(horizontal: 24.w),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16.r),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.all(24.w),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.lock_clock, size: 48.sp, color: AppColors.primaryColor),
+                              SizedBox(height: 16.h),
+                              Text(
+                                l10n.accountInactiveTitle,
+                                style: TextStyle(
+                                  fontSize: 18.sp,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              SizedBox(height: 12.h),
+                              Text(
+                                l10n.accountInactiveMessage,
+                                style: TextStyle(fontSize: 14.sp),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }),
 
               // Trip Flow Bottom Sheet - positioned at bottom, allows map interaction
               Obx(() => _showTripFlow.value

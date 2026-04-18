@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
-import 'package:ride_sharing/feature/auth/view/email_validation_screen.dart';
-import 'package:ride_sharing/feature/auth/view/reset_password_screen.dart';
 import 'package:ride_sharing/feature/auth/controller/login_controller.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 import '../../../l10n/l10n_helper.dart';
@@ -55,7 +53,7 @@ class LogInScreen extends StatelessWidget {
                   SizedBox(height: 10.h),
                   GestureDetector(
                     onTap: () {
-                      Get.to(ResetPasswordScreen());
+                      _controller.navigateToForgotPassword();
                     },
                     child: Text(
                       AppLocalization.tr.forgetPasswordTextButton,
@@ -76,6 +74,16 @@ class LogInScreen extends StatelessWidget {
                         ? 'Logging in...'
                         : AppLocalization.tr.logInButtonText,
                   )),
+                  Obx(() => _controller.errorMessage.value.isNotEmpty
+                      ? Padding(
+                          padding: EdgeInsets.only(top: 8.h),
+                          child: Text(
+                            _controller.errorMessage.value,
+                            style: TextStyle(color: Colors.red, fontSize: 12.sp),
+                            textAlign: TextAlign.center,
+                          ),
+                        )
+                      : const SizedBox.shrink()),
                 ],
               ),
             ),

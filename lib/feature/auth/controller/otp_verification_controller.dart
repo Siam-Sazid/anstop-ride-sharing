@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:async';
+import 'package:ride_sharing/feature/auth/data/forgot_password_request_model.dart';
 import 'package:ride_sharing/feature/auth/data/verify_otp_request_model.dart';
 import 'package:ride_sharing/feature/auth/service/auth_service.dart';
 import 'package:ride_sharing/routes/app_routes.dart';
@@ -117,16 +118,20 @@ class OtpVerificationController extends GetxController {
 
       if (response.isSuccess) {
         if (isPasswordReset.value) {
-          // Password reset flow - navigate to passenger home screen
-          Get.snackbar(
-            'Success',
-            'Password reset successful!',
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.green,
-            colorText: Colors.white,
+          // Extract reset token from verify-OTP response
+          final data = response.responseData;
+          final resetToken = data is Map
+              ? (data['data']?['accessToken'] ??
+                  data['data']?['resetToken'] ??
+                  data['accessToken'] ??
+                  data['token'] ??
+                  '')
+              : '';
+
+          Get.offNamed(
+            AppRoutes.resetPasswordScreen,
+            arguments: {'email': userEmail.value, 'resetToken': resetToken},
           );
-          // Navigate to passenger home screen
-          Get.offAllNamed(AppRoutes.passengerHomeScreen);
         } else {
           // Email verification flow - navigate to login screen
           Get.snackbar(
@@ -175,11 +180,23 @@ class OtpVerificationController extends GetxController {
       isLoading.value = true;
       errorMessage.value = '';
 
-      // TODO: Implement actual resend OTP API call
-      await Future.delayed(const Duration(seconds: 1));
+      final request = ForgotPasswordRequestModel(email: userEmail.value);
+      final response = await _authService.forgotPassword(request);
 
-      startTimer();
-
+      if (response.isSuccess) {
+        startTimer();
+        Get.snackbar(
+          'OTP Sent',
+          'A new OTP has been sent to your email.',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+      } else {
+        errorMessage.value = response.errorMessage.isNotEmpty
+            ? response.errorMessage
+            : 'Failed to resend OTP. Please try again.';
+      }
     } catch (e) {
       errorMessage.value = e.toString();
     } finally {

@@ -12,11 +12,15 @@ import 'package:ride_sharing/feature/passenger/passenger_common_utils/custom_goo
 import 'package:ride_sharing/widgets/home_links/home_links.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:ride_sharing/feature/driver/profile/controller/driver_profile_controller.dart';
+import 'package:ride_sharing/l10n/app_localizations.dart';
 import '../../../../utils/passenger/passenger_custom_drawer.dart';
 
 class HomePage extends StatelessWidget {
-   HomePage({Key? key}) : super(key: key);
+  HomePage({Key? key}) : super(key: key);
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final DriverProfileController _profileController = Get.put(DriverProfileController());
 
   @override
   Widget build(BuildContext context) {
@@ -115,6 +119,48 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
                 ),
+              // Account inactive overlay — non-modal, AppBar/drawer stay active
+              Obx(() {
+                if (!_profileController.isAccountInactive.value) return const SizedBox.shrink();
+                final l10n = AppLocalizations.of(context)!;
+                return Positioned.fill(
+                  child: Container(
+                    color: Colors.black54,
+                    child: Center(
+                      child: Card(
+                        margin: EdgeInsets.symmetric(horizontal: 24.w),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16.r),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.all(24.w),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.lock_clock, size: 48.sp, color: AppColors.primaryColor),
+                              SizedBox(height: 16.h),
+                              Text(
+                                l10n.accountInactiveTitle,
+                                style: TextStyle(
+                                  fontSize: 18.sp,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              SizedBox(height: 12.h),
+                              Text(
+                                l10n.accountInactiveMessage,
+                                style: TextStyle(fontSize: 14.sp),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }),
             ],
           );
         },

@@ -71,7 +71,12 @@ class SocketIoService extends GetxService {
     });
 
     _socket!.onConnectError((data) {
-      _logger.e('Socket connection error: $data');
+      _logger.e('Socket connection error — type: ${data.runtimeType}');
+      _logger.e('Socket connection error — raw: $data');
+      if (data is Map) {
+        _logger.e('Socket connection error — message: ${data['message']}');
+        _logger.e('Socket connection error — data field: ${data['data']}');
+      }
       isConnected.value = false;
       if (!completer.isCompleted) {
         completer.complete();
@@ -80,7 +85,8 @@ class SocketIoService extends GetxService {
     });
 
     _socket!.onError((data) {
-      _logger.e('Socket error: $data');
+      _logger.e('Socket error — type: ${data.runtimeType}');
+      _logger.e('Socket error — raw: $data');
     });
 
     _socket!.onAny((event, data) {

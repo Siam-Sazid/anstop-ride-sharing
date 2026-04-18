@@ -41,13 +41,15 @@ class DriverCustomDrawer extends StatelessWidget {
                 borderRadius: BorderRadius.circular(15),
 
               ),
-              child: CustomUserRating(
-                  name: driverProfileController.profileData.value!.firstName,
-                  imageUrl:    driverProfileController.profileData.value!.profilePicture ?? "https://picsum.photos/250?image=9"
-
-                //  price: 24,
-                //   distance: 28,
-              ),
+              child: Obx(() {
+                final profile = driverProfileController.profileData.value;
+                final name = profile?.firstName ?? '';
+                final imageUrl = profile?.profilePicture ?? 'https://picsum.photos/250?image=9';
+                return CustomUserRating(
+                  name: name,
+                  imageUrl: imageUrl,
+                );
+              }),
             ),
           ),
 
@@ -121,8 +123,7 @@ class DriverCustomDrawer extends StatelessWidget {
 
                         // If user confirmed logout
                         if (result == true) {
-                        //  Get.to(() => LogInScreen());
-                          Get.toNamed(AppRoutes.loginScreen);
+                          Get.offAllNamed(AppRoutes.loginScreen);
                         }
                       },
                     ),

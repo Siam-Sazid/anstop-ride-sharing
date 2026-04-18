@@ -325,5 +325,9 @@
   "goToMap": "Aller à la carte",
   "confirmPickup": "Confirmer la prise en charge",
   "acceptOffer": "Accepter l'offre",
-  "dropOffButton": "Déposer"
+  "dropOffButton": "Déposer",
+
+  "accountInactiveTitle": "Compte non actif",
+  "accountInactiveMessage": "Vous ne pouvez pas utiliser l'application en tant que conducteur. Veuillez attendre l'approbation de l'administrateur.",
+  "accountInactiveButton": "OK"
 }

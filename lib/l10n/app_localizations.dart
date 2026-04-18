@@ -1777,6 +1777,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Drop Off'**
   String get dropOffButton;
+
+  /// No description provided for @accountInactiveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Not Active'**
+  String get accountInactiveTitle;
+
+  /// No description provided for @accountInactiveMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You cannot use the app as a driver. Please wait for admin approval.'**
+  String get accountInactiveMessage;
+
+  /// No description provided for @accountInactiveButton.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get accountInactiveButton;
 }
 
 class _AppLocalizationsDelegate

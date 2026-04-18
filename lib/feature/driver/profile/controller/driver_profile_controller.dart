@@ -11,6 +11,7 @@ class DriverProfileController extends GetxController {
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
   final Rx<UserProfileData?> profileData = Rx<UserProfileData?>(null);
+  final RxBool isAccountInactive = false.obs;
 
   // ==================== Lifecycle ====================
   @override
@@ -40,6 +41,9 @@ class DriverProfileController extends GetxController {
         profileData.value = profileResponse.data;
       } else {
         errorMessage.value = response.errorMessage;
+        if (response.statusCode == 401) {
+          isAccountInactive.value = true;
+        }
       }
     } catch (e) {
       errorMessage.value = e.toString();

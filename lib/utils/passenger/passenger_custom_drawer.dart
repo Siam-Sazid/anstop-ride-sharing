@@ -5,10 +5,6 @@ import 'package:ride_sharing/app/utils/app_colors.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/feature/driver/profile/controller/driver_profile_controller.dart';
 import 'package:ride_sharing/l10n/l10n_helper.dart';
-import 'package:ride_sharing/feature/auth/view/log_in_screen.dart';
-import 'package:ride_sharing/feature/driver/homepage/view/driver_homescreen.dart';
-import 'package:ride_sharing/feature/passenger/my_ride/view/my_ride.dart';
-import 'package:ride_sharing/feature/passenger/wallet/view/passenger_wallet_page.dart';
 import 'package:ride_sharing/feature/settings/view/settings_screen.dart';
 import 'package:ride_sharing/routes/app_routes.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
@@ -19,8 +15,9 @@ import '../../feature/auth/view/log_out_dialog.dart';
 import '../custom_user_rating.dart';
 
 class PassengerCustomDrawer extends StatelessWidget {
-   PassengerCustomDrawer({Key? key}) : super(key: key);
-  DriverProfileController driverProfileController = Get.put(DriverProfileController());
+  PassengerCustomDrawer({Key? key}) : super(key: key);
+  final DriverProfileController driverProfileController = Get.put(DriverProfileController());
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -31,23 +28,22 @@ class PassengerCustomDrawer extends StatelessWidget {
 
           // Drawer Header
           Padding(
-            padding: EdgeInsets.only(left:  32.sp, top: 50.sp,right: 32.sp),
+            padding: EdgeInsets.only(left: 32.sp, top: 50.sp, right: 32.sp),
             child: Container(
               height: 74.h,
-             // color: AppColors.white,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(15),
-
               ),
-              child: CustomUserRating(
-              //  name: "Siam",
-                name: driverProfileController.profileData.value!.firstName ,
-               imageUrl:    driverProfileController.profileData.value!.profilePicture ?? "https://picsum.photos/250?image=9"
-              //  imageUrl: "https://picsum.photos/250?image=9",
-              //  price: 24,
-             //   distance: 28,
-              ),
+              child: Obx(() {
+                final profile = driverProfileController.profileData.value;
+                final name = profile?.firstName ?? '';
+                final imageUrl = profile?.profilePicture ?? 'https://picsum.photos/250?image=9';
+                return CustomUserRating(
+                  name: name,
+                  imageUrl: imageUrl,
+                );
+              }),
             ),
           ),
 
@@ -114,9 +110,7 @@ class PassengerCustomDrawer extends StatelessWidget {
 
                         // If user confirmed logout
                         if (result == true) {
-
-                         //  Get.to(() => LogInScreen());
-                          Get.toNamed(AppRoutes.loginScreen);
+                          Get.offAllNamed(AppRoutes.loginScreen);
 
                         }
                       },
@@ -153,10 +147,6 @@ class PassengerCustomDrawer extends StatelessWidget {
       final prefs = await SharedPreferences.getInstance();
       final accessToken = prefs.getString('accessToken');
 
-      // Debug logging
-      print('🔑 Access Token: $accessToken');
-      print('🔑 All SharedPreferences keys: ${prefs.getKeys()}');
-      print('🔑 User Role: ${prefs.getStringList('userRole')}');
 
       if (accessToken == null || accessToken.isEmpty) {
         Get.back(); // Close loading
@@ -208,7 +198,7 @@ class PassengerCustomDrawer extends StatelessWidget {
       }
     } catch (e) {
       Get.back(); // Close loading if open
-      print('Error switching to driver: $e');
+      debugPrint('Error switching to driver: $e');
       Get.snackbar(
         'Error',
         'Failed to switch to driver mode. Please try again.',

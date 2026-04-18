@@ -213,7 +213,7 @@ abstract class AppRoutes {
     ),
     GetPage(
       name: resetPasswordScreen,
-      page: () => ResetPasswordScreen(),
+      page: () => const ResetPasswordScreen(),
       binding: ResetPasswordBinding(),
     ),
     GetPage(

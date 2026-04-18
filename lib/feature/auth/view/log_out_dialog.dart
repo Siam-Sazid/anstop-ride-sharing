@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:ride_sharing/feature/driver/profile/controller/driver_profile_controller.dart';
 import 'package:ride_sharing/l10n/l10n_helper.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
@@ -89,6 +91,10 @@ class LogoutDialog extends StatelessWidget {
                       await prefs.remove('lastName');
                       await prefs.remove('profilePicture');
                       await prefs.remove('needsVerification');
+
+                      // Delete DriverProfileController so next login starts with fresh state
+                      // (it is manually Get.put'd in screens, not route-bound, so GetX won't auto-clean it)
+                      Get.delete<DriverProfileController>(force: true);
 
                       Navigator.of(context).pop(true);
                     },

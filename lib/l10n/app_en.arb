@@ -325,5 +325,9 @@
   "goToMap": "Go to map",
   "confirmPickup": "Confirm Pickup",
   "acceptOffer": "Accept Offer",
-  "dropOffButton": "Drop Off"
+  "dropOffButton": "Drop Off",
+
+  "accountInactiveTitle": "Account Not Active",
+  "accountInactiveMessage": "You cannot use the app as a driver. Please wait for admin approval.",
+  "accountInactiveButton": "OK"
 }

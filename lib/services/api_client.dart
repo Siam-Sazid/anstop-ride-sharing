@@ -228,7 +228,7 @@ class ApiClient {
           return ApiResponse(
             isSuccess: false,
             statusCode: response.statusCode,
-            errorMessage: '',
+            errorMessage: 'Something went wrong. Please try again.',
           );
         }
       }

@@ -870,4 +870,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dropOffButton => 'Drop Off';
+
+  @override
+  String get accountInactiveTitle => 'Account Not Active';
+
+  @override
+  String get accountInactiveMessage =>
+      'You cannot use the app as a driver. Please wait for admin approval.';
+
+  @override
+  String get accountInactiveButton => 'OK';
 }

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ride_sharing/feature/auth/data/reset_password_request_model.dart';
+import 'package:ride_sharing/feature/auth/service/auth_service.dart';
+import 'package:ride_sharing/routes/app_routes.dart';
 
 class ResetPasswordController extends GetxController {
   // ==================== Text Controllers ====================
@@ -11,12 +14,22 @@ class ResetPasswordController extends GetxController {
   final RxBool obscureNewPassword = true.obs;
   final RxBool obscureConfirmPassword = true.obs;
   final RxString errorMessage = ''.obs;
+  final RxString userEmail = ''.obs;
+  final RxString resetToken = ''.obs;
   final formKey = GlobalKey<FormState>();
+
+  // ==================== Services ====================
+  final AuthService _authService = AuthService();
 
   // ==================== Lifecycle ====================
   @override
   void onInit() {
     super.onInit();
+    final args = Get.arguments;
+    if (args != null && args is Map) {
+      userEmail.value = args['email'] ?? '';
+      resetToken.value = args['resetToken'] ?? '';
+    }
   }
 
   @override
@@ -36,22 +49,51 @@ class ResetPasswordController extends GetxController {
   }
 
   Future<void> resetPassword() async {
-    if (!validatePasswords()) {
-      return;
-    }
+    if (!validatePasswords()) return;
 
     try {
       isLoading.value = true;
       errorMessage.value = '';
 
-      // TODO: Implement actual password reset API call
-      await Future.delayed(const Duration(seconds: 2));
+      final request = ResetPasswordRequestModel(
+        password: newPasswordTEController.text.trim(),
+      );
 
-      // TODO: Navigate to login screen
-      // Get.offAllNamed(AppRoutes.loginScreen);
+      final response = await _authService.resetPassword(
+        request,
+        accessToken: resetToken.value.isNotEmpty ? resetToken.value : null,
+      );
 
+      if (response.isSuccess) {
+        Get.snackbar(
+          'Success',
+          'Password reset successfully. Please log in.',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+        Get.offAllNamed(AppRoutes.loginScreen);
+      } else {
+        errorMessage.value = response.errorMessage.isNotEmpty
+            ? response.errorMessage
+            : 'Failed to reset password. Please try again.';
+        Get.snackbar(
+          'Reset Failed',
+          errorMessage.value,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
     } catch (e) {
       errorMessage.value = e.toString();
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     } finally {
       isLoading.value = false;
     }

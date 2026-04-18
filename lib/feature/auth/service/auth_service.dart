@@ -4,6 +4,7 @@ import 'package:ride_sharing/feature/auth/data/signin_request_model.dart';
 import 'package:ride_sharing/feature/auth/data/signin_response_model.dart';
 import 'package:ride_sharing/feature/auth/data/verify_otp_request_model.dart';
 import 'package:ride_sharing/feature/auth/data/forgot_password_request_model.dart';
+import 'package:ride_sharing/feature/auth/data/reset_password_request_model.dart';
 import 'package:ride_sharing/services/api_client.dart';
 import 'package:ride_sharing/services/api_urls.dart';
 
@@ -67,6 +68,24 @@ class AuthService {
       final response = await _apiClient.postRequest(
         ApiUrls.forgotPassword,
         body: request.toJson(),
+      );
+      return response;
+    } catch (e) {
+      return ApiResponse(
+        isSuccess: false,
+        statusCode: -1,
+        errorMessage: e.toString(),
+      );
+    }
+  }
+
+  /// Reset password using verified email
+  Future<ApiResponse> resetPassword(ResetPasswordRequestModel request, {String? accessToken}) async {
+    try {
+      final response = await _apiClient.postRequest(
+        ApiUrls.resetPassword,
+        body: request.toJson(),
+        accessToken: accessToken,
       );
       return response;
     } catch (e) {

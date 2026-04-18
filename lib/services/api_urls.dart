@@ -1,7 +1,8 @@
 class ApiUrls {
   //static const String baseUrl = "http://217.15.170.117";
-  static const String baseUrl = "https://abu-bakar8000.merinasib.shop/api/v1";
- // static const String baseUrl = "https://abu-bakar7500.merinasib.shop/api/v1";
+ // static const String baseUrl = "https://abu-bakar8000.merinasib.shop/api/v1";
+  static const String baseUrl = "https://api.anstopcovoiturage.com/api/v1";
+ // static const String baseUrl = "https://zeron-8000.ssh.bd/api/v1";
 
 
   ///Authentication///
@@ -10,6 +11,7 @@ class ApiUrls {
   static const String signIn = '$baseUrl/auth/sign-in';
   static const String verifyOtp = '$baseUrl/auth/verify-otp';
   static const String forgotPassword = '$baseUrl/auth/forgot-password';
+  static const String resetPassword = '$baseUrl/auth/reset-password';
   static const String uploadFiles = '$baseUrl/users/upload-files';
   static const String driverOnboard = '$baseUrl/drivers/onboard';
   static const String driverOnboardingStatus = '$baseUrl/drivers/onboarding-status';
@@ -17,11 +19,11 @@ class ApiUrls {
 
   //static const String imageBaseUrl = "http://217.15.170.117/";
  // static const String imageBaseUrl = "https://mihad4000.merinasib.shop/";
-  static const String imageBaseUrl = "https://mihad4000.merinasib.shop/";
+  static const String imageBaseUrl = "https://api.anstopcovoiturage.com/";
 
 
   //static const String socketUrl = "http://217.15.170.117";
-  static const String socketUrl = "https://abu-bakar8000.merinasib.shop";
+  static const String socketUrl = "https://api.anstopcovoiturage.com";
 
   static const String myRides = '$baseUrl/rides/my-rides';
 
