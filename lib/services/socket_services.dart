@@ -539,6 +539,23 @@ class SocketIoService extends GetxService {
     _socket?.off('payment-confirmed');
   }
 
+  void onRideUnavailable(Function(dynamic) handler) {
+    if (_socket == null) {
+      _logger.e('Cannot register ride-unavailable listener - socket is null!');
+      return;
+    }
+    _logger.i('Registering ride-unavailable listener, socket connected: ${_socket!.connected}');
+    _socket!.on('ride-unavailable', (data) {
+      _logger.i('ride-unavailable event received in service: $data');
+      handler(data);
+    });
+  }
+
+  void offRideUnavailable() {
+    _logger.i('Removing ride-unavailable listener');
+    _socket?.off('ride-unavailable');
+  }
+
   // Listen for ride-completed (for passengers - when ride is completed)
   void onRideCompleted(Function(dynamic) handler) {
     if (_socket == null) {

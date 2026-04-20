@@ -342,6 +342,7 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
         Get.find<HomePageController>().showPassengerSheet(
           (_) => BookingCarsBottomSheet(
             rideId: driverRideIds[acceptedDriver!.id] ?? '',
+            driverId: acceptedDriver!.id,
             driverName: acceptedDriver!.name,
             driverProfilePicture: acceptedDriver!.profilePicture,
             driverRating: acceptedDriver!.rating,

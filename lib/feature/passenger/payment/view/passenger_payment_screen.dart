@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_sharing/app/helpers/prefs_helper.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
@@ -51,6 +52,7 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
   double _selectedRating = 4.0;
   final TextEditingController _commentController = TextEditingController();
   bool _isSubmittingRating = false;
+  final _logger = Logger();
 
   @override
   void initState() {
@@ -71,6 +73,7 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
 
     try {
       final accessToken = await PrefsHelper.getString('accessToken');
+      _logger.i('Submitting rating — rideId: ${widget.rideId}, revieweeId (driverId): ${widget.driverId}, rating: $_selectedRating');
       final response = await ApiClient().postRequest(
         ApiUrls.createReview,
         body: {
@@ -134,7 +137,7 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
   // Calls POST /ride-requests/pay-ride-fare/{rideId}
   // For CARD/WALLET: returns the Stripe Checkout URL from response
   // For CASH: notifies the server and returns null
-  Future<String?> _callPayRideFareApi() async {
+  Future<String?> _callPayRideFareApi(BuildContext context) async {
     final accessToken = await PrefsHelper.getString('accessToken');
     final apiClient = ApiClient();
     final response = await apiClient.postRequest(
@@ -145,12 +148,24 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
 
     if (!response.isSuccess) {
       if (mounted) {
-        Get.snackbar(
-          'Payment Error',
-          response.errorMessage,
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              response.errorMessage,
+              style: const TextStyle(
+                color: Colors.black87,
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            backgroundColor: Colors.white,
+            behavior: SnackBarBehavior.floating,
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            duration: const Duration(seconds: 4),
+            elevation: 8,
+          ),
         );
       }
       return null;
@@ -172,7 +187,7 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
     try {
       if (_requiresOnlinePayment()) {
         // CARD / WALLET: call API → get Stripe Checkout URL → open in browser
-        final checkoutUrl = await _callPayRideFareApi();
+        final checkoutUrl = await _callPayRideFareApi(context);
         if (checkoutUrl != null && checkoutUrl.isNotEmpty) {
           final uri = Uri.parse(checkoutUrl);
           if (await canLaunchUrl(uri)) {
@@ -191,7 +206,7 @@ class _PassengerPaymentScreenState extends State<PassengerPaymentScreen> {
         }
       } else {
         // CASH: notify server then show rating dialog immediately
-        await _callPayRideFareApi();
+        await _callPayRideFareApi(context);
         if (context.mounted) {
           _showRatingDialog(context);
         }

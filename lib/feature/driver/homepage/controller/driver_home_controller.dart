@@ -399,13 +399,43 @@ class DriverHomeScreenController extends GetxController with WidgetsBindingObser
         );
       });
 
+      // Set up the ride-unavailable listener
+      socketService.onRideUnavailable((data) {
+        _logger.i('ride-unavailable received: $data');
+        final message = (data is Map ? data['message'] as String? : null) ??
+            'This ride is no longer available';
+        Get.rawSnackbar(
+          messageText: Text(
+            message,
+            style: const TextStyle(
+              color: Colors.black87,
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          backgroundColor: Colors.white,
+          snackPosition: SnackPosition.TOP,
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          borderRadius: 12,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          duration: const Duration(seconds: 4),
+          boxShadows: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.12),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        );
+      });
+
       // Set up the incompleted-ride listener (fires on reconnect when a ride is still incomplete)
       socketService.onIncompletedRide((data) {
         _logger.i('incompleted-ride received: $data');
         _handleIncompletedRide(data);
       });
 
-      _logger.i('Socket listeners set up successfully - ride-request, ride-accepted, ride-picked-up, payment-confirmed, incompleted-ride');
+      _logger.i('Socket listeners set up successfully - ride-request, ride-accepted, ride-picked-up, payment-confirmed, ride-unavailable, incompleted-ride');
     } catch (e) {
       _logger.e('Error setting up socket listeners: $e');
     }

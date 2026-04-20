@@ -84,6 +84,28 @@ class _FindCarBottomSheetState extends State<FindCarBottomSheet> {
     super.dispose();
   }
 
+  void _showErrorSnackbar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: const TextStyle(
+            color: Colors.black87,
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        backgroundColor: Colors.white,
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        duration: const Duration(seconds: 4),
+        elevation: 8,
+      ),
+    );
+  }
+
   Future<void> _onFindCarPressed() async {
     // Show drop-off radius confirmation dialog first
     final accepted = await showDialog<bool>(
@@ -137,7 +159,7 @@ class _FindCarBottomSheetState extends State<FindCarBottomSheet> {
 
       _logger.i('Creating ride request...');
 
-      final success = await controller.createRideRequest(
+      final error = await controller.createRideRequest(
         preferedFare: widget.fare,
         note: descriptionController.text,
         rideNeeds: _selectedRideNeeds,
@@ -151,26 +173,26 @@ class _FindCarBottomSheetState extends State<FindCarBottomSheet> {
         _isLoading = false;
       });
 
-      if (success) {
-        _logger.i('Ride request successful, nearby drivers data: $_nearbyDriversData');
-        Get.find<HomePageController>().showPassengerSheet(
-          (_) => AcceptCarBottomSheet(
-            pickUpAddress: widget.pickUpAddress,
-            destinationAddress: widget.destinationAddress,
-            initialDriversData: _nearbyDriversData,
-          ),
-        );
+      if (error != null) {
+        _logger.e('Ride request failed: $error');
+        if (mounted) _showErrorSnackbar(context, error);
+        return;
       }
+
+      _logger.i('Ride request successful, nearby drivers data: $_nearbyDriversData');
+      Get.find<HomePageController>().showPassengerSheet(
+        (_) => AcceptCarBottomSheet(
+          pickUpAddress: widget.pickUpAddress,
+          destinationAddress: widget.destinationAddress,
+          initialDriversData: _nearbyDriversData,
+        ),
+      );
     } catch (e) {
       _logger.e('Error creating ride request: $e');
       setState(() {
         _isLoading = false;
       });
-      Get.snackbar(
-        'Error',
-        'Failed to create ride request: $e',
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      if (mounted) _showErrorSnackbar(context, 'Failed to create ride request: $e');
     }
   }
 

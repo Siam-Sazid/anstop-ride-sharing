@@ -10,7 +10,10 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:ride_sharing/l10n/app_localizations.dart';
 import 'package:ride_sharing/feature/passenger/payment/view/passenger_payment_screen.dart';
+import 'package:ride_sharing/feature/passenger/trip_details/data/get_trip_details_model.dart';
+import 'package:ride_sharing/feature/passenger/trip_details/service/trip_details_service.dart';
 import 'package:ride_sharing/services/socket_services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePageController extends GetxController {
   final TextEditingController locationTEController = TextEditingController();
@@ -74,7 +77,7 @@ class HomePageController extends GetxController {
     }
     if (!socketService.isSocketReady) return;
 
-    socketService.onIncompletedRide((data) {
+    socketService.onIncompletedRide((data) async {
       if (data == null || data is! Map<String, dynamic>) return;
 
       final status = data['status'] as String? ?? '';
@@ -82,19 +85,43 @@ class HomePageController extends GetxController {
 
       if (status != 'COMPLETED' || isPaymentCompleted) return;
 
+      // Only navigate to PassengerPaymentScreen if this user is the RIDER of this ride.
+      // The driver can also land on the passenger home screen — skip for them.
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getString('userId') ?? '';
+      final riderId = data['riderId'] as String? ?? '';
+      if (userId.isEmpty || riderId != userId) return;
+
       final rideId = data['_id'] as String? ?? '';
+      final driverId = data['driverId'] as String? ?? '';
       final paymentMethod = data['paymentMethod'] as String? ?? '';
       final pickUp = data['pickUp'] as Map<String, dynamic>?;
       final destination = data['destination'] as Map<String, dynamic>?;
 
+      String driverName = '';
+      String? driverProfilePicture;
+
+      final response = await TripDetailsService().getTripDetails(rideId);
+      if (response.isSuccess && response.responseData != null) {
+        try {
+          final details = GetTripDetailsModel.fromJson(
+            response.responseData as Map<String, dynamic>,
+          );
+          driverName = details.data.driverId.name;
+          driverProfilePicture = details.data.driverId.profilePicture;
+        } catch (_) {}
+      }
+
       Get.offAll(() => PassengerPaymentScreen(
         rideId: rideId,
+        driverId: driverId,
         paymentMethod: paymentMethod,
-        driverId: data['driverId'] as String? ?? '',
         bidAmount: data['fare']?.toString() ?? '',
         tripDistance: data['distance']?.toString() ?? '',
         pickUpAddress: pickUp?['name'] as String? ?? '',
         destinationAddress: destination?['name'] as String? ?? '',
+        driverName: driverName,
+        driverProfilePicture: driverProfilePicture,
       ));
     });
   }

@@ -275,8 +275,8 @@ class PickUpLocationController extends GetxController {
     }
   }
 
-  // Create ride request
-  Future<bool> createRideRequest({
+  // Create ride request — returns null on success, error message string on failure
+  Future<String?> createRideRequest({
     required double preferedFare,
     required String note,
     required List<String> rideNeeds,
@@ -315,22 +315,14 @@ class PickUpLocationController extends GetxController {
       );
 
       if (response.isSuccess) {
-        return true;
+        return null;
       } else {
-        Get.snackbar(
-          'Error',
-          response.errorMessage.isNotEmpty ? response.errorMessage : 'Failed to create ride request',
-          snackPosition: SnackPosition.BOTTOM,
-        );
-        return false;
+        return response.errorMessage.isNotEmpty
+            ? response.errorMessage
+            : 'Failed to create ride request';
       }
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to create ride request: $e',
-        snackPosition: SnackPosition.BOTTOM,
-      );
-      return false;
+      return 'Failed to create ride request: $e';
     }
   }
 

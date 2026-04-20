@@ -28,6 +28,8 @@ class DriverArrivedBottomSheet extends StatefulWidget {
   final String tripDistance;
   final String pickUpAddress;
   final String destinationAddress;
+  final String rideId;
+  final String driverId;
 
   const DriverArrivedBottomSheet({
     Key? key,
@@ -43,6 +45,8 @@ class DriverArrivedBottomSheet extends StatefulWidget {
     this.tripDistance = '',
     this.pickUpAddress = '',
     this.destinationAddress = '',
+    this.rideId = '',
+    this.driverId = '',
   }) : super(key: key);
 
   @override
@@ -85,9 +89,11 @@ class _DriverArrivedBottomSheetState extends State<DriverArrivedBottomSheet> {
 
       if (mounted && data != null && data is Map<String, dynamic>) {
         final paymentMethod = data['paymentMethod'] as String? ?? '';
-        final rideId = data['rideId'] as String? ?? '';
-        final driverId = data['driverId'] as String? ?? '';
-        _logger.i('Payment method from ride-completed: $paymentMethod, rideId: $rideId, driverId: $driverId');
+        final eventRideId = data['rideId'] as String? ?? '';
+        final rideId = widget.rideId.isNotEmpty ? widget.rideId : eventRideId;
+        final eventDriverId = data['driverId'] as String? ?? '';
+        final driverId = widget.driverId.isNotEmpty ? widget.driverId : eventDriverId;
+        _logger.i('Payment method from ride-completed: $paymentMethod, rideId: $rideId (widget: ${widget.rideId}, event: $eventRideId), driverId: $driverId');
 
         Get.find<HomePageController>().closeCurrentSheet();
         Get.offAll(() => PassengerPaymentScreen(

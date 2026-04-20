@@ -34,6 +34,7 @@ class BookingCarsBottomSheet extends StatefulWidget {
   final String pickUpAddress;
   final String destinationAddress;
   final String rideId;
+  final String driverId;
 
   const BookingCarsBottomSheet({
     Key? key,
@@ -50,6 +51,7 @@ class BookingCarsBottomSheet extends StatefulWidget {
     this.pickUpAddress = '',
     this.destinationAddress = '',
     required this.rideId,
+    this.driverId = '',
   }) : super(key: key);
 
   @override
@@ -114,6 +116,8 @@ class _BookingCarsBottomSheetState extends State<BookingCarsBottomSheet> {
             tripDistance: widget.tripDistance,
             pickUpAddress: widget.pickUpAddress,
             destinationAddress: widget.destinationAddress,
+            rideId: widget.rideId,
+            driverId: widget.driverId,
           ),
         );
       }
@@ -206,7 +210,7 @@ class _BookingCarsBottomSheetState extends State<BookingCarsBottomSheet> {
                 Image.asset(AppImage.wallet),
                 SizedBox(width: 2.sp,),
                 GestureDetector(
-                  onTap:() {Get.to(PassengerPaymentScreen());},
+                  onTap:() {Get.to(PassengerPaymentScreen(rideId: widget.rideId, driverId: widget.driverId));},
                     child: Text('Pay via wallet',style: TextStyle(fontSize: 20.sp),
                     )
                 )
