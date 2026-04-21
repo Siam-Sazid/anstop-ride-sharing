@@ -158,7 +158,7 @@ class CompletedTripDetails extends StatelessWidget {
                         children: [
                           Text(AppString.rideValueLabel),
                           Spacer(),
-                          Text('\$${trip.finalFare}'),
+                          Text('\$${trip.fare.toStringAsFixed(2)}'),
                         ],
                       ),
                     ),
@@ -177,7 +177,7 @@ class CompletedTripDetails extends StatelessWidget {
                           rating: 4.5,
                           trips: 0,
                           profession: 'Driver',
-                          price: '\$${trip.finalFare}',
+                          price: '\$${trip.fare.toStringAsFixed(2)}',
                           distance: trip.distance,
                         ),
                       ],
@@ -185,13 +185,13 @@ class CompletedTripDetails extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 10.h),
-                DownloadRideScriptTile(
-                  onTap: () {
-                    controller.downloadReceipt();
-                  },
-                  iconColor: AppColors.green300,
-                  iconSize: 20,
-                ),
+                // DownloadRideScriptTile(
+                //   onTap: () {
+                //     controller.downloadReceipt();
+                //   },
+                //   iconColor: AppColors.green300,
+                //   iconSize: 20,
+                // ),
               ],
             ),
           ),

@@ -24,8 +24,7 @@ class TripDetailsData {
   final LocationInfo pickup;
   final LocationInfo destination;
   final String distance;
-  final int baseFare;
-  final int finalFare;
+  final double fare;
   final DateTime createdAt;
 
   TripDetailsData({
@@ -34,8 +33,7 @@ class TripDetailsData {
     required this.pickup,
     required this.destination,
     required this.distance,
-    required this.baseFare,
-    required this.finalFare,
+    required this.fare,
     required this.createdAt,
   });
 
@@ -46,8 +44,7 @@ class TripDetailsData {
       pickup: LocationInfo.fromJson(json['pickup'] ?? {}),
       destination: LocationInfo.fromJson(json['destination'] ?? {}),
       distance: json['distance'] ?? '',
-      baseFare: json['baseFare'] ?? 0,
-      finalFare: json['finalFare'] ?? 0,
+      fare: (json['fare'] as num?)?.toDouble() ?? 0.0,
       createdAt: DateTime.parse(json['createdAt'] ?? DateTime.now().toIso8601String()),
     );
   }
@@ -65,9 +62,11 @@ class DriverInfo {
   });
 
   factory DriverInfo.fromJson(Map<String, dynamic> json) {
+    final first = json['firstName'] ?? json['name'] ?? '';
+    final last = json['lastName'] ?? '';
     return DriverInfo(
       id: json['_id'] ?? '',
-      name: json['name'] ?? '',
+      name: '$first $last'.trim(),
       profilePicture: json['profilePicture'],
     );
   }

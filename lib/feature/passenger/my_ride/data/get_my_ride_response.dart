@@ -51,9 +51,11 @@ class Driver {
   });
 
   factory Driver.fromJson(Map<String, dynamic> json) {
+    final first = json['firstName'] ?? json['name'] ?? '';
+    final last = json['lastName'] ?? '';
     return Driver(
       id: json['_id'],
-      name: json['name'],
+      name: '$first $last'.trim(),
       profilePicture: json['profilePicture'],
     );
   }

@@ -189,6 +189,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           ? 'Loading...'
                           : AppLocalization.tr.registerButton,
                       )),
+                      Obx(() => _controller.errorMessage.value.isNotEmpty
+                          ? Padding(
+                              padding: EdgeInsets.only(top: 8.h),
+                              child: Text(
+                                _controller.errorMessage.value,
+                                style: TextStyle(color: Colors.red, fontSize: 12.sp),
+                                textAlign: TextAlign.center,
+                              ),
+                            )
+                          : const SizedBox.shrink()),
                       SizedBox(height: 16.h),
                       GestureDetector(
                         onTap: (){

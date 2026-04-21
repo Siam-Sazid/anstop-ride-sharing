@@ -164,15 +164,15 @@ class DriverCompletedTripDetails extends StatelessWidget {
               ),
             ),
             SizedBox(height: 5.h,),
-            DownloadRideScriptTile(
-              onTap: () {
-                // your function here
-               // controller.downloadRideScript();
-                Get.to(InvoicePage());
-              },
-              iconColor: AppColors.togglebuttonColor,
-              iconSize: 15.sp,
-            )
+            // DownloadRideScriptTile(
+            //   onTap: () {
+            //     // your function here
+            //     // controller.downloadRideScript();
+            //     Get.to(InvoicePage());
+            //   },
+            //   iconColor: AppColors.togglebuttonColor,
+            //   iconSize: 15.sp,
+            // )
           ],
         ),
       ),

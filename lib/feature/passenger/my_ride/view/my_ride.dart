@@ -52,18 +52,32 @@ class _MyRidePageState extends State<MyRidePage> {
                   return const Center(child: CircularProgressIndicator());
                 }
 
+                if (controller.errorMessage.value.isNotEmpty) {
+                  return Center(
+                    child: Text(
+                      controller.errorMessage.value,
+                      style: const TextStyle(color: Colors.red),
+                      textAlign: TextAlign.center,
+                    ),
+                  );
+                }
+
+                if (controller.rides.isEmpty) {
+                  return const Center(child: Text('No rides found'));
+                }
+
                 return ListView.builder(
                   itemCount: controller.rides.length,
                   itemBuilder: (_, index) {
                     final ride = controller.rides[index];
-                    final formattedDate =
-                    DateFormat('dd MMM yyyy').format(ride.createdAt);
+                    final formattedDate = DateFormat('dd MMM yyyy').format(ride.createdAt);
+                    final formattedTime = DateFormat('hh:mm a').format(ride.createdAt);
                     return MyRideCardWidget(
                       date: formattedDate,
-                      time: '',
+                      time: formattedTime,
                       pickup: ride.pickup?.name ?? '',
                       dropoff: ride.destination?.name ?? '',
-                      imageUrl: ride.driver.profilePicture!,
+                      imageUrl: ride.driver.profilePicture ?? '',
                       onViewDetails: () {
                         if (controller.isOngoing.value) {
                           Get.to(() => OngoingTripDetails(rideId: ride.id));

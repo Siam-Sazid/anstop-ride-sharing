@@ -169,7 +169,7 @@ class OngoingTripDetails extends StatelessWidget {
                       children: [
                         Text(AppString.rideValueLabel),
                         Spacer(),
-                        Text('\$${trip.finalFare}') ,
+                        Text('\$${trip.fare.toStringAsFixed(2)}') ,
                       ],
                     ),
                   ),
@@ -188,7 +188,7 @@ class OngoingTripDetails extends StatelessWidget {
                         rating: 4.5,
                         trips: 0,
                         profession: 'Driver',
-                        price: '\$${trip.finalFare}',
+                        price: '\$${trip.fare.toStringAsFixed(2)}',
                         distance: trip.distance,
                       ),
                       SupportNoteWidget(
