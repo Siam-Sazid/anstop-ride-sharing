@@ -1795,6 +1795,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'OK'**
   String get accountInactiveButton;
+
+  /// No description provided for @deleteAccountScheduledTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Deletion Requested'**
+  String get deleteAccountScheduledTitle;
+
+  /// No description provided for @deleteAccountScheduledMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account will be deleted within 7 days.'**
+  String get deleteAccountScheduledMessage;
 }
 
 class _AppLocalizationsDelegate

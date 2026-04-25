@@ -54,3 +54,7 @@ NUL
 .env
 .env.local
 .env.*.local
+
+# Android signing
+upload-keystore.jks
+android/key.properties

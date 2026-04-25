@@ -31,9 +31,10 @@ class RideSharingApp extends StatelessWidget {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
+          locale: const Locale('fr'),
           supportedLocales: const [
-            Locale('en'), // English
             Locale('fr'), // French
+            Locale('en'), // English
           ],
         //  darkTheme: AppThemeData.darkThemeData,
           debugShowCheckedModeBanner: false,

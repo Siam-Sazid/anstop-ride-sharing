@@ -37,8 +37,8 @@ class SettingsService {
     }
   }
 
-  /// Get legal document by type (PRIVACY_POLICY, TERMS_AND_CONDITIONS, ABOUT_US)
-  Future<ApiResponse> getLegalDocument(LegalDocumentType type) async {
+  /// Delete account — requires token
+  Future<ApiResponse> deleteAccount() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final accessToken = prefs.getString('accessToken');
@@ -51,11 +51,28 @@ class SettingsService {
         );
       }
 
-      final response = await _apiClient.getRequest(
-        ApiUrls.getLegalDocument(type.value),
+      final response = await _apiClient.deleteRequest(
+        ApiUrls.deleteAccount,
         accessToken: accessToken,
       );
 
+      return response;
+    } catch (e) {
+      return ApiResponse(
+        isSuccess: false,
+        statusCode: -1,
+        errorMessage: e.toString(),
+      );
+    }
+  }
+
+  /// Get legal document by type (PRIVACY_POLICY, TERMS_AND_CONDITIONS, ABOUT_US)
+  /// Public endpoint — no token required
+  Future<ApiResponse> getLegalDocument(LegalDocumentType type) async {
+    try {
+      final response = await _apiClient.getRequest(
+        ApiUrls.getLegalDocument(type.value),
+      );
       return response;
     } catch (e) {
       return ApiResponse(

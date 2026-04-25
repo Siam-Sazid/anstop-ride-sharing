@@ -65,9 +65,11 @@ import 'package:ride_sharing/feature/notification/binding/notification_binding.d
 import 'package:ride_sharing/feature/notification/view/notification_screen.dart';
 import 'package:ride_sharing/feature/settings/binding/change_language_binding.dart';
 import 'package:ride_sharing/feature/settings/binding/change_password_binding.dart';
+import 'package:ride_sharing/feature/settings/binding/legal_pages_binding.dart';
 import 'package:ride_sharing/feature/settings/binding/settings_binding.dart';
 import 'package:ride_sharing/feature/settings/view/change_language_screen.dart';
 import 'package:ride_sharing/feature/settings/view/change_password_screen.dart';
+import 'package:ride_sharing/feature/settings/view/legal_pages_screen.dart';
 import 'package:ride_sharing/feature/settings/view/settings_screen.dart';
 
 // Support imports
@@ -162,6 +164,7 @@ abstract class AppRoutes {
   static const String settingsScreen = '/settingsScreen';
   static const String changePasswordScreen = '/changePasswordScreen';
   static const String changeLanguageScreen = '/changeLanguageScreen';
+  static const String legalPagesScreen = '/legalPagesScreen';
   static const String supportListScreen = '/supportListScreen';
   static const String createSupportScreen = '/createSupportScreen';
   static const String addMoneyScreen = '/addMoneyScreen';
@@ -391,6 +394,11 @@ abstract class AppRoutes {
       name: changeLanguageScreen,
       page: () => ChangeLanguageScreen(),
       binding: ChangeLanguageBinding(),
+    ),
+    GetPage(
+      name: legalPagesScreen,
+      page: () => LegalPagesScreen(),
+      binding: LegalPagesBinding(),
     ),
 
     /// Support Routes

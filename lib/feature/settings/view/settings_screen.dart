@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:ride_sharing/feature/auth/controller/login_controller.dart';
 import 'package:ride_sharing/feature/settings/controller/change_password_controller.dart';
 import 'package:ride_sharing/feature/settings/controller/legal_pages_controller.dart';
+import 'package:ride_sharing/feature/settings/controller/settings_controller.dart';
 import 'package:ride_sharing/feature/settings/data/legal_document_model.dart';
 import 'package:ride_sharing/l10n/l10n_helper.dart';
 import 'package:ride_sharing/feature/settings/utils/settings_menu_item.dart';
@@ -22,6 +23,7 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     ChangePasswordController changePasswordController = Get.put(ChangePasswordController());
     LoginController loginController = Get.put(LoginController());
+    SettingsController settingsController = Get.put(SettingsController());
 
 
     return Scaffold(
@@ -165,9 +167,76 @@ class SettingsScreen extends StatelessWidget {
                     context: context,
                     barrierColor: Colors.black.withOpacity(0.3),
                     builder: (context) => DeleteAccountDialog(
-                      onDelete: () {
+                      onDelete: () async {
                         Navigator.pop(context);
-                        // Handle delete account
+                        final success = await settingsController.deleteAccount();
+                        if (success) {
+                          showDialog(
+                            context: Get.context!,
+                            barrierDismissible: false,
+                            barrierColor: Colors.black.withOpacity(0.3),
+                            builder: (_) => Dialog(
+                              backgroundColor: Colors.transparent,
+                              insetPadding: const EdgeInsets.symmetric(horizontal: 32),
+                              child: Container(
+                                padding: const EdgeInsets.all(28),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(Icons.check_circle_outline, color: Color(0xFF1B4332), size: 56),
+                                    const SizedBox(height: 16),
+                                    Text(
+                                      AppLocalization.tr.deleteAccountScheduledTitle,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600,
+                                        color: Color(0xFF1B4332),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Text(
+                                      AppLocalization.tr.deleteAccountScheduledMessage,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Color(0xFF4E4E4E),
+                                        height: 1.5,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 24),
+                                    SizedBox(
+                                      width: double.infinity,
+                                      child: ElevatedButton(
+                                        onPressed: () => Get.offAllNamed(AppRoutes.loginScreen),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: const Color(0xFF1B4332),
+                                          foregroundColor: Colors.white,
+                                          elevation: 0,
+                                          padding: const EdgeInsets.symmetric(vertical: 14),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(25),
+                                          ),
+                                        ),
+                                        child: Text(
+                                          AppLocalization.tr.okButton,
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        }
                       },
                       onCancel: () {
                         Navigator.pop(context);

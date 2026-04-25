@@ -43,6 +43,9 @@ class ApiUrls {
   static const String mySupportMessages = '$baseUrl/supports/my-messages';
   static const String createSupport = '$baseUrl/supports';
 
+  // Account
+  static const String deleteAccount = '$baseUrl/users/account';
+
   // Profile
   static const String myProfile = '$baseUrl/users/my-profile';
   static const String updateProfile = '$baseUrl/users/profile';

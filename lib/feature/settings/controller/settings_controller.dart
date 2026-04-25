@@ -1,4 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../../routes/app_routes.dart';
+import '../service/settings_service.dart';
 
 class SettingsController extends GetxController {
   // ==================== State ====================
@@ -6,6 +11,9 @@ class SettingsController extends GetxController {
   final Rx<dynamic> user = Rx<dynamic>(null);
   final RxMap<String, bool> preferences = <String, bool>{}.obs;
   final RxString errorMessage = ''.obs;
+
+  final _logger = Logger();
+  final _settingsService = SettingsService();
 
   // ==================== Lifecycle ====================
   @override
@@ -62,20 +70,44 @@ class SettingsController extends GetxController {
     }
   }
 
-  Future<void> deleteAccount() async {
+  Future<bool> deleteAccount() async {
     try {
       isLoading.value = true;
+      errorMessage.value = '';
 
-      // TODO: Implement delete account API call
-      await Future.delayed(const Duration(seconds: 2));
+      _logger.i('Requesting account deletion...');
 
-      // Navigate to login
-      // Get.offAllNamed(AppRoutes.loginScreen);
+      final response = await _settingsService.deleteAccount();
 
-    } catch (e) {
+      _logger.i('Delete account response — statusCode: ${response.statusCode}, isSuccess: ${response.isSuccess}');
+
+      if (response.isSuccess) {
+        _logger.i('Account deletion scheduled successfully');
+        return true;
+      } else {
+        errorMessage.value = response.errorMessage;
+        _logger.e('Delete account failed — error: ${response.errorMessage}');
+        Get.snackbar(
+          'Error',
+          response.errorMessage,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: const Color(0xFFD32F2F),
+          colorText: const Color(0xFFFFFFFF),
+        );
+        return false;
+      }
+    } catch (e, stackTrace) {
       errorMessage.value = e.toString();
+      _logger.e('Exception during delete account', error: e, stackTrace: stackTrace);
+      return false;
     } finally {
       isLoading.value = false;
     }
+  }
+
+  Future<void> _clearSession() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    Get.offAllNamed(AppRoutes.loginScreen);
   }
 }

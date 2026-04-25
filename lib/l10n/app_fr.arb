@@ -329,5 +329,8 @@
 
   "accountInactiveTitle": "Compte non actif",
   "accountInactiveMessage": "Vous ne pouvez pas utiliser l'application en tant que conducteur. Veuillez attendre l'approbation de l'administrateur.",
-  "accountInactiveButton": "OK"
+  "accountInactiveButton": "OK",
+
+  "deleteAccountScheduledTitle": "Suppression demandée",
+  "deleteAccountScheduledMessage": "Votre compte sera supprimé dans 7 jours."
 }

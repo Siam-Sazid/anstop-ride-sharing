@@ -1,6 +1,7 @@
 import 'package:ride_sharing/feature/auth/view/log_in_screen.dart';
+import 'package:ride_sharing/feature/settings/data/legal_document_model.dart';
 import 'package:ride_sharing/l10n/l10n_helper.dart';
-import 'package:ride_sharing/feature/auth/passenger/terms_of_services.dart';
+import 'package:ride_sharing/routes/app_routes.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 import 'package:ride_sharing/feature/auth/controller/registration_controller.dart';
 
@@ -137,9 +138,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               _controller.toggleTermsAgreement(value);
                             },
                           ),
-                          RichText(
-                            textAlign: TextAlign.center,
-                            maxLines: 1,
+                          Expanded(
+                          child: RichText(
+                            textAlign: TextAlign.start,
                             text: TextSpan(
                               children: [
                                 TextSpan(
@@ -158,26 +159,33 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                       decoration: TextDecoration.underline,
                                       decorationColor: Colors.red
                                   )),
-                                  onTap: ()=> {
-                                    Get.to(() => TermsOfServices())
-                                  },
+                                  onTap: () => Get.toNamed(
+                                    AppRoutes.legalPagesScreen,
+                                    arguments: {'type': LegalDocumentType.termsAndConditions},
+                                  ),
                                 )),
                                 TextSpan(text: AppLocalization.tr.andText, style: TextStyle(
                                   fontSize: 12.sp,
                                   fontWeight: FontWeight.w400,
                                   color: Color(0XFF4E4E4E),
                                 )),
-                                TextSpan(
-                                    text: AppLocalization.tr.privacyPolicyLink, style: TextStyle(
-                                    fontSize: 12.sp,
-                                    fontWeight: FontWeight.w400,
-                                    color: Colors.red,
-                                    decorationThickness: 2,
-                                    decoration: TextDecoration.underline
+                                WidgetSpan(child: GestureDetector(
+                                  child: Text(AppLocalization.tr.privacyPolicyLink, style: TextStyle(
+                                      fontSize: 12.sp,
+                                      fontWeight: FontWeight.w400,
+                                      color: Colors.red,
+                                      decorationThickness: 2,
+                                      decoration: TextDecoration.underline,
+                                      decorationColor: Colors.red
+                                  )),
+                                  onTap: () => Get.toNamed(
+                                    AppRoutes.legalPagesScreen,
+                                    arguments: {'type': LegalDocumentType.privacyPolicy},
+                                  ),
                                 )),
                               ],
                             ),
-                          )
+                          ))
                         ],
                       )),
                       SizedBox(height: 17.5.sp),

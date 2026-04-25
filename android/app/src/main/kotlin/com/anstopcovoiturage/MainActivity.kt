@@ -1,4 +1,4 @@
-package com.example.ride_sharing
+package com.anstopcovoiturage
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

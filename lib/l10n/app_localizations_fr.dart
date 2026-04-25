@@ -889,4 +889,11 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get accountInactiveButton => 'OK';
+
+  @override
+  String get deleteAccountScheduledTitle => 'Suppression demandée';
+
+  @override
+  String get deleteAccountScheduledMessage =>
+      'Votre compte sera supprimé dans 7 jours.';
 }

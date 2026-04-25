@@ -7,6 +7,25 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:973406003505:android:dae243c72ac3370caa1010",
+        "android_client_info": {
+          "package_name": "com.anstopcovoiturage"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBd4bhHaUvoGHlAhYGiWjmEoh_cre4KsuQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:973406003505:android:188e46117ea1e172aa1010",
         "android_client_info": {
           "package_name": "com.example.ride_sharing"

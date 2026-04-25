@@ -329,5 +329,8 @@
 
   "accountInactiveTitle": "Account Not Active",
   "accountInactiveMessage": "You cannot use the app as a driver. Please wait for admin approval.",
-  "accountInactiveButton": "OK"
+  "accountInactiveButton": "OK",
+
+  "deleteAccountScheduledTitle": "Account Deletion Requested",
+  "deleteAccountScheduledMessage": "Your account will be deleted within 7 days."
 }

@@ -880,4 +880,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get accountInactiveButton => 'OK';
+
+  @override
+  String get deleteAccountScheduledTitle => 'Account Deletion Requested';
+
+  @override
+  String get deleteAccountScheduledMessage =>
+      'Your account will be deleted within 7 days.';
 }

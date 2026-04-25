@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:logger/logger.dart';
 import '../data/legal_document_model.dart';
 import '../service/settings_service.dart';
 
 class LegalPagesController extends GetxController {
+  final _logger = Logger();
   // ==================== State ====================
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
@@ -17,13 +19,18 @@ class LegalPagesController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Get document type from arguments
     final args = Get.arguments;
+    _logger.i('LegalPagesController init — arguments: $args');
     if (args != null && args is Map) {
       final type = args['type'];
       if (type != null && type is LegalDocumentType) {
         documentType.value = type;
+        _logger.i('Document type set to: ${type.value}');
+      } else {
+        _logger.w('No valid LegalDocumentType found in arguments — defaulting to termsAndConditions');
       }
+    } else {
+      _logger.w('Arguments are null or not a Map — defaulting to termsAndConditions');
     }
     fetchLegalDocument();
   }
@@ -34,21 +41,30 @@ class LegalPagesController extends GetxController {
       isLoading.value = true;
       errorMessage.value = '';
 
+      _logger.i('Fetching legal document — type: ${documentType.value.value}');
+
       final response = await _settingsService.getLegalDocument(documentType.value);
+
+      _logger.i('Response — statusCode: ${response.statusCode}, isSuccess: ${response.isSuccess}');
 
       if (response.isSuccess) {
         final legalResponse = LegalDocumentResponse.fromJson(response.responseData);
+        _logger.i('Parsed response — success: ${legalResponse.success}, hasData: ${legalResponse.data != null}');
+
         if (legalResponse.success && legalResponse.data != null) {
           legalDocument.value = legalResponse.data;
+          _logger.i('Document loaded — title: ${legalResponse.data!.title}, descriptionLength: ${legalResponse.data!.description.length}');
         } else {
           errorMessage.value = legalResponse.message.isNotEmpty
               ? legalResponse.message
               : 'Failed to load document';
+          _logger.w('Document load failed — message: ${errorMessage.value}');
         }
       } else {
         errorMessage.value = response.errorMessage.isNotEmpty
             ? response.errorMessage
             : 'Failed to load document';
+        _logger.e('API error — statusCode: ${response.statusCode}, error: ${errorMessage.value}');
         Get.snackbar(
           'Error',
           errorMessage.value,
@@ -57,8 +73,9 @@ class LegalPagesController extends GetxController {
           colorText: Colors.white,
         );
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
       errorMessage.value = e.toString();
+      _logger.e('Exception during fetch', error: e, stackTrace: stackTrace);
       Get.snackbar(
         'Error',
         e.toString(),

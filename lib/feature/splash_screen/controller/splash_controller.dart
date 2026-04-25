@@ -12,7 +12,7 @@ class SplashController extends GetxController {
   final RxBool isLoading = true.obs;
   final RxBool isAuthenticated = false.obs;
   final RxList<String> userRoles = <String>[].obs;
-  final RxBool isFrench = false.obs;
+  final RxBool isFrench = true.obs;
 
   // ==================== Services ====================
   final FcmService _fcmService = FcmService();
@@ -22,13 +22,17 @@ class SplashController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    isFrench.value = Get.locale?.languageCode == 'fr';
     _initialize();
   }
 
   // ==================== UI Actions ====================
-  void toggleLanguage(bool value) {
+  Future<void> toggleLanguage(bool value) async {
     isFrench.value = value;
-    Get.updateLocale(value ? const Locale('fr') : const Locale('en'));
+    final locale = value ? const Locale('fr') : const Locale('en');
+    Get.updateLocale(locale);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('locale', locale.languageCode);
   }
 
   // ==================== Business Logic ====================

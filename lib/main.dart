@@ -8,11 +8,18 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 import 'package:ride_sharing/app.dart';
 import 'package:ride_sharing/services/socket_services.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize Google Maps to use Hybrid Composition on Android
   _initializeMapRenderer();
+
+  // Load saved locale before runApp so GetMaterialApp builds with correct language
+  final prefs = await SharedPreferences.getInstance();
+  final savedLocale = prefs.getString('locale') ?? 'fr';
+  Get.updateLocale(Locale(savedLocale));
 
   // Load environment variables
   await dotenv.load(fileName: ".env");
