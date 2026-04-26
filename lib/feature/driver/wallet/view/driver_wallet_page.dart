@@ -117,9 +117,6 @@ class _DriverWalletPageState extends State<DriverWalletPage> {
             BalanceCard(
               balance:_walletController.balance.value.toString(),
               onWithdraw: _showWithdrawalFormDialog,
-              onDeposit: () {
-                Get.toNamed(AppRoutes.addMoneyScreen);
-              },
             ),
 
             const SizedBox(height: 32),

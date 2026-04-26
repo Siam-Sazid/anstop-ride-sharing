@@ -14,6 +14,7 @@ import 'package:ride_sharing/feature/passenger/trip_details/data/get_trip_detail
 import 'package:ride_sharing/feature/passenger/trip_details/service/trip_details_service.dart';
 import 'package:ride_sharing/services/socket_services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ride_sharing/custom_assets/app_string.dart';
 
 class HomePageController extends GetxController {
   final TextEditingController locationTEController = TextEditingController();
@@ -42,7 +43,6 @@ class HomePageController extends GetxController {
     _currentSheetController = null;
   }
 
-  static const String _googleApiKey = 'AIzaSyD_NVUY504HfMBsvN1gACNyfaFKAulvkVI';
   static const int _carImageSize = 40;
 
   // Custom marker icons
@@ -648,7 +648,7 @@ class HomePageController extends GetxController {
         'https://maps.googleapis.com/maps/api/directions/json?'
         'origin=${origin.latitude},${origin.longitude}'
         '&destination=${destination.latitude},${destination.longitude}'
-        '&key=$_googleApiKey&mode=driving',
+        '&key=${AppString.googleMapsKey}&mode=driving',
       );
 
       final response = await http.get(url);

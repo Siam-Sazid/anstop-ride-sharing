@@ -6,14 +6,14 @@ import '../app/utils/app_colors.dart';
 class BalanceCard extends StatelessWidget {
   final String balance;
   final VoidCallback? onWithdraw;
-  final VoidCallback onDeposit;
+  final VoidCallback? onDeposit;
   final bool showWithdraw;
 
   const BalanceCard({
     Key? key,
     required this.balance,
     this.onWithdraw,
-    required this.onDeposit,
+    this.onDeposit,
     this.showWithdraw = true,
   }) : super(key: key);
 
@@ -71,7 +71,8 @@ class BalanceCard extends StatelessWidget {
                 _buildActionButton('Withdraw Now', onWithdraw!),
               if (showWithdraw && onWithdraw != null)
                 const SizedBox(height: 8),
-              _buildActionButton('Deposit', onDeposit),
+              if (onDeposit != null)
+                _buildActionButton('Deposit', onDeposit!),
             ],
           ),
         ],

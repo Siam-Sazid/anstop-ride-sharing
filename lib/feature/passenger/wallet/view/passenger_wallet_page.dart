@@ -75,9 +75,6 @@ class _PassengerWalletPageState extends State<PassengerWalletPage> {
             BalanceCard(
               balance:_walletController.balance.value.toString(),
              // onWithdraw: _showWithdrawDialog,
-              onDeposit: () {
-                Get.toNamed(AppRoutes.addMoneyScreen);
-              },
             ),
 
             const SizedBox(height: 32),

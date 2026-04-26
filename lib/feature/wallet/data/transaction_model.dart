@@ -13,7 +13,7 @@ class TransactionResponseModel {
     return TransactionResponseModel(
       success: json['success'] ?? false,
       message: json['message'] ?? '',
-      data: TransactionPagination.fromJson(json['data'] ?? {}),
+      data: TransactionPagination.fromJson(json['data']),
     );
   }
 }
@@ -33,7 +33,17 @@ class TransactionPagination {
     required this.totalResults,
   });
 
-  factory TransactionPagination.fromJson(Map<String, dynamic> json) {
+  factory TransactionPagination.fromJson(dynamic data) {
+    if (data is List) {
+      return TransactionPagination(
+        results: data.map((e) => TransactionModel.fromJson(e as Map<String, dynamic>)).toList(),
+        page: 1,
+        limit: data.length,
+        totalPages: 1,
+        totalResults: data.length,
+      );
+    }
+    final json = data as Map<String, dynamic>? ?? {};
     return TransactionPagination(
       results: (json['results'] as List<dynamic>? ?? [])
           .map((e) => TransactionModel.fromJson(e))

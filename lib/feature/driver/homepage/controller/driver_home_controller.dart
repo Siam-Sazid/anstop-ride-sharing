@@ -14,6 +14,7 @@ import 'package:ride_sharing/feature/driver/trip_flow/view/trip_completion_payme
 import 'package:ride_sharing/services/socket_services.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ride_sharing/custom_assets/app_string.dart';
 
 class DriverHomeScreenController extends GetxController with WidgetsBindingObserver {
   final Logger _logger = Logger();
@@ -69,8 +70,7 @@ class DriverHomeScreenController extends GetxController with WidgetsBindingObser
   static const double _simulationSpeed = 0.05; // Progress per tick (adjust for speed)
   static const int _simulationIntervalMs = 50; // Timer interval in milliseconds
 
-  // Google API Key from manifest
-  static const String _googleApiKey = "AIzaSyD_NVUY504HfMBsvN1gACNyfaFKAulvkVI";
+
 
   // Custom markers
   BitmapDescriptor? _pickupMarkerIcon;
@@ -688,7 +688,7 @@ class DriverHomeScreenController extends GetxController with WidgetsBindingObser
 
       final url = Uri.parse(
         'https://maps.googleapis.com/maps/api/directions/json?'
-        'origin=$origin&destination=$destination&key=$_googleApiKey&mode=driving',
+        'origin=$origin&destination=$destination&key=${AppString.googleMapsKey}&mode=driving',
       );
 
       _logger.i('Fetching route from pickup to destination via Google Directions API');
@@ -768,7 +768,7 @@ class DriverHomeScreenController extends GetxController with WidgetsBindingObser
 
       final url = Uri.parse(
         'https://maps.googleapis.com/maps/api/directions/json?'
-        'origin=$origin&destination=$destination&key=$_googleApiKey&mode=driving',
+        'origin=$origin&destination=$destination&key=${AppString.googleMapsKey}&mode=driving',
       );
 
       _logger.i('Fetching route from Google Directions API: $url');

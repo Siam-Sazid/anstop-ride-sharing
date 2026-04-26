@@ -1556,12 +1556,6 @@ abstract class AppLocalizations {
   /// **'Delete'**
   String get deleteButton;
 
-  /// No description provided for @googleApiKey.
-  ///
-  /// In en, this message translates to:
-  /// **'AIzaSyCOAYoZktEbWIRX4mbS9D9ypHXdyYWFpSo'**
-  String get googleApiKey;
-
   /// No description provided for @yourLocationMarker.
   ///
   /// In en, this message translates to:

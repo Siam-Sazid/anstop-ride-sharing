@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_places_flutter/google_places_flutter.dart';
 import 'package:google_places_flutter/model/prediction.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
+import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:ride_sharing/l10n/l10n_helper.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/passenger/controller/pick_up_location_controller.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/passenger/passenger_map_screen.dart';
@@ -97,7 +98,7 @@ class PickUpLocationScreen extends StatelessWidget {
                                   Expanded(
                                     child: GooglePlaceAutoCompleteTextField(
                                       textEditingController: controller.pickUpAddressController,
-                                      googleAPIKey: "AIzaSyD_NVUY504HfMBsvN1gACNyfaFKAulvkVI",
+                                      googleAPIKey: AppString.googleMapsKey,
                                     //   googleAPIKey: "AIzaSyBUHqcmvmiPPwuwl33JkMP3lAzKMxREenI",
                                       inputDecoration: InputDecoration(
                                         border: InputBorder.none,
@@ -182,7 +183,7 @@ class PickUpLocationScreen extends StatelessWidget {
                                   Expanded(
                                     child: GooglePlaceAutoCompleteTextField(
                                       textEditingController: controller.destinationAddressController,
-                                      googleAPIKey: "AIzaSyD_NVUY504HfMBsvN1gACNyfaFKAulvkVI",
+                                      googleAPIKey: AppString.googleMapsKey,
                                    //   googleAPIKey: "AIzaSyBUHqcmvmiPPwuwl33JkMP3lAzKMxREenI",
                                       inputDecoration: InputDecoration(
                                         border: InputBorder.none,

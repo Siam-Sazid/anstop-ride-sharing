@@ -765,9 +765,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get deleteButton => 'Supprimer';
 
   @override
-  String get googleApiKey => 'AIzaSyD_NVUY504HfMBsvN1gACNyfaFKAulvkVI';
-
-  @override
   String get yourLocationMarker => 'Votre emplacement';
 
   @override

@@ -3,13 +3,23 @@
 <plist version="1.0">
 <dict>
     <key>NSLocationWhenInUseUsageDescription</key>
-    <string>This app needs access to location when open.</string>
+    <string>Anstop Covoiturage uses your location to show nearby drivers and track your ride.</string>
     <key>NSLocationAlwaysUsageDescription</key>
-    <string>This app needs access to location.</string>
+    <string>Anstop Covoiturage needs background location access to track your ride in progress.</string>
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>Anstop Covoiturage needs location access to show nearby drivers and track your ride.</string>
+    <key>NSCameraUsageDescription</key>
+    <string>Anstop Covoiturage needs camera access to take your profile photo.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Anstop Covoiturage needs photo library access to set your profile photo.</string>
+    <key>NSPhotoLibraryAddOnlyUsageDescription</key>
+    <string>Anstop Covoiturage needs permission to save photos to your library.</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Anstop Covoiturage needs microphone access when recording a video for your profile.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Ride Sharing</string>
+	<string>Anstop Covoiturage</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>

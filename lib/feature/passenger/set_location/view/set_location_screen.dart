@@ -10,6 +10,7 @@ import 'package:ride_sharing/widgets/home_links/home_links.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ride_sharing/app/utils/app_colors.dart';
 import 'package:ride_sharing/l10n/l10n_helper.dart';
+import 'package:ride_sharing/custom_assets/app_string.dart';
 
 class SetLocationScreen extends StatelessWidget {
   const SetLocationScreen({Key? key}) : super(key: key);
@@ -147,7 +148,7 @@ class SetLocationScreen extends StatelessWidget {
                     Expanded(
                       child: GooglePlaceAutoCompleteTextField(
                         textEditingController: controller.addressController,
-                        googleAPIKey: "AIzaSyD_NVUY504HfMBsvN1gACNyfaFKAulvkVI",
+                        googleAPIKey: AppString.googleMapsKey,
                         inputDecoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: AppLocalization.tr.whereAreYouHeadedHint,
@@ -351,7 +352,7 @@ class SetLocationScreen extends StatelessWidget {
                     Expanded(
                       child: GooglePlaceAutoCompleteTextField(
                         textEditingController: controller.addressController,
-                        googleAPIKey: "AIzaSyD_NVUY504HfMBsvN1gACNyfaFKAulvkVI",
+                        googleAPIKey: AppString.googleMapsKey,
                         inputDecoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: AppLocalization.tr.whereAreYouHeadedHint,
