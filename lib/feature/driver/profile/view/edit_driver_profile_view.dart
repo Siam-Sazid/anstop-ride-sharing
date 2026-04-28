@@ -1,3 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:ride_sharing/widgets/auth_links/auth_link.dart';
 import 'package:ride_sharing/feature/driver/profile/controller/edit_driver_profile_controller.dart';
 
@@ -164,19 +166,26 @@ class EditDriverProfileView extends StatelessWidget {
 
     // If there's an existing profile picture URL, show it
     if (controller.profilePictureUrl.value.isNotEmpty) {
-      return Image.network(
-        controller.profilePictureUrl.value,
+      return CachedNetworkImage(
+        imageUrl: controller.profilePictureUrl.value,
         fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
-          return Container(
-            color: Colors.grey[300],
-            child: Icon(
-              Icons.person,
-              size: 50.sp,
-              color: Colors.grey[600],
-            ),
-          );
-        },
+        placeholder: (context, url) => Shimmer.fromColors(
+          baseColor: Colors.grey.shade300,
+          highlightColor: Colors.grey.shade100,
+          child: Container(
+            width: 100.h,
+            height: 100.h,
+            color: Colors.grey,
+          ),
+        ),
+        errorWidget: (context, url, error) => Container(
+          color: Colors.grey[300],
+          child: Icon(
+            Icons.person,
+            size: 50.sp,
+            color: Colors.grey[600],
+          ),
+        ),
       );
     }
 

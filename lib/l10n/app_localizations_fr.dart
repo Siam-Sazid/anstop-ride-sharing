@@ -41,10 +41,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get onboardingTagline => 'Le covoiturage local, fiable et abordable.';
 
   @override
-  String get onboardingSafeAndSecure => 'surs et sécurisés';
+  String get onboardingSafeAndSecure => 'Trajets';
 
   @override
-  String get onboardingJourneys => 'Trajets';
+  String get onboardingJourneys => ' sûrs et sécurisés';
 
   @override
   String get onboardingSafetyMessage =>

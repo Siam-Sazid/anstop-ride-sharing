@@ -24,7 +24,8 @@ class TripRequest {
   final String id;
   final String riderId;
   final String passengerName;
-  final String passengerImage;
+  final String passengerImage;    // local asset fallback
+  final String passengerImageUrl; // network URL from socket payload
   final double rating;
   final String pickupTime;
   final String pickupLocation;
@@ -41,6 +42,7 @@ class TripRequest {
     required this.riderId,
     required this.passengerName,
     required this.passengerImage,
+    this.passengerImageUrl = '',
     required this.rating,
     required this.pickupTime,
     required this.pickupLocation,
@@ -59,7 +61,8 @@ class TripRequest {
       id: rideRequest.rideId,
       riderId: rideRequest.riderId,
       passengerName: rideRequest.rider.name,
-      passengerImage: 'assets/images/passenger1.jpg',
+      passengerImage: 'assets/images/passenger1.jpg', // local asset fallback
+      passengerImageUrl: rideRequest.rider.profilePicture,
       rating: rideRequest.rider.rating,
       pickupTime: 'Now',
       pickupLocation: rideRequest.pickUp.name,
@@ -591,7 +594,9 @@ class TripRequestCard extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 20.r,
-                  backgroundImage: AssetImage(trip.passengerImage),
+                  backgroundImage: trip.passengerImageUrl.isNotEmpty
+                      ? NetworkImage(trip.passengerImageUrl) as ImageProvider
+                      : AssetImage(trip.passengerImage), // 'assets/images/passenger1.jpg'
                 ),
                 SizedBox(width: 12.w),
                 Expanded(
@@ -1009,7 +1014,9 @@ class TripDetailBottomSheet extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 25.r,
-                    backgroundImage: AssetImage(trip.passengerImage),
+                    backgroundImage: trip.passengerImageUrl.isNotEmpty
+                      ? NetworkImage(trip.passengerImageUrl) as ImageProvider
+                      : AssetImage(trip.passengerImage), // 'assets/images/passenger1.jpg'
                   ),
                   SizedBox(width: 16.w),
                   Expanded(
@@ -1343,7 +1350,9 @@ class BiddingBottomSheet extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 25.r,
-                  backgroundImage: AssetImage(trip.passengerImage),
+                  backgroundImage: trip.passengerImageUrl.isNotEmpty
+                      ? NetworkImage(trip.passengerImageUrl) as ImageProvider
+                      : AssetImage(trip.passengerImage), // 'assets/images/passenger1.jpg'
                 ),
                 SizedBox(width: 16.w),
                 Expanded(
@@ -1923,7 +1932,9 @@ class ActiveTripBottomSheet extends StatelessWidget {
                   children: [
                     CircleAvatar(
                       radius: 25.r,
-                      backgroundImage: AssetImage(trip.passengerImage),
+                      backgroundImage: trip.passengerImageUrl.isNotEmpty
+                      ? NetworkImage(trip.passengerImageUrl) as ImageProvider
+                      : AssetImage(trip.passengerImage), // 'assets/images/passenger1.jpg'
                     ),
                     SizedBox(width: 16.w),
                     Expanded(
@@ -2020,7 +2031,8 @@ class ActiveTripBottomSheet extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(
-                            'Block B, Banasree, Dhaka.',
+                            // 'Block B, Banasree, Dhaka.', // static placeholder
+                            trip.pickupLocation,
                             style: TextStyle(
                               fontSize: 12.sp,
                               color: Colors.grey[600],
@@ -2030,7 +2042,8 @@ class ActiveTripBottomSheet extends StatelessWidget {
                         SizedBox(width: 16.w),
                         Expanded(
                           child: Text(
-                            'Dhanmondi, Dhaka',
+                            // 'Dhanmondi, Dhaka', // static placeholder
+                            trip.dropoffLocation,
                             style: TextStyle(
                               fontSize: 12.sp,
                               color: Colors.grey[600],
@@ -2164,7 +2177,9 @@ class DropOffNavigationBottomSheet extends StatelessWidget {
                       children: [
                         CircleAvatar(
                           radius: 20.r,
-                          backgroundImage: AssetImage(trip.passengerImage),
+                          backgroundImage: trip.passengerImageUrl.isNotEmpty
+                      ? NetworkImage(trip.passengerImageUrl) as ImageProvider
+                      : AssetImage(trip.passengerImage), // 'assets/images/passenger1.jpg'
                         ),
                         SizedBox(width: 12.w),
                         Expanded(
@@ -2191,7 +2206,8 @@ class DropOffNavigationBottomSheet extends StatelessWidget {
                                   ),
                                   SizedBox(width: 4.w),
                                   Text(
-                                    '5.0',
+                                    // '5.0', // static placeholder
+                                    trip.rating.toStringAsFixed(1),
                                     style: TextStyle(
                                       fontSize: 12.sp,
                                       color: Colors.grey[600],
@@ -2283,7 +2299,7 @@ class DropOffNavigationBottomSheet extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                '6 min',
+                                '6 min', // TODO: wire to real-time navigation ETA
                                 style: TextStyle(
                                   fontSize: 16.sp,
                                   color: AppColors.tesxtColor,
@@ -2305,7 +2321,8 @@ class DropOffNavigationBottomSheet extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                '3.3 km',
+                                // '3.3 km', // static placeholder
+                                '${trip.distance} km',
                                 style: TextStyle(
                                   fontSize: 16.sp,
                                   color: AppColors.tesxtColor,
@@ -2327,7 +2344,8 @@ class DropOffNavigationBottomSheet extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                '\$ 24',
+                                // '\$ 24', // static placeholder
+                                '\$${trip.fare.toStringAsFixed(0)}',
                                 style: TextStyle(
                                   fontSize: 16.sp,
                                   color: AppColors.tesxtColor,
@@ -2526,7 +2544,9 @@ class DropOffArrivedBottomSheet extends StatelessWidget {
                             children: [
                               CircleAvatar(
                                 radius: 20.r,
-                                backgroundImage: AssetImage(trip.passengerImage),
+                                backgroundImage: trip.passengerImageUrl.isNotEmpty
+                      ? NetworkImage(trip.passengerImageUrl) as ImageProvider
+                      : AssetImage(trip.passengerImage), // 'assets/images/passenger1.jpg'
                               ),
                               SizedBox(width: 12.w),
                               Expanded(
@@ -2550,7 +2570,8 @@ class DropOffArrivedBottomSheet extends StatelessWidget {
                               ),
                               SizedBox(width: 4.w),
                               Text(
-                                '5.0',
+                                // '5.0', // static placeholder
+                                trip.rating.toStringAsFixed(1),
                                 style: TextStyle(
                                   fontSize: 12.sp,
                                   color: Colors.grey[600],
@@ -2630,7 +2651,7 @@ class DropOffArrivedBottomSheet extends StatelessWidget {
                                       ),
                                     ),
                                     Text(
-                                      '6 min',
+                                      '6 min', // TODO: wire to real-time navigation ETA
                                       style: TextStyle(
                                         fontSize: 16.sp,
                                         color: AppColors.tesxtColor,
@@ -2652,7 +2673,8 @@ class DropOffArrivedBottomSheet extends StatelessWidget {
                                       ),
                                     ),
                                     Text(
-                                      '3.3 km',
+                                      // '3.3 km', // static placeholder
+                                      '${trip.distance} km',
                                       style: TextStyle(
                                         fontSize: 16.sp,
                                         color: AppColors.tesxtColor,
@@ -2674,7 +2696,8 @@ class DropOffArrivedBottomSheet extends StatelessWidget {
                                       ),
                                     ),
                                     Text(
-                                      '\$ 24',
+                                      // '\$ 24', // static placeholder
+                                      '\$${trip.fare.toStringAsFixed(0)}',
                                       style: TextStyle(
                                         fontSize: 16.sp,
                                         color: AppColors.tesxtColor,

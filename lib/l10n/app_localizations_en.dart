@@ -41,10 +41,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingTagline => 'Local, reliable, and affordable carpooling';
 
   @override
-  String get onboardingSafeAndSecure => 'Safe and Secure';
+  String get onboardingSafeAndSecure => 'Safe and secure';
 
   @override
-  String get onboardingJourneys => 'Trips';
+  String get onboardingJourneys => ' trips';
 
   @override
   String get onboardingSafetyMessage =>

@@ -77,10 +77,12 @@ class NearbyDriver {
     final location = json['location'] as Map<String, dynamic>?;
     final coords = location?['coordinates'] as List<dynamic>? ?? [0.0, 0.0];
     final carInfo = json['carInformation'] as Map<String, dynamic>?;
+    final first = json['firstName'] ?? json['name'] ?? '';
+    final last = json['lastName'] ?? '';
 
     return NearbyDriver(
       id: json['_id'] ?? '',
-      name: json['name'] ?? '',
+      name: '$first $last'.trim(),
       email: json['email'] ?? '',
       locationName: json['locationName'] ?? '',
       distance: (json['distance'] as num?)?.toDouble() ?? 0.0,
@@ -118,12 +120,14 @@ class BidData {
   factory BidData.fromJson(Map<String, dynamic> json) {
     final driver = json['driver'] as Map<String, dynamic>?;
     final carInfo = driver?['carInformation'] as Map<String, dynamic>?;
+    final first = driver?['firstName'] ?? driver?['name'] ?? '';
+    final last = driver?['lastName'] ?? '';
 
     return BidData(
       rideId: json['rideId'] ?? '',
       amount: json['amount']?.toString() ?? '0',
       driverId: driver?['_id'] ?? '',
-      driverName: driver?['name'] ?? '',
+      driverName: '$first $last'.trim(),
       profilePicture: driver?['profilePicture'],
       rating: (driver?['rating'] as num?)?.toDouble() ?? 0.0,
       totalReviews: (driver?['totalReviews'] as num?)?.toInt() ?? 0,
@@ -543,27 +547,42 @@ class _AcceptCarBottomSheetState extends State<AcceptCarBottomSheet> {
             children: [
               // Profile image from driver data
               ClipOval(
-                child: Image.network(
-                  driver.profilePicture ?? 'https://picsum.photos/250?image=9',
-                  width: 50.w,
-                  height: 50.h,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      width: 50.w,
-                      height: 50.h,
-                      decoration: BoxDecoration(
-                        color: AppColors.grayShade100,
-                        shape: BoxShape.circle,
+                child: driver.profilePicture != null && driver.profilePicture!.isNotEmpty
+                    ? Image.network(
+                        // 'https://picsum.photos/250?image=9', // static placeholder
+                        driver.profilePicture!,
+                        width: 50.w,
+                        height: 50.h,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            width: 50.w,
+                            height: 50.h,
+                            decoration: BoxDecoration(
+                              color: AppColors.grayShade100,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.person,
+                              color: AppColors.appGreyColor,
+                              size: 30.sp,
+                            ),
+                          );
+                        },
+                      )
+                    : Container(
+                        width: 50.w,
+                        height: 50.h,
+                        decoration: BoxDecoration(
+                          color: AppColors.grayShade100,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.person,
+                          color: AppColors.appGreyColor,
+                          size: 30.sp,
+                        ),
                       ),
-                      child: Icon(
-                        Icons.person,
-                        color: AppColors.appGreyColor,
-                        size: 30.sp,
-                      ),
-                    );
-                  },
-                ),
               ),
               SizedBox(width: 12.sp),
 

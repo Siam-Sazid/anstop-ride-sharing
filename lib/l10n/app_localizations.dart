@@ -161,13 +161,13 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingSafeAndSecure.
   ///
   /// In en, this message translates to:
-  /// **'Safe and Secure'**
+  /// **'Safe and secure'**
   String get onboardingSafeAndSecure;
 
   /// No description provided for @onboardingJourneys.
   ///
   /// In en, this message translates to:
-  /// **'Trips'**
+  /// **' trips'**
   String get onboardingJourneys;
 
   /// No description provided for @onboardingSafetyMessage.

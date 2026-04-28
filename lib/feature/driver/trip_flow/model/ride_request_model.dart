@@ -63,20 +63,25 @@ class Rider {
   final String name;
   final double rating;
   final int totalReviews;
+  final String profilePicture;
 
   Rider({
     required this.id,
     required this.name,
     required this.rating,
     required this.totalReviews,
+    this.profilePicture = '',
   });
 
   factory Rider.fromJson(Map<String, dynamic> json) {
+    final first = json['firstName'] ?? json['name'] ?? '';
+    final last = json['lastName'] ?? '';
     return Rider(
       id: json['_id'] ?? '',
-      name: json['name'] ?? '',
+      name: '$first $last'.trim(),
       rating: (json['rating'] ?? 0).toDouble(),
       totalReviews: (json['totalReviews'] ?? 0) as int,
+      profilePicture: json['profilePicture'] ?? '',
     );
   }
 
@@ -86,6 +91,7 @@ class Rider {
       'name': name,
       'rating': rating,
       'totalReviews': totalReviews,
+      'profilePicture': profilePicture,
     };
   }
 }

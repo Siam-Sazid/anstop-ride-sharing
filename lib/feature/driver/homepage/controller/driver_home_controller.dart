@@ -62,6 +62,10 @@ class DriverHomeScreenController extends GetxController with WidgetsBindingObser
   Timer? _locationUpdateTimer;
   static const Duration _locationUpdateInterval = Duration(seconds: 20);
 
+  // Idle GPS tracking (when online, no active route)
+  StreamSubscription<Position>? _idleLocationSubscription;
+  LatLng? _previousIdlePosition;
+
   // Simulation mode for testing/demo
   final RxBool isSimulationMode = false.obs;
   Timer? _simulationTimer;
@@ -79,6 +83,13 @@ class DriverHomeScreenController extends GetxController with WidgetsBindingObser
   // Store original car image for rotation
   ui.Image? _carImage;
   int _carImageSize = 50;
+
+  // Offset to correct for the car image's natural orientation.
+  // 0° assumes the image faces north. Adjust if the car faces another direction:
+  //   image faces east  → set to -90.0
+  //   image faces south → set to -180.0
+  //   image faces west  → set to  90.0
+  static const double _imageNorthOffsetDegrees = 0.0;
 
   static const CameraPosition defaultLocation = CameraPosition(
     target: LatLng(23.8103, 90.4125),
@@ -153,10 +164,10 @@ class DriverHomeScreenController extends GetxController with WidgetsBindingObser
 
   // Create a rotated bitmap descriptor from the car image
   Future<BitmapDescriptor> _getRotatedCarBitmap(double rotationDegrees) async {
-    _logger.i('_getRotatedCarBitmap called with rotation: ${rotationDegrees.toStringAsFixed(1)}°');
+    _logger.i('🎨 [BITMAP] called with bearing=${rotationDegrees.toStringAsFixed(1)}°, offset=$_imageNorthOffsetDegrees°, carImage=${_carImage != null ? "loaded(${_carImage!.width}x${_carImage!.height})" : "NULL"}');
 
     if (_carImage == null) {
-      _logger.e('Car image is null! Cannot rotate.');
+      _logger.e('🎨 [BITMAP] ❌ _carImage is null — returning default green marker. Check assets/images/3D_car.png is in pubspec.yaml');
       return BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen);
     }
 
@@ -167,12 +178,11 @@ class DriverHomeScreenController extends GetxController with WidgetsBindingObser
     final double diagonal = math.sqrt(imageWidth * imageWidth + imageHeight * imageHeight);
     final int canvasSize = diagonal.ceil();
 
-    // Remove the +90 test offset once rotation is confirmed working
-    final double finalRotation = rotationDegrees; // Use actual bearing
+    final double finalRotation = (rotationDegrees + _imageNorthOffsetDegrees) % 360;
 
     final double rotationRadians = finalRotation * math.pi / 180;
 
-    _logger.i('Car image: ${imageWidth}x$imageHeight, canvas: $canvasSize, rotation: ${finalRotation.toStringAsFixed(1)}°');
+    _logger.i('🎨 [BITMAP] canvas=${canvasSize}px, finalRotation=${finalRotation.toStringAsFixed(1)}°');
 
     // Create a picture recorder and canvas
     final ui.PictureRecorder recorder = ui.PictureRecorder();
@@ -207,11 +217,11 @@ class DriverHomeScreenController extends GetxController with WidgetsBindingObser
     final ByteData? byteData = await rotatedImage.toByteData(format: ui.ImageByteFormat.png);
 
     if (byteData == null) {
-      _logger.e('Failed to get byte data from rotated image');
+      _logger.e('🎨 [BITMAP] ❌ toByteData returned null — returning default marker');
       return BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen);
     }
 
-    _logger.i('Rotated bitmap SUCCESS - size: $canvasSize, bytes: ${byteData.lengthInBytes}');
+    _logger.i('🎨 [BITMAP] ✅ success — ${byteData.lengthInBytes} bytes, rotation=${finalRotation.toStringAsFixed(1)}°');
     return BitmapDescriptor.bytes(byteData.buffer.asUint8List());
   }
 
@@ -307,10 +317,10 @@ class DriverHomeScreenController extends GetxController with WidgetsBindingObser
 
   // Update driver marker with position and rotated bitmap
   Future<void> _updateDriverMarkerWithRotation(LatLng position, double bearing) async {
-    // Get rotated car bitmap
+    _logger.i('📍 [MARKER UPDATE] bearing=${bearing.toStringAsFixed(1)}°, pos=${position.latitude.toStringAsFixed(6)},${position.longitude.toStringAsFixed(6)}');
+
     final rotatedIcon = await _getRotatedCarBitmap(bearing);
 
-    // Create a new marker
     final newMarker = Marker(
       markerId: const MarkerId('driver_location'),
       position: position,
@@ -320,12 +330,11 @@ class DriverHomeScreenController extends GetxController with WidgetsBindingObser
       flat: true,
     );
 
-    // Create a new Set to ensure Google Maps detects the change
     final updatedMarkers = markers.where((m) => m.markerId.value != 'driver_location').toSet();
     updatedMarkers.add(newMarker);
     markers = updatedMarkers;
 
-    _logger.i('Marker updated with bearing: ${bearing.toStringAsFixed(1)}°, icon hash: ${rotatedIcon.hashCode}');
+    _logger.i('📍 [MARKER UPDATE] ✅ markers set size=${markers.length}, icon.hashCode=${rotatedIcon.hashCode}');
   }
 
   Future<void> _setupSocketListeners() async {
@@ -986,6 +995,8 @@ class DriverHomeScreenController extends GetxController with WidgetsBindingObser
     _logger.i('Starting real-time location tracking');
     _logger.i('Route points available: ${_currentRoutePoints.length}');
 
+    // Stop idle tracking — active navigation takes over
+    _stopIdleLocationTracking();
     _locationSubscription?.cancel();
 
     _locationSubscription = Geolocator.getPositionStream(
@@ -994,8 +1005,8 @@ class DriverHomeScreenController extends GetxController with WidgetsBindingObser
         distanceFilter: 1,
       ),
     ).listen((Position position) async {
-      _logger.i('Location updated: ${position.latitude}, ${position.longitude}');
-      _logger.i('Current route points count: ${_currentRoutePoints.length}');
+      _logger.i('🚗 [GPS] lat=${position.latitude.toStringAsFixed(6)}, lng=${position.longitude.toStringAsFixed(6)}, accuracy=${position.accuracy.toStringAsFixed(1)}m');
+      _logger.i('🚗 [GPS] routePoints=${_currentRoutePoints.length}, currentBearing=${_currentBearing.toStringAsFixed(1)}°');
 
       currentPosition = position;
 
@@ -1014,11 +1025,11 @@ class DriverHomeScreenController extends GetxController with WidgetsBindingObser
         _currentBearing = snappedResult.bearing;
         _currentRouteSegmentIndex = snappedResult.segmentIndex;
 
-        _logger.i('ROTATION DEBUG - Bearing: ${snappedResult.bearing.toStringAsFixed(1)}°, Segment: ${snappedResult.segmentIndex}');
+        _logger.i('🧭 [SNAP] snappedSegment=${snappedResult.segmentIndex}/${_currentRoutePoints.length}, bearing=${snappedResult.bearing.toStringAsFixed(1)}°');
 
         await _updateDriverMarkerWithRotation(snappedResult.position, snappedResult.bearing);
 
-        _logger.i('Driver marker updated - snapped position: ${snappedResult.position}, bearing: ${snappedResult.bearing.toStringAsFixed(1)}°');
+        _logger.i('📍 [MARKER] updated at snapped position, bearing=${snappedResult.bearing.toStringAsFixed(1)}°');
 
         // Advance navigation step based on proximity to step end location
         if (_routeSteps.isNotEmpty && _currentStepIndex < _routeSteps.length) {
@@ -1039,13 +1050,16 @@ class DriverHomeScreenController extends GetxController with WidgetsBindingObser
         }
       } else {
         _logger.w('No route points available - marker will not rotate');
+        final icon = await _getRotatedCarBitmap(_currentBearing);
         markers.removeWhere((m) => m.markerId.value == 'driver_location');
         markers.add(
           Marker(
             markerId: const MarkerId('driver_location'),
             position: currentLatLng,
-            icon: _driverMarkerIcon ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+            icon: icon,
             infoWindow: const InfoWindow(title: 'You'),
+            anchor: const Offset(0.5, 0.5),
+            flat: true,
           ),
         );
       }
@@ -1196,6 +1210,7 @@ class DriverHomeScreenController extends GetxController with WidgetsBindingObser
   // ==================== ONLINE LOCATION UPDATES ====================
 
   /// Called when the driver goes online. Hits the API immediately then every 20 seconds.
+  /// Also starts idle GPS tracking so the car icon moves/rotates before any ride.
   Future<void> startLocationUpdates() async {
     _logger.i('Driver went online — starting location updates every ${_locationUpdateInterval.inSeconds}s');
     await _postCurrentLocation(); // immediate hit
@@ -1203,13 +1218,49 @@ class DriverHomeScreenController extends GetxController with WidgetsBindingObser
     _locationUpdateTimer = Timer.periodic(_locationUpdateInterval, (_) async {
       await _postCurrentLocation();
     });
+    _startIdleLocationTracking();
   }
 
-  /// Called when the driver goes offline. Stops the periodic timer.
+  /// Called when the driver goes offline. Stops the periodic timer and idle tracking.
   void stopLocationUpdates() {
     _logger.i('Driver went offline — stopping location updates');
     _locationUpdateTimer?.cancel();
     _locationUpdateTimer = null;
+    _stopIdleLocationTracking();
+  }
+
+  void _startIdleLocationTracking() {
+    _logger.i('🟢 [IDLE TRACK] starting idle GPS tracking (distanceFilter=5m)');
+    _idleLocationSubscription?.cancel();
+    _previousIdlePosition = null;
+
+    _idleLocationSubscription = Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 5,
+      ),
+    ).listen((Position position) async {
+      currentPosition = position;
+      final currentLatLng = LatLng(position.latitude, position.longitude);
+
+      if (_previousIdlePosition != null) {
+        _currentBearing = _calculateBearing(_previousIdlePosition!, currentLatLng);
+        _logger.i('🟢 [IDLE TRACK] moved — bearing=${_currentBearing.toStringAsFixed(1)}°, from=${_previousIdlePosition!.latitude.toStringAsFixed(6)} to=${currentLatLng.latitude.toStringAsFixed(6)}');
+      } else {
+        _logger.i('🟢 [IDLE TRACK] first fix — lat=${position.latitude.toStringAsFixed(6)}, bearing stays ${_currentBearing.toStringAsFixed(1)}°');
+      }
+      _previousIdlePosition = currentLatLng;
+
+      await _updateDriverMarkerWithRotation(currentLatLng, _currentBearing);
+      _logger.i('🟢 [IDLE TRACK] calling update()');
+      update();
+    });
+  }
+
+  void _stopIdleLocationTracking() {
+    _idleLocationSubscription?.cancel();
+    _idleLocationSubscription = null;
+    _previousIdlePosition = null;
   }
 
   Future<void> _postCurrentLocation() async {
@@ -1383,6 +1434,7 @@ class DriverHomeScreenController extends GetxController with WidgetsBindingObser
     WidgetsBinding.instance.removeObserver(this);
     mapController?.dispose();
     _locationSubscription?.cancel();
+    _idleLocationSubscription?.cancel();
     _simulationTimer?.cancel();
     _locationUpdateTimer?.cancel();
     // Remove socket listeners

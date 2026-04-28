@@ -116,19 +116,25 @@ class _DriverArrivedBottomSheetState extends State<DriverArrivedBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    // Use dynamic data or fallback to static
-    final displayName = widget.driverName.isNotEmpty ? widget.driverName : 'John Doe';
-    final displayImageUrl = widget.driverProfilePicture ?? 'https://picsum.photos/250?image=9';
-    final displayRating = widget.driverRating > 0 ? widget.driverRating : 3.54;
-    final displayTrips = widget.driverTotalReviews > 0 ? widget.driverTotalReviews : 3;
-    final displayPrice = widget.bidAmount.isNotEmpty ? '\$${widget.bidAmount}' : '\$24';
-    final displayDistance = widget.tripDistance.isNotEmpty ? '${widget.tripDistance} km' : '28 km';
-    final displayCarTitle = widget.licensePlateNumber.isNotEmpty
-        ? widget.licensePlateNumber
-        : 'DHK METRO - 8475Dkk';
+    // Use dynamic data from socket payload
+    // final displayName = widget.driverName.isNotEmpty ? widget.driverName : 'John Doe';
+    final displayName = widget.driverName;
+    // final displayImageUrl = widget.driverProfilePicture ?? 'https://picsum.photos/250?image=9';
+    final displayImageUrl = widget.driverProfilePicture ?? '';
+    // final displayRating = widget.driverRating > 0 ? widget.driverRating : 3.54;
+    final displayRating = widget.driverRating;
+    // final displayTrips = widget.driverTotalReviews > 0 ? widget.driverTotalReviews : 3;
+    final displayTrips = widget.driverTotalReviews;
+    // final displayPrice = widget.bidAmount.isNotEmpty ? '\$${widget.bidAmount}' : '\$24';
+    final displayPrice = widget.bidAmount.isNotEmpty ? '\$${widget.bidAmount}' : '';
+    // final displayDistance = widget.tripDistance.isNotEmpty ? '${widget.tripDistance} km' : '28 km';
+    final displayDistance = widget.tripDistance.isNotEmpty ? '${widget.tripDistance} km' : '';
+    // final displayCarTitle = widget.licensePlateNumber.isNotEmpty ? widget.licensePlateNumber : 'DHK METRO - 8475Dkk';
+    final displayCarTitle = widget.licensePlateNumber;
+    // final displayCarSubtitle = (widget.carBrand.isNotEmpty || widget.carModel.isNotEmpty) ? '${widget.carBrand} ${widget.carModel}'.trim() : 'Toyota';
     final displayCarSubtitle = (widget.carBrand.isNotEmpty || widget.carModel.isNotEmpty)
         ? '${widget.carBrand} ${widget.carModel}'.trim()
-        : 'Toyota';
+        : '';
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.4,

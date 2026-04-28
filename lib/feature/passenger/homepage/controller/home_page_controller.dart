@@ -45,6 +45,12 @@ class HomePageController extends GetxController {
 
   static const int _carImageSize = 40;
 
+  // Adjust to match the car image's natural orientation (same value as driver controller).
+  //   image faces east  → -90.0
+  //   image faces south → -180.0
+  //   image faces west  →  90.0
+  static const double _imageNorthOffsetDegrees = 0.0;
+
   // Custom marker icons
   ui.Image? _carImage;
   BitmapDescriptor? _pinMarkerIcon;
@@ -57,6 +63,9 @@ class HomePageController extends GetxController {
 
   // Tracks last position where Directions API was called — avoids redundant fetches
   LatLng? _lastFetchedDriverLocation;
+
+  // Tracks previous driver position to compute movement bearing before route loads
+  LatLng? _previousDriverPosition;
 
   static const CameraPosition defaultLocation = CameraPosition(
     target: LatLng(23.8103, 90.4125),
@@ -181,7 +190,9 @@ class HomePageController extends GetxController {
 
   /// Rotates the car image by [degrees] and returns it as a BitmapDescriptor.
   Future<BitmapDescriptor> _getRotatedCarBitmap(double degrees) async {
+    debugPrint('🎨 [PASSENGER BITMAP] bearing=${degrees.toStringAsFixed(1)}°, offset=$_imageNorthOffsetDegrees°, carImage=${_carImage != null ? "loaded(${_carImage!.width}x${_carImage!.height})" : "NULL"}');
     if (_carImage == null) {
+      debugPrint('🎨 [PASSENGER BITMAP] ❌ _carImage is null — returning default azure marker');
       return BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure);
     }
 
@@ -190,7 +201,7 @@ class HomePageController extends GetxController {
     final double diagonal = sqrt(w * w + h * h);
     final int canvasSize = diagonal.ceil();
 
-    final double radians = degrees * pi / 180;
+    final double radians = ((degrees + _imageNorthOffsetDegrees) % 360) * pi / 180;
 
     final ui.PictureRecorder recorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(
@@ -276,7 +287,11 @@ class HomePageController extends GetxController {
   /// Updates the driver marker with a rotated car icon at [position].
   Future<void> _updateDriverMarkerWithRotation(
       LatLng position, double bearing, String locationName) async {
+    debugPrint('🚕 [PASSENGER MARKER] bearing=${bearing.toStringAsFixed(1)}°, pos=${position.latitude.toStringAsFixed(6)},${position.longitude.toStringAsFixed(6)}, carImage=${_carImage != null ? "loaded" : "NULL"}');
+
     final BitmapDescriptor icon = await _getRotatedCarBitmap(bearing);
+
+    debugPrint('🚕 [PASSENGER MARKER] icon.hashCode=${icon.hashCode}, markersBeforeUpdate=${markers.length}');
 
     markers = {
       ...markers.where((m) => m.markerId.value != 'driver_location'),
@@ -289,6 +304,8 @@ class HomePageController extends GetxController {
         flat: true,
       ),
     };
+
+    debugPrint('🚕 [PASSENGER MARKER] ✅ markers updated, new size=${markers.length}');
   }
 
   // ─── Location permission & initial position ────────────────────────────────
@@ -375,6 +392,8 @@ class HomePageController extends GetxController {
       final locationName = data['locationName'] as String? ?? 'Driver';
       final driverLatLng = LatLng(lat, lng);
 
+      debugPrint('🟡 [SOCKET] update-location → lat=$lat, lng=$lng');
+      debugPrint('🟡 [SOCKET] routePoints=${_currentRoutePoints.length}, prevDriverPos=$_previousDriverPosition');
       debugPrint('🟡 [POLYLINE DEBUG] update-location received → driver lat=$lat, lng=$lng');
       debugPrint('🟡 [POLYLINE DEBUG] polyline origin (driver) = $lat, $lng');
       debugPrint('🟡 [POLYLINE DEBUG] polyline destination (pickup) = ${pickupLocation.latitude}, ${pickupLocation.longitude}');
@@ -396,10 +415,17 @@ class HomePageController extends GetxController {
         await _fetchAndDrawRoute(driverLatLng, pickupLocation);
       }
 
-      // Snap to route for smooth bearing
+      // Snap to route for smooth bearing.
+      // If route not yet loaded, fall back to movement direction bearing.
       final snapped = _snapToRoute(driverLatLng);
-      await _updateDriverMarkerWithRotation(
-          snapped.position, snapped.bearing, locationName);
+      double bearing = snapped.bearing;
+      if (_currentRoutePoints.isEmpty && _previousDriverPosition != null) {
+        bearing = _calculateBearing(_previousDriverPosition!, driverLatLng);
+        _currentBearing = bearing;
+      }
+      _previousDriverPosition = driverLatLng;
+
+      await _updateDriverMarkerWithRotation(snapped.position, bearing, locationName);
       update();
 
       // Animate camera to keep both driver and pickup in frame
@@ -451,10 +477,17 @@ class HomePageController extends GetxController {
         await _fetchAndDrawRoute(driverLatLng, destination);
       }
 
-      // Snap to route for smooth bearing
+      // Snap to route for smooth bearing.
+      // If route not yet loaded, fall back to movement direction bearing.
       final snapped = _snapToRoute(driverLatLng);
-      await _updateDriverMarkerWithRotation(
-          snapped.position, snapped.bearing, locationName);
+      double bearing = snapped.bearing;
+      if (_currentRoutePoints.isEmpty && _previousDriverPosition != null) {
+        bearing = _calculateBearing(_previousDriverPosition!, driverLatLng);
+        _currentBearing = bearing;
+      }
+      _previousDriverPosition = driverLatLng;
+
+      await _updateDriverMarkerWithRotation(snapped.position, bearing, locationName);
       update();
 
       // Keep both driver and destination in frame
@@ -624,6 +657,7 @@ class HomePageController extends GetxController {
     _currentRoutePoints = [];
     _currentRouteSegmentIndex = 0;
     _currentBearing = 0.0;
+    _previousDriverPosition = null;
   }
 
   void _addPinMarker(String id, LatLng position, String title) {
