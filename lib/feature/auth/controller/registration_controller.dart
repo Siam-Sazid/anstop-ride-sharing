@@ -89,9 +89,9 @@ class RegistrationController extends GetxController {
         email: emailTEController.text.trim(),
         password: passwordTEController.text.trim(),
         role: userRole.value,
-        // phoneNumber: phoneTEController.text.trim().isNotEmpty
-        //     ? phoneTEController.text.trim()
-        //     : null,
+        phoneNumber: phoneTEController.text.trim().isNotEmpty
+            ? phoneTEController.text.trim()
+            : null,
       );
 
       // Call signup API

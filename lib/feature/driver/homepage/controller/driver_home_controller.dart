@@ -11,6 +11,7 @@ import 'package:logger/logger.dart';
 import 'package:ride_sharing/feature/driver/homepage/service/driver_location_service.dart';
 import 'package:ride_sharing/feature/driver/trip_flow/model/ride_request_model.dart';
 import 'package:ride_sharing/feature/driver/trip_flow/view/trip_completion_payment_dialogs.dart';
+import 'package:ride_sharing/feature/driver/trip_flow/view/driver_trip_flow.dart';
 import 'package:ride_sharing/services/socket_services.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -413,29 +414,49 @@ class DriverHomeScreenController extends GetxController with WidgetsBindingObser
         _logger.i('ride-unavailable received: $data');
         final message = (data is Map ? data['message'] as String? : null) ??
             'This ride is no longer available';
-        Get.rawSnackbar(
-          messageText: Text(
-            message,
-            style: const TextStyle(
-              color: Colors.black87,
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
+        final incomingRideId = data is Map ? data['rideId'] as String? : null;
+
+        final ctx = Get.context;
+        if (ctx != null) {
+          ScaffoldMessenger.of(ctx).showSnackBar(
+            SnackBar(
+              content: Text(
+                message,
+                style: const TextStyle(
+                  color: Colors.black87,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              backgroundColor: Colors.white,
+              behavior: SnackBarBehavior.floating,
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              duration: const Duration(seconds: 4),
+              elevation: 8,
             ),
-          ),
-          backgroundColor: Colors.white,
-          snackPosition: SnackPosition.TOP,
-          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          borderRadius: 12,
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-          duration: const Duration(seconds: 4),
-          boxShadows: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.12),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        );
+          );
+        }
+
+        // Remove the cancelled ride from PendingTripsBottomSheet
+        if (incomingRideId != null &&
+            currentRideRequest.value?.rideId == incomingRideId) {
+          clearRideRequest();
+          try {
+            final tripController = Get.find<DriverTripController>();
+            tripController.pendingTrips
+                .removeWhere((t) => t.id == incomingRideId);
+            if (tripController.pendingTrips.isEmpty) {
+              tripController.selectedTrip.value = null;
+              tripController.currentState.value = TripState.pendingRequests;
+            }
+          } catch (_) {
+            // DriverTripController not mounted — no trip sheet open
+          }
+        }
       });
 
       // Set up the incompleted-ride listener (fires on reconnect when a ride is still incomplete)

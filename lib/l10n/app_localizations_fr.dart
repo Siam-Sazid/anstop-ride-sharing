@@ -893,4 +893,17 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get deleteAccountScheduledMessage =>
       'Votre compte sera supprimé dans 7 jours.';
+
+  @override
+  String get dropOffNoticeTitle => 'Avis de dépôt';
+
+  @override
+  String get dropOffNoticeMessage =>
+      'Le chauffeur peut vous déposer dans un rayon de 500 m autour de votre destination. Acceptez-vous cela ?';
+
+  @override
+  String get dropOffNoticeNo => 'Non';
+
+  @override
+  String get dropOffNoticeYesAccept => 'Oui, Accepter';
 }

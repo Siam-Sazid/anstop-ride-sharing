@@ -884,4 +884,17 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get deleteAccountScheduledMessage =>
       'Your account will be deleted within 7 days.';
+
+  @override
+  String get dropOffNoticeTitle => 'Drop-off Notice';
+
+  @override
+  String get dropOffNoticeMessage =>
+      'The driver may drop you off within a 500m radius near your destination. Do you accept this?';
+
+  @override
+  String get dropOffNoticeNo => 'No';
+
+  @override
+  String get dropOffNoticeYesAccept => 'Yes, Accept';
 }

@@ -111,22 +111,23 @@ class _FindCarBottomSheetState extends State<FindCarBottomSheet> {
     final accepted = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Drop-off Notice'),
-        content: const Text(
-          'The driver may drop you off within a 500m radius near your destination. Do you accept this?',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('No'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Yes, Accept'),
-          ),
-        ],
-      ),
+      builder: (ctx) {
+        final l10n = AppLocalization.of(ctx);
+        return AlertDialog(
+          title: Text(l10n.dropOffNoticeTitle),
+          content: Text(l10n.dropOffNoticeMessage),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: Text(l10n.dropOffNoticeNo),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(true),
+              child: Text(l10n.dropOffNoticeYesAccept),
+            ),
+          ],
+        );
+      },
     );
 
     if (accepted != true) return;

@@ -1801,6 +1801,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your account will be deleted within 7 days.'**
   String get deleteAccountScheduledMessage;
+
+  /// No description provided for @dropOffNoticeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop-off Notice'**
+  String get dropOffNoticeTitle;
+
+  /// No description provided for @dropOffNoticeMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The driver may drop you off within a 500m radius near your destination. Do you accept this?'**
+  String get dropOffNoticeMessage;
+
+  /// No description provided for @dropOffNoticeNo.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get dropOffNoticeNo;
+
+  /// No description provided for @dropOffNoticeYesAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, Accept'**
+  String get dropOffNoticeYesAccept;
 }
 
 class _AppLocalizationsDelegate

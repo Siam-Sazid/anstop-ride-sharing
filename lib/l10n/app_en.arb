@@ -331,5 +331,10 @@
   "accountInactiveButton": "OK",
 
   "deleteAccountScheduledTitle": "Account Deletion Requested",
-  "deleteAccountScheduledMessage": "Your account will be deleted within 7 days."
+  "deleteAccountScheduledMessage": "Your account will be deleted within 7 days.",
+
+  "dropOffNoticeTitle": "Drop-off Notice",
+  "dropOffNoticeMessage": "The driver may drop you off within a 500m radius near your destination. Do you accept this?",
+  "dropOffNoticeNo": "No",
+  "dropOffNoticeYesAccept": "Yes, Accept"
 }

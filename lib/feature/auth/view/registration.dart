@@ -101,6 +101,19 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       ),
                       SizedBox(height: 12.h),
                       CustomTextField(
+                        controller: _controller.phoneTEController,
+                        keyboardType: TextInputType.phone,
+                        prefixIcon: Icon(
+                          Icons.phone_outlined,
+                          color: Color(0XFF8A8A8A),
+                          size: 24.sp,
+                        ),
+                        hintText: 'Phone Number',
+                        hintextSize: 14.sp,
+                        hintextColor: Color(0XFF8A8A8A),
+                      ),
+                      SizedBox(height: 12.h),
+                      CustomTextField(
                         isObscureText: true,
                         isPassword: true,
                         controller: _controller.passwordTEController,
