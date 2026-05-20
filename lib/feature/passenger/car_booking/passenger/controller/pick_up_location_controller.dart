@@ -7,12 +7,16 @@ import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:flutter/material.dart';
 import 'package:ride_sharing/l10n/l10n_helper.dart';
+import 'package:ride_sharing/services/logger.dart';
+import 'package:ride_sharing/custom_assets/app_string.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ride_sharing/feature/passenger/car_booking/service/ride_request_service.dart';
 
 import '../../../../../l10n/app_localizations.dart';
 
 class PickUpLocationController extends GetxController {
+  final _logger = logger(PickUpLocationController);
+
   final TextEditingController locationTEController = TextEditingController();
 
   // Pickup location controllers
@@ -56,7 +60,27 @@ class PickUpLocationController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _debugGooglePlacesApi();
     _initializeMap();
+  }
+
+  Future<void> _debugGooglePlacesApi() async {
+    const testInput = 'Paris';
+    final uri = Uri.parse(
+      'https://maps.googleapis.com/maps/api/place/autocomplete/json'
+      '?input=$testInput&key=${AppString.googleMapsKey}&language=en',
+    );
+    try {
+      final response = await http.get(uri);
+      final decoded = jsonDecode(response.body);
+      _logger.i('Places API status: ${decoded['status']}');
+      if (decoded['error_message'] != null) {
+        _logger.e('Places API error_message: ${decoded['error_message']}');
+      }
+      _logger.d('Places API raw response: ${response.body}');
+    } catch (e) {
+      _logger.e('Places API debug call failed: $e');
+    }
   }
 
   Future<void> _initializeMap() async {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ride_sharing/app/utils/app_colors.dart';
 import 'package:ride_sharing/custom_assets/app_image.dart';
 import 'package:ride_sharing/feature/splash_screen/controller/splash_controller.dart';
 
@@ -29,19 +30,40 @@ class SplashScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
+                  Obx(() => Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Text(AppLocalization.tr.splashEnglishLabel),
-                      Obx(() => Switch(
-                            value: controller.isFrench.value,
-                            onChanged: controller.toggleLanguage,
-                            activeColor: Colors.white,
-                            activeTrackColor: Colors.grey[300],
-                          )),
-                      Text(AppLocalization.tr.splashFrenchLabel),
+                      GestureDetector(
+                        onTap: () => controller.toggleLanguage(false),
+                        child: Text(
+                          AppLocalization.tr.splashEnglishLabel,
+                          style: TextStyle(
+                            color: controller.isFrench.value ?  Colors.grey[300] : AppColors.primaryColor,
+                            fontWeight: controller.isFrench.value ? FontWeight.normal : FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Text(
+                          '|',
+                          style: const TextStyle(color: Colors.white, fontSize: 14),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () => controller.toggleLanguage(true),
+                        child: Text(
+                          AppLocalization.tr.splashFrenchLabel,
+                          style: TextStyle(
+                            color: controller.isFrench.value ? AppColors.primaryColor : Colors.white,
+                            fontWeight: controller.isFrench.value ? FontWeight.bold : FontWeight.normal,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
                     ],
-                  ),
+                  )),
                   const Spacer(),
                   Image.asset(AppImage.logoAnstop),
                   const SizedBox(height: 20),

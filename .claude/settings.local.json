@@ -22,7 +22,10 @@
       "Bash(flutter test:*)",
       "Bash(keytool *)",
       "Bash(flutter build *)",
-      "Bash(git pull *)"
+      "Bash(git pull *)",
+      "Bash(flutter clean *)",
+      "Bash(gh repo *)",
+      "PowerShell(gh *)"
     ]
   }
 }
