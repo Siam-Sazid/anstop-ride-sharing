@@ -25,7 +25,11 @@
       "Bash(git pull *)",
       "Bash(flutter clean *)",
       "Bash(gh repo *)",
-      "PowerShell(gh *)"
+      "PowerShell(gh *)",
+      "Bash(git fetch *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)"
     ]
   }
 }
