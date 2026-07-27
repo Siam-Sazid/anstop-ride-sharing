@@ -2,6 +2,8 @@
 
 A full-featured, cross-platform ride-sharing mobile application built with Flutter, supporting both **passengers** and **drivers** in a single codebase.
 
+> 📱 This app is already published on the Google Play Store.
+
 ---
 
 ## Overview
